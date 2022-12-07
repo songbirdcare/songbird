@@ -1,0 +1,2 @@
+# songbirds
+Initial monorepo (WIP)
