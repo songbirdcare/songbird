@@ -17,9 +17,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@songbird/iso@workspace:packages/iso":
+"@songbird/precedent-iso@workspace:packages/precedent-iso":
   version: 0.0.0-use.local
-  resolution: "@songbird/iso@workspace:packages/iso"
+  resolution: "@songbird/precedent-iso@workspace:packages/precedent-iso"
   dependencies:
     typescript: ^4.9.4
   languageName: unknown
