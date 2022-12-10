@@ -13,8 +13,9 @@
     "run-server::develop": "node --watch dist/index.js",
     "test": "yarn vitest src/tests",
     "lint": "eslint . --ext .ts",
-    "fix": "yarn fix::lint",
-    "fix::lint": "eslint . --ext .ts --fix"
+    "fix": "yarn fix::lint && yarn fix::format",
+    "fix::lint": "eslint . --ext .ts --fix",
+    "fix::format": "prettier --write ."
   },
   "devDependencies": {
     "@types/eslint": "^8",

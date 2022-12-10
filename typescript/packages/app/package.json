@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test": "yarn vitest src/tests",
     "lint": "eslint . --ext .ts",
-    "fix::lint": "eslint . --ext .ts --fix"
+    "fix": "yarn fix::lint && yarn fix::format",
+    "fix::lint": "eslint . --ext .ts --fix",
+    "fix::format": "prettier --write ."
   },
   "dependencies": {
     "@songbird/precedent-iso": "workspace:*",
