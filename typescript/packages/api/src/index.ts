@@ -1,15 +1,13 @@
 import * as http from "http";
 import { HAMLET } from "@songbird/precedent-iso";
+import { SETTINGS } from "./settings";
 
-const hostname = "127.0.0.1";
-const port = 3000;
-
-const server = http.createServer((_, res) => {
-  res.statusCode = 201;
-  res.setHeader("Content-Type", "text/plain");
-  res.end(HAMLET);
-});
-
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+http
+  .createServer((_, res) => {
+    res.statusCode = 201;
+    res.setHeader("Content-Type", "text/plain");
+    res.end(HAMLET);
+  })
+  .listen(SETTINGS.port, SETTINGS.host, () => {
+    console.log(`Server running at http://${SETTINGS.host}:${SETTINGS.port}/`);
+  });
