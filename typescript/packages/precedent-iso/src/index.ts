@@ -1,1 +1,1 @@
-export const HAMLET = "I am a coward";
+export const HAMLET = "to be or not to be";

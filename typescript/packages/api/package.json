@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -b -w",
+    "start": "concurrently -k --names \"HTTP,WATCH\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn run-server::develop\" \"yarn watch\"",
     "run-server::prod": "node dist/index.js",
     "run-server::develop": "node --watch dist/index.js",
     "test": "yarn vitest src/tests",
@@ -28,6 +29,7 @@
     "@types/prettier": "^2",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
+    "concurrently": "^7.6.0",
     "eslint": "^8.29.0",
     "prettier": "^2.8.1",
     "vitest": "^0.25.6"
