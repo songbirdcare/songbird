@@ -6,10 +6,12 @@
   "packageManager": "yarn@3.3.0",
   "private": true,
   "devDependencies": {
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "vitest": "^0.25.6"
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w -b"
+    "watch": "tsc -w -b",
+    "test": "yarn vitest src/tests"
   }
 }

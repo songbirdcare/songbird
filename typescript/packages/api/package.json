@@ -10,9 +10,11 @@
     "build": "tsc",
     "watch": "tsc -b -w",
     "run-server::prod": "node dist/index.js",
-    "run-server::develop": "node --watch dist/index.js"
+    "run-server::develop": "node --watch dist/index.js",
+    "test": "yarn vitest src/tests"
   },
   "devDependencies": {
-    "@types/node": "^18.11.12"
+    "@types/node": "^18.11.12",
+    "vitest": "^0.25.6"
   }
 }
