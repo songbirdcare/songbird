@@ -1,9 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "String Base Config",
-  "include": ["src/**/*"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"],
-
   "references": [
     { "path": "./precedent-iso" },
     { "path": "./api" },

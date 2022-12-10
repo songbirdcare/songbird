@@ -1,13 +1,15 @@
 {
   "name": "@songbird/precedent-iso",
   "version": "0.0.0",
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "packageManager": "yarn@3.3.0",
   "private": true,
   "devDependencies": {
     "typescript": "^4.9.4"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "watch": "tsc -w"
   }
 }

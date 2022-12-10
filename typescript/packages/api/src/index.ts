@@ -1,13 +1,13 @@
 import * as http from "http";
-import {} from "@songbird/precedent-iso";
+import { HAMLET } from "@songbird/precedent-iso";
 
 const hostname = "127.0.0.1";
 const port = 3000;
 
 const server = http.createServer((_, res) => {
-  res.statusCode = 200;
+  res.statusCode = 201;
   res.setHeader("Content-Type", "text/plain");
-  res.end("World");
+  res.end(HAMLET);
 });
 
 server.listen(port, hostname, () => {

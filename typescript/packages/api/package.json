@@ -10,7 +10,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "run-server::prod": "node dist/index.js",
-    "run-server::test": "node --watch dist/index.js"
+    "run-server::develop": "node --watch dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^18.11.12"
