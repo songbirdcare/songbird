@@ -592,9 +592,11 @@ __metadata:
     "@songbird/precedent-iso": "workspace:*"
     "@types/eslint": ^8
     "@types/node": ^18.11.12
+    "@types/prettier": ^2
     "@typescript-eslint/eslint-plugin": ^5.46.0
     "@typescript-eslint/parser": ^5.46.0
     eslint: ^8.29.0
+    prettier: ^2.8.1
     typescript: ^4.9.4
     vitest: ^0.25.6
   languageName: unknown
@@ -606,6 +608,7 @@ __metadata:
   dependencies:
     "@songbird/precedent-iso": "workspace:*"
     "@types/eslint": ^8
+    "@types/prettier": ^2
     "@types/react": ^18.0.26
     "@types/react-dom": ^18.0.9
     "@typescript-eslint/eslint-plugin": ^5.46.0
@@ -614,6 +617,7 @@ __metadata:
     eslint: ^8.29.0
     eslint-plugin-react: ^7.31.11
     eslint-plugin-react-hooks: ^4.6.0
+    prettier: ^2.8.1
     react: ^18.2.0
     react-dom: ^18.2.0
     typescript: ^4.9.3
@@ -627,9 +631,11 @@ __metadata:
   resolution: "@songbird/precedent-iso@workspace:packages/precedent-iso"
   dependencies:
     "@types/eslint": ^8
+    "@types/prettier": ^2
     "@typescript-eslint/eslint-plugin": ^5.46.0
     "@typescript-eslint/parser": ^5.46.0
     eslint: ^8.29.0
+    prettier: ^2.8.1
     typescript: ^4.9.4
     vitest: ^0.25.6
   languageName: unknown
@@ -686,6 +692,13 @@ __metadata:
   version: 18.11.12
   resolution: "@types/node@npm:18.11.12"
   checksum: 6c67f0998a9ad8ef0f357fcc0d72841c579576c746cfbac67c9d0229e1cd219d3b96297c2caaeaa4084ba7e9ad112b412e64af4066e522faa0be4ef9ad0a613a
+  languageName: node
+  linkType: hard
+
+"@types/prettier@npm:^2":
+  version: 2.7.1
+  resolution: "@types/prettier@npm:2.7.1"
+  checksum: 5e3f58e229d6c73b5f5cae2e8f96c1c4a5b5805f83459e17a045ba8e96152b1d38e86b63e3172fb159dac923388699660862b75b2d37e54220805f0e691e26f1
   languageName: node
   linkType: hard
 
@@ -3166,6 +3179,15 @@ __metadata:
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
   checksum: cd192ec0d0a8e4c6da3bb80e4f62afe336df3f76271ac6deb0e6a36187133b6073a19e9727a1ff108cd8b9982e4768850d413baa71214dd80c7979617dca827a
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "prettier@npm:2.8.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 4f21a0f1269f76fb36f54e9a8a1ea4c11e27478958bf860661fb4b6d7ac69aac1581f8724fa98ea3585e56d42a2ea317a17ff6e3324f40cb11ff9e20b73785cc
   languageName: node
   linkType: hard
 
