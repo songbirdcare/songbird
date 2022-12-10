@@ -3,6 +3,12 @@
   "display": "String Base Config",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
+
+  "references": [
+    { "path": "./precedent-iso" },
+    { "path": "./api" },
+    { "path": "./app" }
+  ],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
@@ -21,6 +27,9 @@
     "noUnusedParameters": true,
     "importsNotUsedAsValues": "error",
     "allowJs": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
   }
 }

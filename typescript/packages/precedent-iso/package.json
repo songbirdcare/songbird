@@ -1,5 +1,7 @@
 {
   "name": "@songbird/precedent-iso",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
   "packageManager": "yarn@3.3.0",
   "private": true,
   "devDependencies": {
