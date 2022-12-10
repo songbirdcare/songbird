@@ -18,7 +18,9 @@
     "fix::format": "prettier --write .",
     "check": "yarn check::lint && yarn check::format",
     "check::lint": "eslint . --ext .ts",
-    "check::format": "prettier --check ."
+    "check::format": "prettier --check .",
+    "clean": "yarn clean::dist",
+    "clean::dist": "rm -rf tsconfig.tsbuildinfo dist"
   },
   "devDependencies": {
     "@types/eslint": "^8",

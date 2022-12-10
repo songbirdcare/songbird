@@ -18,12 +18,14 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w -b",
-    "test": "yarn vitest src/tests",
+    "test": "vitest src/tests",
     "fix": "yarn fix::lint && yarn fix::format",
     "fix::lint": "eslint . --ext .ts --fix",
     "fix::format": "prettier --write .",
-    "check": "yarn check::lint && yarn check::format",
+    "check": "yarn check::lint && yarn  check::format",
     "check::lint": "eslint . --ext .ts",
-    "check::format": "prettier --check ."
+    "check::format": "prettier --check .",
+    "clean": "yarn clean::dist",
+    "clean::dist": "rm -rf tsconfig.tsbuildinfo dist"
   }
 }
