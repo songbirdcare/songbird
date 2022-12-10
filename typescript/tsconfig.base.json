@@ -20,6 +20,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "importsNotUsedAsValues": "error",
-    "checkJs": true
+    "allowJs": false,
+    "sourceMap": true
   }
 }
