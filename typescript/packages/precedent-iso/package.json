@@ -6,12 +6,18 @@
   "packageManager": "yarn@3.3.0",
   "private": true,
   "devDependencies": {
+    "@types/eslint": "^8",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "eslint": "^8.29.0",
     "typescript": "^4.9.4",
     "vitest": "^0.25.6"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w -b",
-    "test": "yarn vitest src/tests"
+    "test": "yarn vitest src/tests",
+    "lint": "eslint . --ext .ts",
+    "fix::lint": "eslint . --ext .ts --fix"
   }
 }

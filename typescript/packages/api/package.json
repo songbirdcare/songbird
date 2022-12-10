@@ -11,10 +11,17 @@
     "watch": "tsc -b -w",
     "run-server::prod": "node dist/index.js",
     "run-server::develop": "node --watch dist/index.js",
-    "test": "yarn vitest src/tests"
+    "test": "yarn vitest src/tests",
+    "lint": "eslint . --ext .ts",
+    "fix": "yarn fix::lint",
+    "fix::lint": "eslint . --ext .ts --fix"
   },
   "devDependencies": {
+    "@types/eslint": "^8",
     "@types/node": "^18.11.12",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "eslint": "^8.29.0",
     "vitest": "^0.25.6"
   }
 }
