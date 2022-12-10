@@ -6,6 +6,6 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach --topological run build"
+    "build": "yarn workspaces foreach -tvp run build"
   }
 }
