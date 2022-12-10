@@ -8,10 +8,12 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "yarn vitest src/tests",
-    "lint": "eslint . --ext .ts",
     "fix": "yarn fix::lint && yarn fix::format",
     "fix::lint": "eslint . --ext .ts --fix",
-    "fix::format": "prettier --write ."
+    "fix::format": "prettier --write .",
+    "check": "yarn check::lint && yarn check::format",
+    "check::lint": "eslint . --ext .ts",
+    "check::format": "prettier --check ."
   },
   "dependencies": {
     "@songbird/precedent-iso": "workspace:*",
