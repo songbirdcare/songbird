@@ -506,6 +506,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@songbird/api@workspace:packages/api"
   dependencies:
+    "@types/node": ^18.11.12
     typescript: ^4.9.4
   languageName: unknown
   linkType: soft
@@ -542,6 +543,13 @@ __metadata:
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
   checksum: ad87447820dd3f24825d2d947ebc03072b20a42bfc96cbafec16bff8bbda6c1a81fcb0be56d5b21968560c5359a0af4038a68ba150c3e1694fe4c109a063bed8
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.11.12":
+  version: 18.11.12
+  resolution: "@types/node@npm:18.11.12"
+  checksum: 6c67f0998a9ad8ef0f357fcc0d72841c579576c746cfbac67c9d0229e1cd219d3b96297c2caaeaa4084ba7e9ad112b412e64af4066e522faa0be4ef9ad0a613a
   languageName: node
   linkType: hard
 
