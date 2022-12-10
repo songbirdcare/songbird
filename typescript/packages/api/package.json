@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w",
+    "watch": "tsc -b -w",
     "run-server::prod": "node dist/index.js",
     "run-server::develop": "node --watch dist/index.js"
   },
