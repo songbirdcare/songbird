@@ -16,7 +16,15 @@ const QUOTES = [
 http
   .createServer((_, res) => {
     res.statusCode = 201;
-    res.setHeader("Content-Type", "text/plain");
+    res.setHeader("Content-Type", "application/plain");
+
+    // #TODO deal w/ CORS later
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    );
+
     res.end(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
   })
   .listen(SETTINGS.port, SETTINGS.host, () => {
