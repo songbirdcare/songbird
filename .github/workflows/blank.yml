@@ -33,8 +33,10 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
+
   job_id:
-    # Add "id-token" with the intended permissions.
+    runs-on: "ubuntu-latest"
+
     permissions:
       contents: "read"
       id-token: "write"
