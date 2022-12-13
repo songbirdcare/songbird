@@ -2,7 +2,7 @@ build-api:
 	docker build . -f packages/api/Dockerfile -t "api:$$(git rev-parse --short HEAD)"
 
 build-and-push-api:
-	gcloud builds submit --config=cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="songbird-assets",_IMAGE="api"
+	gcloud builds submit --suppress-logs --config=cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="songbird-assets",_IMAGE="api"
 	gcloud run deploy api \
 --image=us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api:latest \
 --region=us-central1 \
