@@ -16,15 +16,15 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={styles["container"]}>
+    <div className={styles.container}>
       <Head>
-        <title>Welcome to Songbird Therapy</title>
-        <div>Welcome to Songbird Therapy</div>
+        <title>Songbird Therapy</title>
+        <meta name="description" content="Innovative care" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles["main"]}>
-        <h1 className={styles["title"]}>{copy}</h1>
+      <main className={styles.main}>
+        <h1 className={styles.title}>{copy}</h1>
       </main>
     </div>
   );
