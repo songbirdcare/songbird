@@ -7,7 +7,7 @@ build-and-push-api:
 --image=us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api:latest \
 --region=us-central1 \
 --project=proud-amphora-371018 \
- && gcloud run services update-traffic api --to-latest
+ && gcloud run services update-traffic api --to-latest --region=us-central1
 
 
 install-app:
