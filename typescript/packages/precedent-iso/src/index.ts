@@ -1,1 +1,2 @@
-export const HAMLET = "To be or not to be";
+// placeholder
+export const VERSION = 0;
