@@ -9,3 +9,8 @@
 **/node_modules/
 node_modules/
 node_modules
+
+packages/app
+Makefile
+README.md
+scaffold
