@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className={styles["container"]}>
       <Head>
-        <title>Songbird Therapy</title>
+        <title>Welcome to Songbird Therapy</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
