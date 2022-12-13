@@ -1,1 +1,1 @@
-export const HAMLET = "to be or not to be";
+export const HAMLET = "To be or not to be";

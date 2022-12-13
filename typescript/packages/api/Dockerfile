@@ -12,8 +12,9 @@ COPY packages/precedent-iso packages/precedent-iso
 COPY packages/api packages/api
 
 
-RUN yarn workspaces focus @songbird/api
-RUN yarn workspaces foreach -tvp --include @songbird/api --include @songbird/precedent-iso run build
+RUN yarn workspaces focus @songbird/api && \
+    yarn workspaces foreach -tvp --include @songbird/api --include @songbird/precedent-iso run build && \
+    yarn cache clean;
 
 WORKDIR "/usr/src/target/packages/api"
 
