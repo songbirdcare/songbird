@@ -16,7 +16,7 @@ const QUOTES = [
 http
   .createServer((_, res) => {
     res.statusCode = 201;
-    res.setHeader("Content-Type", "application/plain");
+    res.setHeader("Content-Type", "text/plain");
 
     // #TODO deal w/ CORS later
     res.setHeader("Access-Control-Allow-Origin", "*");
