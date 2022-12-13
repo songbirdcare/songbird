@@ -39,3 +39,9 @@ jobs:
 
       - name: "Use gcloud CLI"
         run: "gcloud info"
+
+      - name: "Build and Deploy API"
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          cd typescript
+          make build-and-push-api

@@ -18,6 +18,3 @@ install-app:
 
 build-app:
 	yarn workspaces foreach -tvp --include @songbird/app --include @songbird/precedent-iso run build
-
-
-
