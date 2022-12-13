@@ -2,15 +2,14 @@
   "name": "@songbird/app",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "test": "yarn vitest src/tests",
     "fix": "yarn fix::lint && yarn fix::format",
-    "fix::lint": "eslint . --ext .ts --fix",
-    "fix::format": "prettier --write .",
+    "fix::lint": "eslint pages/ --ext .ts --fix",
+    "fix::format": "prettier --write pages/",
     "check": "yarn check::lint && yarn check::format",
     "check::lint": "eslint . --ext .ts",
     "check::format": "prettier --check .",
@@ -19,6 +18,7 @@
   },
   "dependencies": {
     "@songbird/precedent-iso": "workspace:*",
+    "next": "^13.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -29,13 +29,11 @@
     "@types/react-dom": "^18.0.9",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
-    "@vitejs/plugin-react": "^3.0.0",
     "eslint": "^8.29.0",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.1",
     "typescript": "^4.9.3",
-    "vite": "^4.0.0",
     "vitest": "^0.25.6"
   }
 }
