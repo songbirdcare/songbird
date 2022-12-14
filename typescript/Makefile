@@ -21,7 +21,7 @@ build-app:
 
 
 delete-old-revisions:
-	gcloud run revisions list --service api |  tail -n +10 | grep -v yes | awk '{print $2}' | xargs -I {} gcloud run revisions delete --quiet {}
+	gcloud run revisions list --region us-central1 --service api |  tail -n +10 | grep -v yes | awk '{print $2}' | xargs -I {} gcloud run revisions delete --region us-central1 --quiet {}
 
 delete-old-images:
-	gcloud artifacts docker images list us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api --sort-by "~CREATE_TIME" | tail -n +10  | awk '{print $2}' | xargs -I {} gcloud artifacts docker images delete  us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api@{} --delete-tags --quiet
+	gcloud artifacts docker images list us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api --sort-by "~CREATE_TIME" | tail -n +10  | awk '{print $2}' | xargs -I {} gcloud artifacts docker images delete  us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api@{} --delete-tags --quiet 
