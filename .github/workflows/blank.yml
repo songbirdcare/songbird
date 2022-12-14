@@ -45,3 +45,8 @@ jobs:
           cd "$GITHUB_WORKSPACE"
           cd typescript
           make build-and-push-api
+
+      - name: "Delete old images and revisions"
+        run: |
+          make delete-old-revisions
+          make delete-old-images
