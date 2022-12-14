@@ -27,6 +27,29 @@ async function start() {
     reply.send({ count });
   });
 
+  fastify.register(
+    async function (fastify) {
+      fastify.get("/healthz", async function (_, reply) {
+        reply.send("ok");
+        return reply;
+      });
+
+      fastify.get("/auth/callback", async function (_, reply) {
+        reply.send("callback");
+        return reply;
+      });
+
+      fastify.get("/auth/logout", async function (_, reply) {
+        reply.send("logout");
+        return reply;
+      });
+    },
+
+    {
+      prefix: "/api/v1",
+    }
+  );
+
   fastify.listen(
     { port: SETTINGS.port, host: SETTINGS.host },
     function (err, _) {
