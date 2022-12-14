@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@songbird/precedent-iso": "workspace:*",
+    "fastify": "^4.10.2",
     "typescript": "^4.9.4"
   },
   "scripts": {

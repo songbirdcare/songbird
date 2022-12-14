@@ -10,7 +10,8 @@ export default function Home() {
   useEffect(() => {
     async function f() {
       const res = await fetch(API_ENDPOINT);
-      setCopy(await res.text());
+      const json = await res.json();
+      setCopy(json.quote);
     }
     f();
   }, []);
