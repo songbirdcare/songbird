@@ -37,9 +37,6 @@ jobs:
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v1"
 
-      - name: "Use gcloud CLI"
-        run: "gcloud info"
-
       - name: "Build and Deploy API"
         run: |
           cd "$GITHUB_WORKSPACE"
@@ -48,5 +45,6 @@ jobs:
 
       - name: "Delete old images and revisions"
         run: |
+          cd "$GITHUB_WORKSPACE"
           make delete-old-revisions
           make delete-old-images
