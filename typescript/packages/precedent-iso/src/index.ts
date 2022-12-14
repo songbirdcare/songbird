@@ -1,2 +1,1 @@
-// placeholder
-export const VERSION = 0;
+export * from "./assert-never";

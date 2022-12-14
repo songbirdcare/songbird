@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -b -w",
-    "start": "concurrently -k --names \"HTTP,WATCH\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn run-server::develop\" \"yarn watch\"",
+    "dev": "concurrently -k --names \"HTTP,WATCH\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn run-server::develop\" \"yarn watch\"",
     "run-server::prod": "node dist/index.js",
     "run-server::develop": "node --watch dist/index.js",
     "test": "yarn vitest src/tests",
