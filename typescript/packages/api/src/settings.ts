@@ -16,8 +16,8 @@ const Settings = z.object({
 type Settings = z.infer<typeof Settings>;
 
 export const SETTINGS = Settings.parse({
-  host: process.env["HOST"] ?? "8080",
-  port: Number(process.env["PORT"]) ?? "0.0.0.0",
+  host: process.env["HOST"] ?? "0.0.0.0",
+  port: Number(process.env["PORT"]) ?? "8080",
   redis: {
     host: process.env["REDISHOST"],
     port: Number(process.env["REDISPORT"]),
