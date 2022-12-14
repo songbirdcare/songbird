@@ -19,7 +19,6 @@ fastify.get("/", function (_, reply) {
   reply.send({ quote });
 });
 
-// Run the server!
 fastify.listen({ port: SETTINGS.port, host: SETTINGS.host }, function (err, _) {
   if (err) {
     fastify.log.error(err);
