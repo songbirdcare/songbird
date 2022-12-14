@@ -43,6 +43,7 @@ jobs:
           make build-and-push-api
 
       - name: "Delete old images and revisions"
+        continue-on-error: true
         run: |
           cd "$GITHUB_WORKSPACE/typescript"
           make delete-old-revisions
