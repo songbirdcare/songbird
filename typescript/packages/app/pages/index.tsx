@@ -11,7 +11,7 @@ export default function Home() {
     async function f() {
       const res = await fetch(API_ENDPOINT);
       const json = await res.json();
-      setCopy(json.quote);
+      setCopy(json.count);
     }
     f();
   }, []);
