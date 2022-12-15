@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { AppBar } from "../src/app-bar";
+import type { Step } from "../src/onboarding/step/step";
 import { DisplaySteps } from "../src/onboarding/step/display-steps";
 
 const STEPS: Step[] = [
