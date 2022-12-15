@@ -43,7 +43,7 @@ export default withPageAuthRequired(function Home() {
       <Box>
         <AppBar displayName={user?.name ?? undefined} />
       </Box>
-      <Box my={2} height="100%">
+      <Box display="flex" my={2} height="100%" justifyContent="center">
         <DisplaySteps steps={STEPS} />
       </Box>
     </Box>

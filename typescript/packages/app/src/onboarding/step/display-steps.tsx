@@ -10,6 +10,7 @@ export const DisplaySteps: React.FC<{ steps: Step[] }> = ({ steps }) => {
       display="flex"
       flexDirection="column"
       alignItems="center"
+      gap={4}
       justifyContent="center"
     >
       {steps.map((step, index) => (
