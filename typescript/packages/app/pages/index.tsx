@@ -1,26 +1,11 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import { useEffect, useState } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 export default withPageAuthRequired(function Home() {
-  const [copy, setCopy] = useState("Please authenticate");
-
   const { user } = useUser();
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    async function f() {
-      const res = await fetch("/api/proxy");
-      const json = await res.json();
-      setCopy(json.message);
-    }
-    f();
-  }, [user]);
 
   return (
     <div className={styles.container}>
@@ -37,10 +22,6 @@ export default withPageAuthRequired(function Home() {
       )}
 
       <Profile />
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>{copy}</h1>
-      </main>
     </div>
   );
 });
