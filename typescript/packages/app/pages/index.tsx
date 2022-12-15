@@ -1,10 +1,11 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { useEffect, useState } from "react";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 
-export default function Home() {
+export default withPageAuthRequired(function Home() {
   const [copy, setCopy] = useState("Please authenticate");
 
   const { user } = useUser();
@@ -42,7 +43,7 @@ export default function Home() {
       </main>
     </div>
   );
-}
+});
 
 const Profile: React.FunctionComponent = () => {
   const { user, error, isLoading } = useUser();
