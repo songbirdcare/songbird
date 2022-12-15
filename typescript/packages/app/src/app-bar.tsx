@@ -4,6 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { default as MuiAppBar } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 
 import Image from "next/image";
 
@@ -36,7 +37,14 @@ export const AppBar: React.FC<Props> = ({ displayName }) => (
         justifyContent="flex-end"
         marginRight={2}
       >
-        {displayName && <Typography color={"black"}>{displayName}</Typography>}
+        <Box>
+          {displayName && (
+            <Typography color={"black"}>{displayName}</Typography>
+          )}
+          <Link href="/api/auth/logout" variant="body2">
+            Logout
+          </Link>
+        </Box>
       </Box>
     </Toolbar>
   </MuiAppBar>
