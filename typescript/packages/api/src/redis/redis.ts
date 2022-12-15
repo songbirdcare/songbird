@@ -9,6 +9,6 @@ CLIENT.on("connect", () => {
   console.info("Connection to redis established");
 });
 
-CLIENT.on("error", (err) => {
-  throw new Error(`Redis:::createClient: Connection to redis failed ${err} --`);
+CLIENT.on("error", (_) => {
+  //throw new Error(`Redis:::createClient: Connection to redis failed ${err} --`);
 });
