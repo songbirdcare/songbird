@@ -33,7 +33,7 @@ async function start() {
   app.use(jwtCheck);
 
   app.get("/", async (_: express.Request, res: express.Response) => {
-    res.json({ count: 0 });
+    res.json({ message: "🎊 You are authenticated 🎊" });
   });
 
   app.use("/api/v1", router);

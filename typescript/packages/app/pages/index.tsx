@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 export default function Home() {
-  const [copy, setCopy] = useState("NO AUTH");
+  const [copy, setCopy] = useState("Please authenticate");
 
   const { user } = useUser();
 
@@ -16,7 +16,7 @@ export default function Home() {
     async function f() {
       const res = await fetch("/api/proxy");
       const json = await res.json();
-      setCopy(json.count);
+      setCopy(json.message);
     }
     f();
   }, [user]);
