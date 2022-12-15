@@ -4,21 +4,22 @@ import { useEffect, useState } from "react";
 
 import { useUser } from "@auth0/nextjs-auth0/client";
 
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT as string;
-
 export default function Home() {
-  const [copy, setCopy] = useState("");
+  const [copy, setCopy] = useState("NO AUTH");
 
   const { user } = useUser();
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     async function f() {
-      const res = await fetch(API_ENDPOINT);
+      const res = await fetch("/api/proxy");
       const json = await res.json();
       setCopy(json.count);
     }
     f();
-  }, []);
+  }, [user]);
 
   return (
     <div className={styles.container}>
