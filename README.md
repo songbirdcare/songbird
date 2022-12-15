@@ -8,6 +8,11 @@ Monorepo for songbird services
 
 Follow the directions to install and authenticate [1password](https://developer.1password.com/docs/cli/get-started/#install)
 
+```
+cd typescript
+make pull-secrets
+```
+
 ### install brew
 
 `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`

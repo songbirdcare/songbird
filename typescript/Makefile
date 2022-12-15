@@ -1,3 +1,7 @@
+pull-secrets:
+	op item get env.api.local --fields=notesPlain >> packages/api/.env
+	op item get env.app.local --fields=notesPlain >> packages/app/.env.local
+
 build-api:
 	docker build . -f packages/api/Dockerfile -t "api:$$(git rev-parse --short HEAD)"
 
@@ -25,3 +29,4 @@ delete-old-revisions:
 
 delete-old-images:
 	gcloud artifacts docker images list us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api --sort-by "~CREATE_TIME" | tail -n +10  | awk '{print $2}' | xargs -I {} gcloud artifacts docker images delete  us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api@{} --delete-tags --quiet
+
