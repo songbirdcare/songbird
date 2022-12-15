@@ -16,10 +16,10 @@ const jwtCheck = expressjwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: "https://dev-ffq1l2ddq2z8vbhs.us.auth0.com/.well-known/jwks.json",
+    jwksUri: SETTINGS.auth.jwksUri,
   }) as any,
-  audience: "songbird-node-test",
-  issuer: "https://dev-ffq1l2ddq2z8vbhs.us.auth0.com/",
+  audience: SETTINGS.auth.audience,
+  issuer: SETTINGS.auth.issuer,
   algorithms: ["RS256"],
 });
 

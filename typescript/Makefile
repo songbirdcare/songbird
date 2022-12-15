@@ -1,6 +1,10 @@
+
+make sign-in:
+	eval $$(op signin)
+
 pull-secrets:
-	op item get env.api.local --fields=notesPlain >> packages/api/.env
-	op item get env.app.local --fields=notesPlain >> packages/app/.env.local
+	op read -o packages/app/.env.local  op://Engineering/env.app.local/notesPlain -f
+	op read -o packages/api/.env op://Engineering/env.api.local/notesPlain -f
 
 build-api:
 	docker build . -f packages/api/Dockerfile -t "api:$$(git rev-parse --short HEAD)"
