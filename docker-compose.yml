@@ -16,6 +16,15 @@ services:
       interval: 1s
       timeout: 5s
       retries: 5
+  db_migration:
+    image: db_migration
+    build: ./db
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/songbird?sslmode=disable
+      - DBMATE_MIGRATIONS_DIR=migrations
+
 volumes:
   db:
     driver: local
