@@ -28,13 +28,11 @@ jobs:
 
       - name: "Build and Deploy API"
         run: |
-          cd "$GITHUB_WORKSPACE/typescript"
           make build
           make deploy
 
       - name: "Delete old images and revisions"
         continue-on-error: true
         run: |
-          cd "$GITHUB_WORKSPACE/typescript"
           make delete-old-revisions
           make delete-old-images
