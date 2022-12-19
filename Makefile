@@ -8,17 +8,6 @@ build:
 deploy:
 	gcloud builds submit --suppress-logs --config=deploy.cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="songbird-assets",_IMAGE_API="api",_IMAGE_DB="db",_TAG="$$(git rev-parse --short HEAD)"
 
-
-install-app:
-	cd typescript && yarn set version berry
-	cd typescript && yarn plugin import workspace-tools
-	cd typescript && yarn config set nodeLinker node-modules
-	cd typescript && yarn workspaces focus @songbird/app
-
-build-app:
-	cd typescript && yarn workspaces foreach -tvp --include @songbird/app --include @songbird/precedent-iso run build
-
-
 delete-old-revisions:
 	gcloud run revisions list --region us-central1 --service api |  tail -n +10 | grep -v yes | awk '{print $$2}' | xargs -I {} gcloud run revisions delete --quiet {}
 
