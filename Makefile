@@ -10,15 +10,13 @@ deploy:
 
 
 install-app:
-	cd typescript
-	yarn set version berry
-	yarn plugin import workspace-tools
-	yarn config set nodeLinker node-modules
-	yarn workspaces focus @songbird/app
+	cd typescript && yarn set version berry
+	cd typescript && yarn plugin import workspace-tools
+	cd typescript && yarn config set nodeLinker node-modules
+	cd typescript && yarn workspaces focus @songbird/app
 
 build-app:
-	cd typescript
-	yarn workspaces foreach -tvp --include @songbird/app --include @songbird/precedent-iso run build
+	cd typescript && yarn workspaces foreach -tvp --include @songbird/app --include @songbird/precedent-iso run build
 
 
 delete-old-revisions:
