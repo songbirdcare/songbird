@@ -28,6 +28,7 @@ jobs:
 
       - name: "Build and Deploy API"
         run: |
+          gcloud components install beta --quiet
           make build
           make deploy
 

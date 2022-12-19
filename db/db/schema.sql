@@ -14,17 +14,6 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: foo; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.foo (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    sub text NOT NULL,
-    email text NOT NULL
-);
-
-
---
 -- Name: sb_user; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -43,30 +32,6 @@ CREATE TABLE public.sb_user (
 CREATE TABLE public.schema_migrations (
     version character varying(255) NOT NULL
 );
-
-
---
--- Name: foo foo_email_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.foo
-    ADD CONSTRAINT foo_email_key UNIQUE (email);
-
-
---
--- Name: foo foo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.foo
-    ADD CONSTRAINT foo_pkey PRIMARY KEY (id);
-
-
---
--- Name: foo foo_sub_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.foo
-    ADD CONSTRAINT foo_sub_key UNIQUE (sub);
 
 
 --

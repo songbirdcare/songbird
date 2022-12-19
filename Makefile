@@ -6,7 +6,7 @@ build:
 	gcloud builds submit --suppress-logs --config=build-images.cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="songbird-assets",_IMAGE_API="api",_IMAGE_DB="db",_TAG="$$(git rev-parse --short HEAD)"
 
 deploy:
-	gcloud builds submit --suppress-logs --config=deploy.cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="songbird-assets",_IMAGE_API="api",_TAG="$$(git rev-parse --short HEAD)"
+	gcloud builds submit --suppress-logs --config=deploy.cloudbuild.yaml --substitutions=_LOCATION="us-central1",_REPOSITORY="songbird-assets",_IMAGE_API="api",_IMAGE_DB="db",_TAG="$$(git rev-parse --short HEAD)"
 
 
 install-app:
