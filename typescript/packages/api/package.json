@@ -11,6 +11,7 @@
     "jwks-rsa": "^3.0.0",
     "pino-pretty": "^9.1.1",
     "redis": "^4.5.1",
+    "slonik": "^33.0.6",
     "typescript": "^4.9.4",
     "zod": "^3.20.2"
   },

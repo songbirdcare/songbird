@@ -13,6 +13,9 @@ const Settings = z.object({
     audience: z.string(),
     issuer: z.string(),
   }),
+  sql: z.object({
+    uri: z.string(),
+  }),
 });
 
 type Settings = z.infer<typeof Settings>;
@@ -25,5 +28,8 @@ export const SETTINGS = Settings.parse({
     jwksUri: process.env["AUTH0_JKWS_URI"],
     audience: process.env["AUTH0_AUDIENCE"],
     issuer: process.env["AUTH0_ISSUER"],
+  },
+  sql: {
+    uri: process.env["SQL_URI"],
   },
 });
