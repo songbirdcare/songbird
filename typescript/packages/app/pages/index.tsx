@@ -1,12 +1,14 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 import Head from "next/head";
 import * as React from "react";
 
 import { AppBar } from "../src/app-bar";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 import type { Step } from "../src/onboarding/step/step";
+import { VerifyEmail } from "../src/verify-email";
 
 const STEPS: Step[] = [
   {
@@ -48,7 +50,7 @@ const STEPS: Step[] = [
 ];
 
 export default withPageAuthRequired(function Home() {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
@@ -60,7 +62,11 @@ export default withPageAuthRequired(function Home() {
       <Box>
         <AppBar displayName={user?.name ?? undefined} />
       </Box>
-      <OnboardingFlow steps={STEPS} />
+      {isLoading && <LinearProgress />}
+      {!isLoading && user && !user.email_verified && <VerifyEmail />}
+      {!isLoading && user && user.email_verified && (
+        <OnboardingFlow steps={STEPS} />
+      )}
     </Box>
   );
 });
