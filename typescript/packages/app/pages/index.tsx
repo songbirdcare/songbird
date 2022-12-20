@@ -51,6 +51,7 @@ const STEPS: Step[] = [
 
 export default withPageAuthRequired(function Home() {
   const { user, isLoading } = useUser();
+  console.log(user);
 
   return (
     <Box display="flex" flexDirection="column" height="100%">

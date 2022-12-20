@@ -35,6 +35,15 @@ export class UserInformationMiddleware {
           sub: auth.sub,
         });
 
+        if (!req.user.emailVerified) {
+          res.json({
+            status: "failed",
+            message: "Please verify your email address",
+          });
+          res.end();
+          return;
+        }
+
         await this.userService.upsert(req.user);
         next();
       } catch (error) {
