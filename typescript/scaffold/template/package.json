@@ -19,7 +19,7 @@
     "build": "tsc",
     "watch": "tsc -w -b",
     "test": "vitest src/tests",
-    "fix": "yarn fix::lint && yarn fix::format",
+    "fix": "yarn fix::lint; yarn fix::format",
     "fix::lint": "eslint . --ext .ts --fix",
     "fix::format": "prettier --write .",
     "check": "yarn check::lint && yarn  check::format",

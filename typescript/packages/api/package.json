@@ -23,7 +23,7 @@
     "run-server::develop": "node --watch dist/index.js",
     "test": "yarn vitest src/tests",
     "lint": "eslint . --ext .ts",
-    "fix": "yarn fix::lint && yarn fix::format",
+    "fix": "yarn fix::lint; yarn fix::format",
     "fix::lint": "eslint . --ext .ts --fix",
     "fix::format": "prettier --write .",
     "check": "yarn check::lint && yarn check::format",
@@ -33,6 +33,7 @@
     "clean::dist": "rm -rf tsconfig.tsbuildinfo dist"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
     "@types/cors": "^2",
     "@types/eslint": "^8",
     "@types/express": "^4",
@@ -42,6 +43,7 @@
     "@typescript-eslint/parser": "^5.46.0",
     "concurrently": "^7.6.0",
     "eslint": "^8.29.0",
+    "eslint-plugin-sql": "^2.3.2",
     "prettier": "^2.8.1",
     "vitest": "^0.25.6"
   }

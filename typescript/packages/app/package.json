@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "test": "yarn vitest src/tests",
-    "fix": "yarn fix::lint && yarn fix::format",
+    "fix": "yarn fix::lint; yarn fix::format",
     "fix::lint": "eslint pages/ --ext .ts --fix",
     "fix::format": "prettier --write pages/",
     "check": "yarn check::lint && yarn check::format",
