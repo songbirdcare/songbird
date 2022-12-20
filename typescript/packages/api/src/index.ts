@@ -8,8 +8,12 @@ import { SETTINGS } from "./settings";
 import { expressjwt } from "express-jwt";
 
 import { expressJwtSecret } from "jwks-rsa";
-import { sql } from "slonik";
 import { POOL } from "./sql";
+import { HealthRouter } from "./routers/health";
+import { UserRouter } from "./routers/user";
+import { PsqlUserService } from "./services/psql-user-service";
+
+import { UserInformationMiddleware } from "./middleware/user-information-middleware";
 
 console.log("Booting application");
 
@@ -27,30 +31,29 @@ const jwtCheck = expressjwt({
 
 async function start() {
   const app = express();
-  const router = express.Router();
 
   const pool = await POOL;
 
   app.use(express.json());
   app.use(cors({ origin: "*" }));
 
-  app.get("/public", async (_: express.Request, res: express.Response) => {
-    res.json({ message: "🎊 Success! 🎊" });
-  });
+  const userService = new PsqlUserService(pool);
 
-  app.get("/sql-check", async (_: express.Request, res: express.Response) => {
-    const selectResponse = await pool.query(sql.unsafe`SELECT 1 as one`);
-    const data = selectResponse.rows[0].one;
-    res.json({ message: data });
-  });
+  const healthRouter = new HealthRouter(pool).init();
+
+  app.use("/api/v1/health", healthRouter);
 
   app.use(jwtCheck);
 
-  app.get("/protected", async (_: express.Request, res: express.Response) => {
-    res.json({ message: "🎊 Success! 🎊" });
-  });
+  const userInformationMiddleware = new UserInformationMiddleware(
+    userService
+  ).init();
 
-  app.use("/api/v1", router);
+  app.use(userInformationMiddleware);
+
+  const userRouter = new UserRouter(userService).init();
+
+  app.use("/api/v1/users", userRouter);
 
   app.listen(SETTINGS.port, SETTINGS.host);
 }
