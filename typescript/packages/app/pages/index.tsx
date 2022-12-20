@@ -55,7 +55,7 @@ export default withPageAuthRequired(function Home() {
       <Head>
         <title>Songbird Therapy</title>
         <meta name="description" content="Innovative care" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
       <Box>
         <AppBar displayName={user?.name ?? undefined} />
