@@ -2,22 +2,26 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 
+import { SONG_BIRD_BIEGE } from "../style/colors";
 import { DisplaySteps } from "./step/display-steps";
 import type { Step } from "./step/step";
 
 const CURRENT_STEP = 1;
 export const OnboardingFlow: React.FC<{ steps: Step[] }> = ({ steps }) => {
   return (
-    <Box display="flex" justifyContent="center">
+    <Box
+      display="flex"
+      justifyContent="center"
+      bgcolor={SONG_BIRD_BIEGE}
+      height="100%"
+    >
       <Box
         display="flex"
-        my={2}
+        paddingTop={5}
         height="100%"
-        justifyContent="center"
         flexDirection="column"
         alignItems="center"
         width="725px"
-        marginTop="56px"
       >
         <Box display="flex" flexDirection="column" width="100%">
           <Box display="flex" width="100%" flexDirection="column" gap={1}>
