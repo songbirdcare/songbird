@@ -1,5 +1,6 @@
-import type { UserService } from "./user-service";
 import { DatabasePool, sql } from "slonik";
+
+import type { UserService } from "./user-service";
 
 export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}

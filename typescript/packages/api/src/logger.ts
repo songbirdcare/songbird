@@ -1,4 +1,5 @@
 import { assertNever } from "@songbird/precedent-iso";
+
 import type { LogFormat } from "./settings";
 
 export function fastifyLogSettings(logFormat: LogFormat) {

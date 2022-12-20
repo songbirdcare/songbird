@@ -1,7 +1,7 @@
-import type { Response, NextFunction } from "express";
-import type { UserService } from "../services/user-service";
-
+import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
+
+import type { UserService } from "../services/user-service";
 import { UserInformation } from "./user-information";
 
 const KEY = "https://songbird.com/user";

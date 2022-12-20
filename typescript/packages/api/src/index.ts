@@ -1,19 +1,16 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import express from "express";
 import cors from "cors";
-
-import { SETTINGS } from "./settings";
-
+import express from "express";
 import { expressjwt } from "express-jwt";
-
 import { expressJwtSecret } from "jwks-rsa";
-import { POOL } from "./sql";
+
+import { UserInformationMiddleware } from "./middleware/user-information-middleware";
 import { HealthRouter } from "./routers/health";
 import { UserRouter } from "./routers/user";
 import { PsqlUserService } from "./services/psql-user-service";
-
-import { UserInformationMiddleware } from "./middleware/user-information-middleware";
+import { SETTINGS } from "./settings";
+import { POOL } from "./sql";
 
 console.log("Booting application");
 

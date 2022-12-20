@@ -1,4 +1,5 @@
 import express from "express";
+
 import type { UserService } from "../services/user-service";
 
 export class UserRouter {
