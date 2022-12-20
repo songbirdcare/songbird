@@ -1,32 +1,49 @@
-import Head from "next/head";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-
+import { useUser } from "@auth0/nextjs-auth0/client";
+import Box from "@mui/material/Box";
+import Head from "next/head";
 import * as React from "react";
 
-import Box from "@mui/material/Box";
-
-import { useUser } from "@auth0/nextjs-auth0/client";
 import { AppBar } from "../src/app-bar";
-import type { Step } from "../src/onboarding/step/step";
 import { DisplaySteps } from "../src/onboarding/step/display-steps";
+import type { Step } from "../src/onboarding/step/step";
 
 const STEPS: Step[] = [
   {
     title: "Check insurance coverage",
-    byline: "Check if your insurance covers the cost of your treatment",
+    byline:
+      "If you’d like to know your insurance coverage sooner, just submit additional info here.",
     status: "in-progress",
+    asset: {
+      path: "/onboarding/hands.svg",
+      width: 64,
+      height: 60,
+      alt: "Insurance coverage",
+    },
   },
   {
     title: "Submit records",
     byline:
-      "With a few medical records, we'll be able to being the process of insurance covering care",
+      "With a few medical records, we’ll be able to begin the process of insurance covering care.",
     status: "disabled",
+
+    asset: {
+      path: "/onboarding/flower-pot.svg",
+      width: 33,
+      height: 42,
+      alt: "Submit records",
+    },
   },
   {
     title: "Meet your care team",
-    byline:
-      "We'll find time to meet with you and your care team to discuss your treatment plan",
+    byline: "We’ll find time for you to meet your family’s care team",
     status: "disabled",
+    asset: {
+      path: "/onboarding/heart.svg",
+      width: 39,
+      height: 31,
+      alt: "Care team",
+    },
   },
 ];
 
