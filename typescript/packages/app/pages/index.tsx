@@ -5,7 +5,7 @@ import Head from "next/head";
 import * as React from "react";
 
 import { AppBar } from "../src/app-bar";
-import { DisplaySteps } from "../src/onboarding/step/display-steps";
+import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 import type { Step } from "../src/onboarding/step/step";
 
 const STEPS: Step[] = [
@@ -60,9 +60,7 @@ export default withPageAuthRequired(function Home() {
       <Box>
         <AppBar displayName={user?.name ?? undefined} />
       </Box>
-      <Box display="flex" my={2} height="100%" justifyContent="center">
-        <DisplaySteps steps={STEPS} />
-      </Box>
+      <OnboardingFlow steps={STEPS} />
     </Box>
   );
 });
