@@ -12,11 +12,12 @@ export class UserInformationMiddleware {
   init() {
     // DELETE ME
     undefined && this.userService;
-    async function addUser(
+
+    const addUser = async (
       req: Request,
       res: Response,
       next: NextFunction
-    ): Promise<void> {
+    ): Promise<void> => {
       const auth = req.auth;
       const user = auth?.[KEY];
       if (auth === undefined || user === undefined) {
@@ -33,15 +34,18 @@ export class UserInformationMiddleware {
           ...user,
           sub: auth.sub,
         });
+
+        await this.userService.upsert(req.user);
         next();
       } catch (error) {
+        console.log(error);
         res.json({
           status: "failed",
-          message: "Authentication failed invalid token",
+          message: "Could not read user information",
         });
         res.end();
       }
-    }
+    };
 
     return addUser;
   }

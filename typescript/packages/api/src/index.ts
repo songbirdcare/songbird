@@ -48,7 +48,7 @@ async function start() {
 
   app.use(userInformationMiddleware);
 
-  const userRouter = new UserRouter(userService).init();
+  const userRouter = new UserRouter().init();
 
   app.use("/api/v1/users", userRouter);
 
