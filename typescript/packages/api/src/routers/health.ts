@@ -1,4 +1,5 @@
 import express from "express";
+
 import type { HealthService } from "../services/health-service";
 
 export class HealthRouter {

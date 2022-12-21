@@ -6,13 +6,15 @@ import { expressjwt } from "express-jwt";
 import { expressJwtSecret } from "jwks-rsa";
 
 import { UserInformationMiddleware } from "./middleware/user-information-middleware";
+import { FormSubmissionRouter } from "./routers/form-submission";
 import { HealthRouter } from "./routers/health";
+import { TokenRouter } from "./routers/token";
 import { UserRouter } from "./routers/user";
+import { PsqlFormSubmissionService } from "./services/form-submission-service";
+import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
 import { SETTINGS } from "./settings";
 import { POOL } from "./sql";
-import { TokenRouter } from "./routers/token";
-import { HealthService } from "./services/health-service";
 
 console.log("Booting application");
 
@@ -38,10 +40,15 @@ async function start() {
 
   const userService = new PsqlUserService(pool);
   const healthService = new HealthService(pool);
+  const formSubmissionService = new PsqlFormSubmissionService(pool);
 
   const healthRouter = new HealthRouter(healthService).init();
+  const formSubmissionRouter = new FormSubmissionRouter(
+    formSubmissionService
+  ).init();
 
   app.use("/api/v1/health", healthRouter);
+  app.use("/api/v1/form-submission", formSubmissionRouter);
 
   app.use(jwtCheck);
 

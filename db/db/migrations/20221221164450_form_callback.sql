@@ -10,6 +10,4 @@ CREATE TABLE
 CREATE INDEX IF NOT EXISTS "email_form_submissions_index" ON "form_submissions" ("email");
 
 -- migrate:down
-DROP INDEX IF EXISTS "user_sub_idx";
-
 DROP TABLE IF EXISTS form_submissions
