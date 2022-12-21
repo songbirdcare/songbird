@@ -7,7 +7,7 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
 
   async insert({ raw }: InsertFormSubmissionArgs): Promise<Form> {
     const parsed = RawForm.parse(raw);
-    const email = parsed.answers[EMAIL_KEY];
+    const email = parsed.answers[EMAIL_KEY] ?? null;
 
     const form = await this.pool.connect(async (connection) =>
       connection.one(
