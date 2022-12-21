@@ -6,15 +6,18 @@ export default withApiAuthRequired(async function products(req, res) {
   const { accessToken } = await getAccessToken(req, res, {
     scopes: ["openid", "profile", "email"],
   });
-  console.log(accessToken);
 
-  const response = await fetch(`${endpoint}/api/v1/users`, {
+  const proxy = (() => {
+    const path = req.query.proxy ?? [];
+    const asArray = Array.isArray(path) ? path : [path];
+    return asArray.join("/");
+  })();
+
+  const response = await fetch(`${endpoint}/api/v1/${proxy}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  const t = await response.text();
 
-  //const json = await response.json();
-  res.status(200).json(t);
+  res.status(200).json(await response.json());
 });
