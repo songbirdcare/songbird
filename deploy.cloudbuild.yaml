@@ -11,6 +11,7 @@ steps:
         "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE_DB}:${_TAG}",
         "--region",
         "${_LOCATION}",
+        "--wait",
       ]
   - name: "gcr.io/cloud-builders/gcloud"
     args:
