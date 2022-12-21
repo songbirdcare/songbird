@@ -1,8 +1,8 @@
 import express from "express";
-import type { HealthService } from "../services/health-service";
+import { DatabasePool, sql } from "slonik";
 
 export class HealthRouter {
-  constructor(private readonly svc: HealthService) {}
+  constructor(private readonly pool: DatabasePool) {}
 
   init() {
     const router = express.Router();
@@ -12,8 +12,8 @@ export class HealthRouter {
     });
 
     router.get("/sql", async (_: express.Request, res: express.Response) => {
-      const data = await this.svc.pingSql();
-      res.json({ message: data });
+      const [row] = (await this.pool.query(sql.unsafe`SELECT 1 as data`)).rows;
+      res.json({ message: row.data });
     });
     return router;
   }

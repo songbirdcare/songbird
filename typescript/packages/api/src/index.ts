@@ -11,6 +11,8 @@ import { UserRouter } from "./routers/user";
 import { PsqlUserService } from "./services/psql-user-service";
 import { SETTINGS } from "./settings";
 import { POOL } from "./sql";
+import { TokenRouter } from "./routers/token";
+import { HealthService } from "./services/health-service";
 
 console.log("Booting application");
 
@@ -35,12 +37,15 @@ async function start() {
   app.use(cors({ origin: "*" }));
 
   const userService = new PsqlUserService(pool);
+  const healthService = new HealthService(pool);
 
-  const healthRouter = new HealthRouter(pool).init();
+  const healthRouter = new HealthRouter(healthService).init();
 
   app.use("/api/v1/health", healthRouter);
 
   app.use(jwtCheck);
+
+  app.use("/api/v1/token", new TokenRouter().init());
 
   const userInformationMiddleware = new UserInformationMiddleware(
     userService
