@@ -23,7 +23,6 @@ services:
       - db
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/songbird?sslmode=disable
-      - DBMATE_MIGRATIONS_DIR=migrations
 
 volumes:
   db:

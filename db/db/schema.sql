@@ -14,6 +14,29 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: foo; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.foo (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    sub text NOT NULL,
+    email text NOT NULL
+);
+
+
+--
+-- Name: form_submissions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.form_submissions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    email text,
+    submission jsonb NOT NULL
+);
+
+
+--
 -- Name: sb_user; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -32,6 +55,38 @@ CREATE TABLE public.sb_user (
 CREATE TABLE public.schema_migrations (
     version character varying(255) NOT NULL
 );
+
+
+--
+-- Name: foo foo_email_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.foo
+    ADD CONSTRAINT foo_email_key UNIQUE (email);
+
+
+--
+-- Name: foo foo_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.foo
+    ADD CONSTRAINT foo_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: foo foo_sub_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.foo
+    ADD CONSTRAINT foo_sub_key UNIQUE (sub);
+
+
+--
+-- Name: form_submissions form_submissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_submissions
+    ADD CONSTRAINT form_submissions_pkey PRIMARY KEY (id);
 
 
 --
@@ -67,10 +122,10 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: user_sub_idx; Type: INDEX; Schema: public; Owner: -
+-- Name: email_form_submissions_index; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX user_sub_idx ON public.sb_user USING btree (sub);
+CREATE INDEX email_form_submissions_index ON public.form_submissions USING btree (email);
 
 
 --
@@ -83,4 +138,5 @@ CREATE UNIQUE INDEX user_sub_idx ON public.sb_user USING btree (sub);
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20221216163949');
+    ('20221216163949'),
+    ('20221221164450');

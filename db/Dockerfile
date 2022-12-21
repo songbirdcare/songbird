@@ -1,5 +1,5 @@
 FROM amacneil/dbmate:latest
 
-COPY migrations migrations
+COPY db db
 
-CMD ["--migrations-dir=migrations", "up"]
+CMD ["up"]
