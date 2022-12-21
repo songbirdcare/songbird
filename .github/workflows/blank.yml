@@ -26,10 +26,13 @@ jobs:
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v1"
 
-      - name: "Build and Deploy API"
+      - name: "Build Services "
         run: |
           gcloud components install beta --quiet
           make build
+
+      - name: "Deploy Services "
+        run: |
           make deploy
 
       - name: "Delete old images and revisions"
