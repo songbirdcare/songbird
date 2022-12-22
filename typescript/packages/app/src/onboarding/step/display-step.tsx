@@ -21,12 +21,19 @@ export const DisplayStep: React.FC<{ step: Step; index: number }> = ({
         padding={3}
       >
         <Box display="flex" gap={3} alignItems="center">
-          <Image
-            src={asset.path}
-            width={asset.width}
-            height={asset.height}
-            alt={asset.alt}
-          />
+          <Box
+            width="60px"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Image
+              src={asset.path}
+              width={asset.width}
+              height={asset.height}
+              alt={asset.alt}
+            />
+          </Box>
           <Box display="flex" flexDirection="column" width="370px">
             <Typography variant="h6" component="h6" gutterBottom>
               {index + 1}. {title}
