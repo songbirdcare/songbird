@@ -35,7 +35,13 @@ async function start() {
 
   const pool = await POOL;
 
-  app.use(express.json());
+  app.use(
+    express.json({
+      verify: function (req, _, buf) {
+        (req as any).rawBody = buf;
+      },
+    })
+  );
   app.use(cors({ origin: "*" }));
 
   const userService = new PsqlUserService(pool);

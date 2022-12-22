@@ -16,6 +16,9 @@ const Settings = z.object({
   sql: z.object({
     uri: z.string(),
   }),
+  formsort: z.object({
+    signingKey: z.optional(z.string()),
+  }),
 });
 
 type Settings = z.infer<typeof Settings>;
@@ -31,5 +34,8 @@ export const SETTINGS = Settings.parse({
   },
   sql: {
     uri: process.env["SQL_URI"],
+  },
+  formsort: {
+    signingKey: process.env["FORM_SORT_SIGNING_KEY"],
   },
 });
