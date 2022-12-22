@@ -10,6 +10,7 @@ import { FormSubmissionRouter } from "./routers/form-submission";
 import { HealthRouter } from "./routers/health";
 import { TokenRouter } from "./routers/token";
 import { UserRouter } from "./routers/user";
+import { Auth0Service } from "./services/auth0/auth0-service";
 import { PsqlFormSubmissionService } from "./services/form-submission-service";
 import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
@@ -44,9 +45,18 @@ async function start() {
   );
   app.use(cors({ origin: "*" }));
 
-  const userService = new PsqlUserService(pool);
   const healthService = new HealthService(pool);
   const formSubmissionService = new PsqlFormSubmissionService(pool);
+
+  // todo use this service
+  new Auth0Service(
+    SETTINGS.auth.issuerBaseUrl,
+    SETTINGS.auth.machineSecret,
+    SETTINGS.auth.machineClientId,
+    SETTINGS.auth.domain
+  );
+
+  const userService = new PsqlUserService(pool);
 
   const healthRouter = new HealthRouter(healthService).init();
   const formSubmissionRouter = new FormSubmissionRouter(

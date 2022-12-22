@@ -10,9 +10,6 @@ export class UserInformationMiddleware {
   constructor(private readonly userService: UserService) {}
 
   init() {
-    // DELETE ME
-    undefined && this.userService;
-
     const addUser = async (
       req: Request,
       res: Response,
