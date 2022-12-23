@@ -45,7 +45,8 @@ jobs:
 
       - name: "Build API"
         run: |
-          make build-api
+          git diff --quiet HEAD^ HEAD typescript || echo "API service is being built"
+          git diff --quiet HEAD^ HEAD typescript || make build-api
 
       - name: "Deploy DB"
         run: |
@@ -54,7 +55,8 @@ jobs:
 
       - name: "Deploy API"
         run: |
-          make deploy-api
+          git diff --quiet HEAD^ HEAD typescript || echo "API service is being deployed"
+          git diff --quiet HEAD^ HEAD typescript || make deploy-api
 
       - name: "Delete old images and revisions"
         continue-on-error: true
