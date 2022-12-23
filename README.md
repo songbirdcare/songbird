@@ -46,3 +46,15 @@ cd typescript
 yarn
 yarn build
 ```
+
+## Docker
+
+Install docker for mac:
+
+https://docs.docker.com/desktop/install/mac-install/
+
+Run services
+
+```bash
+docker compose up
+```
