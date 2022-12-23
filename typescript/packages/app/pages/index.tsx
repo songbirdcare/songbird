@@ -1,7 +1,7 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import { UserModel } from "@songbird/precedent-iso";
+import type { UserModel } from "@songbird/precedent-iso";
 import Head from "next/head";
 import * as React from "react";
 import useSWR from "swr";
