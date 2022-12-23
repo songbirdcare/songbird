@@ -1,7 +1,7 @@
+import type { UserModel } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { UserModel } from "@songbird/precedent-iso";
 import type { UpsertUserArgs, UserService } from "./user-service";
 
 export class PsqlUserService implements UserService {

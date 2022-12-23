@@ -1,2 +1,2 @@
-export { UserModel } from "./models/user";
 export * from "./assert-never";
+export { UserModel } from "./models/user";
