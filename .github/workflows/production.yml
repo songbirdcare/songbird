@@ -3,6 +3,10 @@ name: Deploy to Production
 on:
   push:
     branches: ["production"]
+    paths-ignore:
+      - "README.md"
+      - "docker-compose.yml"
+      - "scripts/**"
 
 jobs:
   build:

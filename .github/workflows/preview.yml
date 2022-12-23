@@ -3,6 +3,10 @@ name: Deploy to staging
 on:
   push:
     branches: ["develop"]
+    paths-ignore:
+      - "README.md"
+      - "docker-compose.yml"
+      - "scripts/**"
 
 jobs:
   build:
@@ -41,4 +45,3 @@ jobs:
         continue-on-error: true
         run: |
           make delete-old-revisions
-          make delete-old-images
