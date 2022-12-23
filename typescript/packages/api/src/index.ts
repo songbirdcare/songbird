@@ -48,8 +48,7 @@ async function start() {
   const healthService = new HealthService(pool);
   const formSubmissionService = new PsqlFormSubmissionService(pool);
 
-  // todo use this service
-  new Auth0Service(
+  const auth0Service = new Auth0Service(
     SETTINGS.auth.issuerBaseUrl,
     SETTINGS.auth.machineSecret,
     SETTINGS.auth.machineClientId,
@@ -69,16 +68,16 @@ async function start() {
   app.use(jwtCheck);
 
   const userInformationMiddleware = new UserInformationMiddleware(
-    userService
-  ).init();
+    userService,
+    auth0Service
+  );
 
-  app.use(userInformationMiddleware);
+  app.use(userInformationMiddleware.addUser());
 
+  app.use("/api/v1/users", new UserRouter().init());
   app.use("/api/v1/token", new TokenRouter().init());
 
-  const userRouter = new UserRouter().init();
-
-  app.use("/api/v1/users", userRouter);
+  app.use(userInformationMiddleware.ensureUserVerified());
 
   app.listen(SETTINGS.port, SETTINGS.host);
 }

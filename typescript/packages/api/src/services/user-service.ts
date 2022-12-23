@@ -2,6 +2,10 @@ export interface User {
   id: string;
   sub: string;
   email: string;
+  emailVerified: boolean;
+  familyName: string | undefined;
+  givenName: string | undefined;
+  name: string | undefined;
 }
 
 export interface UserService {
@@ -12,4 +16,8 @@ export interface UserService {
 export interface UpsertUserArgs {
   sub: string;
   email: string;
+  emailVerified: boolean;
+  name: string | undefined;
+  familyName: string | undefined;
+  givenName: string | undefined;
 }

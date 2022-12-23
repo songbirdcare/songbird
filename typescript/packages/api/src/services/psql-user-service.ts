@@ -6,57 +6,97 @@ import type { UpsertUserArgs, User, UserService } from "./user-service";
 export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async get(email: string): Promise<User | undefined> {
+  async get(sub: string): Promise<User | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
         sql.type(UserModel)`
 SELECT
     id,
     sub,
-    email
+    email,
+    email_verified,
+    name,
+    given_name,
+    family_name
 FROM
     sb_user
 WHERE
-    email = ${email}
+    sub = ${sub}
 `
       )
     );
-
-    return user ?? undefined;
+    return user ? fromSQL(user) : undefined;
   }
 
-  async upsert({ sub, email }: UpsertUserArgs): Promise<User> {
-    const user = await this.pool.connect(
-      async (connection) =>
-        await connection.transaction(async (trx) => {
-          const user = await trx.maybeOne(sql.type(UserModel)`
+  async upsert({
+    sub,
+    email,
+    emailVerified,
+    name,
+    familyName,
+    givenName,
+  }: UpsertUserArgs): Promise<User> {
+    return this.pool.connect((connection) =>
+      connection.transaction(async (trx) => {
+        await trx.query(
+          sql.unsafe`
+
+INSERT INTO sb_user (sub, email, email_verified)
+    VALUES (${sub}, ${email}, ${emailVerified})
+ON CONFLICT (sub)
+    DO UPDATE SET
+        email_verified = ${emailVerified}, name = ${
+            name ?? null
+          }, family_name = ${familyName ?? null}, given_name = ${
+            givenName ?? null
+          }
+`
+        );
+
+        const user = await trx.one(sql.type(UserModel)`
 SELECT
     id,
     sub,
-    email
+    email,
+    email_verified,
+    name,
+    given_name,
+    family_name
 FROM
     sb_user
 WHERE
     sub = ${sub}
 `);
-          if (user) {
-            return user;
-          }
-          return trx.one(
-            sql.type(UserModel)`
-INSERT INTO sb_user (sub, email)
-    VALUES (${sub}, ${email})
-RETURNING (id, sub, email)
-`
-          );
-        })
+
+        return fromSQL(user);
+      })
     );
-    return user;
   }
 }
+
+function fromSQL({
+  email_verified,
+  family_name,
+  given_name,
+  ...rest
+}: UserModel): User {
+  return {
+    ...rest,
+    emailVerified: email_verified,
+    familyName: family_name,
+    givenName: given_name,
+    name: rest.name,
+  };
+}
+
+export type UserModel = z.infer<typeof UserModel>;
 
 const UserModel = z.object({
   id: z.string(),
   sub: z.string(),
   email: z.string(),
+  email_verified: z.boolean(),
+  name: z.optional(z.string()),
+  family_name: z.optional(z.string()),
+  given_name: z.optional(z.string()),
 });

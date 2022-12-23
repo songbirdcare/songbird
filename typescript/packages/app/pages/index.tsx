@@ -1,9 +1,9 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Head from "next/head";
 import * as React from "react";
+import useSWR from "swr";
 
 import { AppBar } from "../src/app-bar";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
@@ -49,10 +49,14 @@ const STEPS: Step[] = [
   },
 ];
 
-export default withPageAuthRequired(function Home() {
-  const { user, isLoading } = useUser();
-  console.log(user);
-
+const Home: React.FC = () => {
+  const { data: user, isLoading } = useSWR(
+    "/api/proxy/users/me",
+    async (url) => {
+      const response = await fetch(url);
+      return response.json();
+    }
+  );
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <Head>
@@ -64,10 +68,12 @@ export default withPageAuthRequired(function Home() {
         <AppBar displayName={user?.name ?? undefined} />
       </Box>
       {isLoading && <LinearProgress />}
-      {!isLoading && user && !user.email_verified && <VerifyEmail />}
-      {!isLoading && user && user.email_verified && (
+      {!isLoading && user && !user.emailVerified && <VerifyEmail />}
+      {!isLoading && user && user.emailVerified && (
         <OnboardingFlow steps={STEPS} />
       )}
     </Box>
   );
-});
+};
+
+export default withPageAuthRequired(Home);

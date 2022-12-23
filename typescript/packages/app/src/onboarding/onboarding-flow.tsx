@@ -44,6 +44,7 @@ export const OnboardingFlow: React.FC<{ steps: Step[] }> = ({ steps }) => {
           <LinearProgress
             variant="buffer"
             value={(CURRENT_STEP / steps.length) * 100}
+            valueBuffer={100}
           />
           <Typography variant="caption">
             {CURRENT_STEP} of {steps.length} complete
