@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: Preview
+    environment: Production
 
     permissions:
       contents: "read"
@@ -24,7 +24,11 @@ jobs:
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v1"
 
-      - name: "Build Services "
+      - name: "Echo version"
+        run: |
+          gcloud info
+
+      - name: "Build Services"
         run: |
           gcloud components install beta --quiet
 
