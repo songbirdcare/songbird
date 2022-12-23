@@ -40,9 +40,10 @@ WHERE
       connection.transaction(async (trx) => {
         await trx.query(
           sql.unsafe`
-
-INSERT INTO sb_user (sub, email, email_verified)
-    VALUES (${sub}, ${email}, ${emailVerified})
+INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name)
+    VALUES (${sub}, ${email}, ${emailVerified}, ${name ?? null}, ${
+            familyName ?? null
+          }, ${givenName ?? null})
 ON CONFLICT (sub)
     DO UPDATE SET
         email_verified = ${emailVerified}, name = ${
