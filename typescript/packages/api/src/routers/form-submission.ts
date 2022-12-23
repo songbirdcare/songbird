@@ -42,9 +42,12 @@ export class FormSubmissionRouter {
           await this.svc.insert({ raw: req.body });
 
           res.json({ status: "OK" });
-        } catch (e: any) {
+        } catch (e: unknown) {
           console.error(e);
-          res.status(400).json({ status: "ERROR", message: e.message });
+          res.status(400).json({
+            status: "ERROR",
+            message: (e as { message: string }).message,
+          });
           res.end();
         }
       }

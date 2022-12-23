@@ -25,6 +25,7 @@ const jwtCheck = expressjwt({
     rateLimit: true,
     jwksRequestsPerMinute: 5,
     jwksUri: SETTINGS.auth.jwksUri,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }) as any,
   audience: SETTINGS.auth.audience,
   issuer: SETTINGS.auth.issuer,
@@ -39,6 +40,7 @@ async function start() {
   app.use(
     express.json({
       verify: function (req, _, buf) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (req as any).rawBody = buf;
       },
     })
