@@ -68,13 +68,13 @@ async function start() {
 
   app.use(jwtCheck);
 
-  app.use("/api/v1/token", new TokenRouter().init());
-
   const userInformationMiddleware = new UserInformationMiddleware(
     userService
   ).init();
 
   app.use(userInformationMiddleware);
+
+  app.use("/api/v1/token", new TokenRouter().init());
 
   const userRouter = new UserRouter().init();
 

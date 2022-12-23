@@ -25,6 +25,7 @@ export class UserInformationMiddleware {
         res.end();
         return;
       }
+      console.log(auth);
 
       try {
         req.user = UserInformation.parse({
