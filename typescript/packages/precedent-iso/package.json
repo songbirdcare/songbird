@@ -28,5 +28,8 @@
     "check::format": "prettier --check .",
     "clean": "yarn clean::dist",
     "clean::dist": "rm -rf tsconfig.tsbuildinfo dist"
+  },
+  "dependencies": {
+    "zod": "^3.20.2"
   }
 }

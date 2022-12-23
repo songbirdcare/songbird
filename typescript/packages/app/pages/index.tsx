@@ -9,9 +9,10 @@ import { AppBar } from "../src/app-bar";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 import { VerifyEmail } from "../src/verify-email";
 import { STEPS } from "../src/onboarding/steps";
+import { UserModel } from "@songbird/precedent-iso";
 
 const Home: React.FC = () => {
-  const { data: user, isLoading } = useSWR(
+  const { data: user, isLoading } = useSWR<UserModel>(
     "/api/proxy/users/me",
     async (url) => {
       const response = await fetch(url);

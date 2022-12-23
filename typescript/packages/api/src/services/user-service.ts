@@ -1,16 +1,8 @@
-export interface User {
-  id: string;
-  sub: string;
-  email: string;
-  emailVerified: boolean;
-  familyName: string | undefined;
-  givenName: string | undefined;
-  name: string | undefined;
-}
+import type { UserModel } from "@songbird/precedent-iso";
 
 export interface UserService {
-  get(email: string): Promise<User | undefined>;
-  upsert(args: UpsertUserArgs): Promise<User>;
+  get(email: string): Promise<UserModel | undefined>;
+  upsert(args: UpsertUserArgs): Promise<UserModel>;
 }
 
 export interface UpsertUserArgs {

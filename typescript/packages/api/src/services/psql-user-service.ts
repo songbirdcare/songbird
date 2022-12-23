@@ -1,15 +1,16 @@
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { UpsertUserArgs, User, UserService } from "./user-service";
+import type { UserModel } from "@songbird/precedent-iso";
+import type { UpsertUserArgs, UserService } from "./user-service";
 
 export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async get(sub: string): Promise<User | undefined> {
+  async get(sub: string): Promise<UserModel | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
-        sql.type(UserModel)`
+        sql.type(UserFromSql)`
 SELECT
     id,
     sub,
@@ -35,7 +36,7 @@ WHERE
     name,
     familyName,
     givenName,
-  }: UpsertUserArgs): Promise<User> {
+  }: UpsertUserArgs): Promise<UserModel> {
     return this.pool.connect((connection) =>
       connection.transaction(async (trx) => {
         await trx.query(
@@ -54,7 +55,7 @@ ON CONFLICT (sub)
 `
         );
 
-        const user = await trx.one(sql.type(UserModel)`
+        const user = await trx.one(sql.type(UserFromSql)`
 SELECT
     id,
     sub,
@@ -80,7 +81,7 @@ function fromSQL({
   family_name,
   given_name,
   ...rest
-}: UserModel): User {
+}: UserFromSql): UserModel {
   return {
     ...rest,
     emailVerified: email_verified,
@@ -90,9 +91,9 @@ function fromSQL({
   };
 }
 
-export type UserModel = z.infer<typeof UserModel>;
+export type UserFromSql = z.infer<typeof UserFromSql>;
 
-const UserModel = z.object({
+const UserFromSql = z.object({
   id: z.string(),
   sub: z.string(),
   email: z.string(),
