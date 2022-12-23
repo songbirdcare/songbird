@@ -1,0 +1,40 @@
+name: Deploy to staging
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Preview
+
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: "Build Services "
+        run: |
+          gcloud components install beta --quiet
+          make build
+
+      - name: "Deploy Services"
+        run: |
+          make deploy
+
+      - name: "Delete old images and revisions"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions
+          make delete-old-images

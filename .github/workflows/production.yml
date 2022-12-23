@@ -1,15 +1,13 @@
-# This is a basic workflow to help you get started with Actions
+name: Deploy to Production
 
-name: CI
-
-# Controls when the workflow will run
 on:
   push:
-    branches: ["develop"]
+    branches: ["production"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: Preview
 
     permissions:
       contents: "read"
@@ -29,14 +27,7 @@ jobs:
       - name: "Build Services "
         run: |
           gcloud components install beta --quiet
-          make build
 
-      - name: "Deploy Services "
+      - name: "Deploy Services"
         run: |
-          make deploy
-
-      - name: "Delete old images and revisions"
-        continue-on-error: true
-        run: |
-          make delete-old-revisions
-          make delete-old-images
+          echo "Hello world"
