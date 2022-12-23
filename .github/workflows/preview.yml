@@ -38,7 +38,8 @@ jobs:
 
       - name: "Build DB"
         run: |
-          make build-db
+          git diff --quiet HEAD^ HEAD db || echo "DB service is being built"
+          git diff --quiet HEAD^ HEAD db || make build-db
 
       - name: "Build API"
         run: |
@@ -46,7 +47,8 @@ jobs:
 
       - name: "Deploy DB"
         run: |
-          make deploy-db
+          git diff --quiet HEAD^ HEAD db || echo "DB service is being deployed"
+          git diff --quiet HEAD^ HEAD db || make deploy-db
 
       - name: "Deploy API"
         run: |

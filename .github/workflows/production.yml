@@ -32,7 +32,7 @@ jobs:
         run: |
           gcloud info
 
-      - name: "Build Services"
+      - name: "Install beta"
         run: |
           gcloud components install beta --quiet
 
