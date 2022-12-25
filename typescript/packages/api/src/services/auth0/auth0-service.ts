@@ -1,7 +1,7 @@
+import type { EmailVerification } from "@songbird/precedent-iso";
 import { ManagementClient } from "auth0";
 import { z } from "zod";
 
-import type { EmailVerification } from "@songbird/precedent-iso";
 import { Auth0TokenService } from "./auth0-token-service";
 
 export class Auth0Service {

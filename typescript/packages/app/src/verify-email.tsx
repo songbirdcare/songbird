@@ -1,11 +1,11 @@
-import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { EmailVerification } from "@songbird/precedent-iso";
+import React from "react";
 import useSWR from "swr";
 
-import React from "react";
 import { SONG_BIRD_BIEGE } from "./style/colors";
-import { EmailVerification } from "@songbird/precedent-iso";
 
 export const VerifyEmail: React.FC = () => {
   const [url, setUrl] = React.useState<string | null>(null);
