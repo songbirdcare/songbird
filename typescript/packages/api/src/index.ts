@@ -76,7 +76,7 @@ async function start() {
 
   app.use(userInformationMiddleware.addUser());
 
-  app.use("/api/v1/users", new UserRouter().init());
+  app.use("/api/v1/users", new UserRouter(auth0Service).init());
   app.use("/api/v1/token", new TokenRouter().init());
 
   app.use(userInformationMiddleware.ensureUserVerified());

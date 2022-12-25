@@ -1,6 +1,7 @@
 import { ManagementClient } from "auth0";
 import { z } from "zod";
 
+import type { EmailVerification } from "@songbird/precedent-iso";
 import { Auth0TokenService } from "./auth0-token-service";
 
 export class Auth0Service {
@@ -14,6 +15,22 @@ export class Auth0Service {
     private readonly domain: string
   ) {
     this.#tokenService = new Auth0TokenService(baseUrl, secret, clientId);
+  }
+
+  async sendEmailVerification(id: string): Promise<EmailVerification> {
+    const client = await this.#client();
+    const user = await client.getUser({
+      id,
+    });
+
+    if (user.email_verified) {
+      return "already_verified";
+    }
+
+    await client.sendEmailVerification({
+      user_id: id,
+    });
+    return "sent";
   }
 
   async getUser(id: string) {

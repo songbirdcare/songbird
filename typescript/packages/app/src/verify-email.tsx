@@ -1,9 +1,26 @@
 import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import useSWR from "swr";
 
+import React from "react";
 import { SONG_BIRD_BIEGE } from "./style/colors";
+import { EmailVerification } from "@songbird/precedent-iso";
 
 export const VerifyEmail: React.FC = () => {
+  const [url, setUrl] = React.useState<string | null>(null);
+
+  const makeRequest = () => setUrl("/api/proxy/users/send-email-verification");
+
+  const { data, isLoading } = useSWR<{ data: EmailVerification }>(
+    url,
+    async (url) => {
+      const response = await fetch(url, {
+        method: "POST",
+      });
+      return response.json();
+    }
+  );
   return (
     <Box
       display="flex"
@@ -17,10 +34,23 @@ export const VerifyEmail: React.FC = () => {
         alignItems="center"
         justifyContent="center"
         width="725px"
+        flexDirection="column"
       >
         <Typography variant="h5" align="center">
           Please verify your email
         </Typography>
+
+        <Button
+          onClick={makeRequest}
+          disabled={isLoading || data !== undefined}
+          variant="contained"
+        >
+          Click here to resend verification email
+        </Button>
+
+        {data?.data === "sent" && (
+          <Typography align="center">Email sent</Typography>
+        )}
       </Box>
     </Box>
   );
