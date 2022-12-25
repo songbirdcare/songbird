@@ -16,7 +16,7 @@ export default withApiAuthRequired(async function proxy(
     const asArray = Array.isArray(path) ? path : [path];
     return asArray.join("/");
   })();
-  console.log({ body: req.body });
+
   const response = await fetch(`${endpoint}/api/v1/${proxy}`, {
     method: req.method ?? "GET",
     headers: {
