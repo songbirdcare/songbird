@@ -38,6 +38,23 @@ jobs:
         run: |
           gcloud components install beta --quiet
 
-      - name: "Deploy Services"
+      - name: "Build DB"
         run: |
-          echo "Hello world"
+          make build-db
+
+      - name: "Build API"
+        run: |
+          make build-api
+
+      - name: "Deploy DB"
+        run: |
+          make deploy-db
+
+      - name: "Deploy API"
+        run: |
+          make deploy-api
+
+      - name: "Delete old images and revisions"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions
