@@ -38,6 +38,27 @@ jobs:
         run: |
           gcloud components install beta --quiet
 
-      - name: "Deploy Services"
+      - name: "Build DB"
         run: |
-          echo "Hello world"
+          git diff --quiet HEAD^ HEAD db || echo "DB service is being built"
+          git diff --quiet HEAD^ HEAD db || make build-db
+
+      - name: "Build API"
+        run: |
+          git diff --quiet HEAD^ HEAD typescript || echo "API service is being built"
+          git diff --quiet HEAD^ HEAD typescript || make build-api
+
+      - name: "Deploy DB"
+        run: |
+          git diff --quiet HEAD^ HEAD db || echo "DB service is being deployed"
+          git diff --quiet HEAD^ HEAD db || make deploy-db
+
+      - name: "Deploy API"
+        run: |
+          git diff --quiet HEAD^ HEAD typescript || echo "API service is being deployed"
+          git diff --quiet HEAD^ HEAD typescript || make deploy-api
+
+      - name: "Delete old images and revisions"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions

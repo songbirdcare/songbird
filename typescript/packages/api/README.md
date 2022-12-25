@@ -1,3 +1,3 @@
 # api
 
-Songbird node api server
+Songbird Node api server
