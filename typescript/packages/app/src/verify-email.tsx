@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { EmailVerification } from "@songbird/precedent-iso";
+import type { EmailVerification } from "@songbird/precedent-iso";
 import React from "react";
 import useSWR from "swr";
 
