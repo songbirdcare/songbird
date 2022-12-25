@@ -45,7 +45,7 @@ export const VerifyEmail: React.FC = () => {
           disabled={isLoading || data !== undefined}
           variant="contained"
         >
-          Click here to resend verification email
+          Click here to resend a verification email
         </Button>
 
         {data?.data === "sent" && (
