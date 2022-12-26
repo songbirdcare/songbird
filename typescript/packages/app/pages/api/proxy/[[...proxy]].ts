@@ -7,9 +7,7 @@ export default withApiAuthRequired(async function proxy(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { accessToken } = await getAccessToken(req, res, {
-    scopes: ["openid", "profile", "email"],
-  });
+  const { accessToken } = await getAccessToken(req, res, {});
 
   const proxy = (() => {
     const path = req.query.proxy ?? [];
