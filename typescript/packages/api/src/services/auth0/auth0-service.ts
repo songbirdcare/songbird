@@ -1,8 +1,11 @@
 import type { EmailVerification } from "@songbird/precedent-iso";
 import { ManagementClient } from "auth0";
 import { z } from "zod";
+import crypto from "crypto";
 
 import { Auth0TokenService } from "./auth0-token-service";
+
+const CONNECTION = "Username-Password-Authentication";
 
 export class Auth0Service {
   #tokenService: Auth0TokenService;
@@ -15,6 +18,22 @@ export class Auth0Service {
     private readonly domain: string
   ) {
     this.#tokenService = new Auth0TokenService(baseUrl, secret, clientId);
+  }
+
+  async createUser(email: string): Promise<"already_exists" | "created"> {
+    const client = await this.#client();
+    const users = await client.getUsersByEmail(email);
+
+    if (users.length > 0) {
+      return "already_exists";
+    }
+
+    await client.createUser({
+      connection: CONNECTION,
+      email,
+      password: `${crypto.randomBytes(20).toString("hex")}XYZxyz123!@#`,
+    });
+    return "created";
   }
 
   async sendEmailVerification(id: string): Promise<EmailVerification> {
