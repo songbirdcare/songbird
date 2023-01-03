@@ -1,7 +1,9 @@
 import * as dotenv from "dotenv";
 dotenv.config();
+import express from "express"; // eslint-disable-line
+import "express-async-errors"; // eslint-disable-line
+
 import cors from "cors";
-import express from "express";
 import { expressjwt } from "express-jwt";
 import { expressJwtSecret } from "jwks-rsa";
 
