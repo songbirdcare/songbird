@@ -17,7 +17,7 @@ import { PsqlUserService } from "./services/psql-user-service";
 import { SETTINGS } from "./settings";
 import { POOL } from "./sql";
 
-console.log("Booting application");
+console.log("Booting application!");
 
 const jwtCheck = expressjwt({
   secret: expressJwtSecret({
