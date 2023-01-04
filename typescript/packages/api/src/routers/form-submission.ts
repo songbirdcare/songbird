@@ -38,18 +38,8 @@ export class FormSubmissionRouter {
             assertNever(validationResult);
         }
 
-        try {
-          await this.svc.insert({ raw: req.body });
-
-          res.json({ status: "OK" });
-        } catch (e: unknown) {
-          console.error(e);
-          res.status(400).json({
-            status: "ERROR",
-            message: (e as { message: string }).message,
-          });
-          res.end();
-        }
+        await this.svc.insert({ raw: req.body });
+        res.json({ status: "OK" });
       }
     );
 

@@ -10,6 +10,7 @@ const Settings = z.object({
     issuer: z.array(z.string()),
     machineClientId: z.string(),
     machineSecret: z.string(),
+    machineAudience: z.string(),
     domain: z.string(),
   }),
   sql: z.object({
@@ -23,21 +24,19 @@ const Settings = z.object({
 type Settings = z.infer<typeof Settings>;
 
 const domain = process.env["AUTH0_DOMAIN"];
-const additionalIssuer = process.env["AUTH0_ADDITIONAL_ISSUER"];
 const issuer: string[] = [`https://${domain}/`];
-if (typeof additionalIssuer === "string") {
-  issuer.push(additionalIssuer);
-}
-
-console.log(`Issuer: ${JSON.stringify(issuer)}`);
+const issuerBaseUrl = `https://${domain}`;
 
 export const SETTINGS = Settings.parse({
   host: process.env["HOST"] ?? "0.0.0.0",
   port: Number(process.env["PORT"] ?? "8080"),
   auth: {
-    issuerBaseUrl: `https://${domain}`,
+    issuerBaseUrl,
     jwksUri: `https://${domain}/.well-known/jwks.json`,
     audience: process.env["AUTH0_AUDIENCE"],
+    machineAudience:
+      process.env["AUTH0_MACHINE_AUDIENCE"] ?? `${issuerBaseUrl}/api/v2/`,
+
     issuer,
     machineClientId: process.env["AUTH0_MACHINE_CLIENT_ID"],
     machineSecret: process.env["AUTH0_MACHINE_SECRET"],

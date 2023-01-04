@@ -15,9 +15,15 @@ export class Auth0Service {
     baseUrl: string,
     secret: string,
     clientId: string,
+    audience: string,
     private readonly domain: string
   ) {
-    this.#tokenService = new Auth0TokenService(baseUrl, secret, clientId);
+    this.#tokenService = new Auth0TokenService(
+      baseUrl,
+      secret,
+      clientId,
+      audience
+    );
   }
 
   async createUser(email: string): Promise<"already_exists" | "created"> {
@@ -57,7 +63,6 @@ export class Auth0Service {
     const user = await client.getUser({
       id,
     });
-
     return fromAuth0(Auth0Profile.parse(user));
   }
 
@@ -68,7 +73,6 @@ export class Auth0Service {
     }
 
     const token = await this.#tokenService.token();
-
     this.#sdkClient = new ManagementClient({
       token,
       domain: this.domain,

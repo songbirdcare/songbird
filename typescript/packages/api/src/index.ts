@@ -18,6 +18,9 @@ import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
 import { SETTINGS } from "./settings";
 import { POOL } from "./sql";
+import { errorLogger } from "./middleware/error-logger";
+import { errorResponder } from "./middleware/error-responder";
+import { invalidPathHandler } from "./middleware/invalid-path-handler";
 
 console.log("Booting application!");
 
@@ -56,6 +59,7 @@ async function start() {
     SETTINGS.auth.issuerBaseUrl,
     SETTINGS.auth.machineSecret,
     SETTINGS.auth.machineClientId,
+    SETTINGS.auth.machineAudience,
     SETTINGS.auth.domain
   );
 
@@ -69,19 +73,32 @@ async function start() {
   app.use("/api/v1/health", healthRouter);
   app.use("/api/v1/form-submission", formSubmissionRouter);
 
-  app.use(jwtCheck);
-
   const userInformationMiddleware = new UserInformationMiddleware(
     userService,
     auth0Service
   );
 
-  app.use(userInformationMiddleware.addUser());
+  const userIsVerified = userInformationMiddleware.ensureUserVerified();
+  const addUser = userInformationMiddleware.addUser();
 
-  app.use("/api/v1/users", new UserRouter(auth0Service).init());
-  app.use("/api/v1/token", new TokenRouter().init());
+  app.use(
+    "/api/v1/users",
+    jwtCheck,
+    addUser,
+    userIsVerified,
+    new UserRouter(auth0Service).init()
+  );
+  app.use(
+    "/api/v1/token",
+    jwtCheck,
+    addUser,
+    userIsVerified,
+    new TokenRouter().init()
+  );
 
-  app.use(userInformationMiddleware.ensureUserVerified());
+  app.use(errorLogger);
+  app.use(errorResponder);
+  app.use(invalidPathHandler);
 
   app.listen(SETTINGS.port, SETTINGS.host);
 }

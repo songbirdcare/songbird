@@ -6,7 +6,8 @@ export class Auth0TokenService {
   constructor(
     private readonly baseUrl: string,
     private readonly secret: string,
-    private readonly clientId: string
+    private readonly clientId: string,
+    private readonly audience: string
   ) {}
 
   async token(): Promise<string> {
@@ -17,7 +18,7 @@ export class Auth0TokenService {
           {
             client_id: this.clientId,
             client_secret: this.secret,
-            audience: `${this.baseUrl}/api/v2/`,
+            audience: this.audience,
             grant_type: "client_credentials",
           }
         )
