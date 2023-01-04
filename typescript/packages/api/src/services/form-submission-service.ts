@@ -12,7 +12,6 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
     const form = await this.pool.connect(async (connection) =>
       connection.one(
         sql.type(Form)`
-
 INSERT INTO form_submissions (email, submission)
     VALUES (${email}, ${JSON.stringify(parsed)})
 RETURNING (id)
