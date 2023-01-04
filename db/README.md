@@ -1,6 +1,6 @@
 # Overview
 
-Install DB Mate
+Install `dbmate`
 
 ```sh
 brew install dbmate
