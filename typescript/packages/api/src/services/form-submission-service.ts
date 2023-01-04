@@ -7,13 +7,24 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
 
   async insert({ raw }: InsertFormSubmissionArgs): Promise<Form> {
     const parsed = RawForm.parse(raw);
-    const email = parsed.answers[EMAIL_KEY] ?? null;
+    const {
+      answers,
+      responder_uuid,
+      flow_label,
+      variant_label,
+      variant_uuid,
+      created_at,
+      finalized,
+    } = parsed;
+    const email = answers[EMAIL_KEY] ?? null;
 
     const form = await this.pool.connect(async (connection) =>
       connection.one(
         sql.type(Form)`
-INSERT INTO form_submissions (email, submission)
-    VALUES (${email}, ${JSON.stringify(parsed)})
+INSERT INTO form_submissions (email, submission, flow_label, variant_label, variant_uuid, responder_uuid, form_created_at, finalized)
+    VALUES (${email}, ${JSON.stringify(
+          parsed
+        )}, ${flow_label}, ${variant_label}, ${variant_uuid}, ${responder_uuid}, ${created_at}, ${finalized})
 RETURNING (id)
 `
       )
@@ -44,4 +55,5 @@ const RawForm = z.object({
   variant_label: z.string(),
   variant_uuid: z.string(),
   created_at: z.string(),
+  finalized: z.boolean(),
 });
