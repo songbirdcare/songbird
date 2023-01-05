@@ -1,5 +1,6 @@
 import type { Stage, Workflow } from "@songbird/precedent-iso";
-import { DatabasePool, sql } from "slonik";
+import { DatabasePool, sql, DatabaseTransactionConnection } from "slonik";
+import type { S } from "vitest/dist/types-bae746aa";
 import { z } from "zod";
 
 import type {
@@ -54,14 +55,31 @@ const INITIAL_STAGES: Stage[] = [
 export class PsqWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
+  //async getAndTryToAdvanced({userId, childId}: GetOrCreateWorkflowOptions) {
+
+  //const workflow =
+  //}
+
   async getOrCreateInitial({
     userId,
     childId,
   }: GetOrCreateWorkflowOptions): Promise<Workflow> {
-    const workflow = await this.pool.connect(async (connection) => {
-      const workflows = await connection.query(
-        sql.type(ZWorkflowFromSql)`
+    const workflow = await this.pool.connect(async (connection) =>
+      connection.transaction(async (trx) => {
+        const workflow = await this.#getOrCreate(trx, { userId, childId });
+      })
+    );
 
+    return fromSQL(workflow);
+  }
+
+  async #getOrCreate(
+    trx: DatabaseTransactionConnection,
+
+    { userId, childId }: GetOrCreateWorkflowOptions
+  ): Promise<WorkflowFromSql> {
+    const workflows = await trx.query(
+      sql.type(ZWorkflowFromSql)`
 SELECT
     ${FIELDS}
 FROM
@@ -71,36 +89,47 @@ WHERE
     AND child_id = ${childId}
     AND workflow_slug = ${INITIAL_SLUG}
 `
-      );
+    );
 
-      const [workflow] = workflows.rows;
+    const [workflow] = workflows.rows;
 
-      if (workflow === undefined) {
-        return connection.one(
-          sql.type(ZWorkflowFromSql)`
-
+    if (workflow === undefined) {
+      return trx.one(
+        sql.type(ZWorkflowFromSql)`
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
     VALUES (${userId}, ${childId}, ${INITIAL_SLUG}, ${CURRENT_VERSION}, ${JSON.stringify(
-            INITIAL_STAGES
-          )}, 0)
+          INITIAL_STAGES
+        )}, 0)
 RETURNING
     ${FIELDS}
 `
-        );
-      } else if (workflows.rows.length > 1) {
-        throw new Error(
-          `Multiple workflows found for user=${userId} child=${childId} slug=${INITIAL_SLUG}`
-        );
-      }
+      );
+    } else if (workflows.rows.length > 1) {
+      throw new Error(
+        `Multiple workflows found for user=${userId} child=${childId} slug=${INITIAL_SLUG}`
+      );
+    }
 
-      return workflow;
-    });
-
-    return fromSQL(workflow);
+    return workflow;
   }
 
-  async tryAdvanceWorkflow(): Promise<Workflow> {
-    return undefined!;
+  async #update(
+    trx: DatabaseTransactionConnection,
+
+    { id, stages, currentStageIndex }: UpdateWorkflow
+  ): Promise<WorkflowFromSql> {
+    const workflows = await trx.one(
+      sql.type(ZWorkflowFromSql)`
+UPDATE
+stages=${stages}, current_stage_idx=${currentStageIndex}
+FROM workflow
+WHERE
+id =${id}
+RETURNING ${FIELDS}
+`
+    );
+
+    return workflows;
   }
 }
 
@@ -126,6 +155,12 @@ function fromSQL({
 }
 
 export type WorkflowFromSql = z.infer<typeof ZWorkflowFromSql>;
+
+interface UpdateWorkflow {
+  id: string;
+  stages: Stages[];
+  currentStageIndex: number;
+}
 
 const ZWorkflowFromSql = z.object({
   id: z.string(),
