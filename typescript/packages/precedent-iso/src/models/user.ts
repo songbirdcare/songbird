@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export type UserModel = z.infer<typeof UserModel>;
-export const UserModel = z.object({
+export type UserModel = z.infer<typeof ZUserModel>;
+export const ZUserModel = z.object({
   id: z.string(),
   sub: z.string(),
   email: z.string(),

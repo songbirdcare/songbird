@@ -1,9 +1,9 @@
-import type { UserInformation } from "../middleware/user-information";
+import type { UserModel } from "@songbird/precedent-iso";
 
 declare global {
   namespace Express {
     export interface Request {
-      user?: UserInformation;
+      user: UserModel;
       rawBody: Buffer;
     }
   }
