@@ -1,5 +1,5 @@
 import type { Stage, Workflow } from "@songbird/precedent-iso";
-import { DatabasePool, sql, DatabaseTransactionConnection } from "slonik";
+import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import type { S } from "vitest/dist/types-bae746aa";
 import { z } from "zod";
 
@@ -120,12 +120,16 @@ RETURNING
   ): Promise<WorkflowFromSql> {
     const workflows = await trx.one(
       sql.type(ZWorkflowFromSql)`
+
 UPDATE
-stages=${stages}, current_stage_idx=${currentStageIndex}
-FROM workflow
+    stages = ${stages},
+    current_stage_idx = ${currentStageIndex}
+FROM
+    workflow
 WHERE
-id =${id}
-RETURNING ${FIELDS}
+    id = ${id}
+RETURNING
+    ${FIELDS}
 `
     );
 
