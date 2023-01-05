@@ -67,7 +67,9 @@ async function start() {
 
   const healthRouter = new HealthRouter(healthService).init();
   const formSubmissionRouter = new FormSubmissionRouter(
-    formSubmissionService
+    formSubmissionService,
+    auth0Service,
+    userService
   ).init();
 
   app.use("/api/v1/health", healthRouter);

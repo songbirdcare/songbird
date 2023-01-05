@@ -1,5 +1,5 @@
 import type { EmailVerification } from "@songbird/precedent-iso";
-import { ManagementClient } from "auth0";
+import { AuthenticationClient, ManagementClient } from "auth0";
 import crypto from "crypto";
 import { z } from "zod";
 
@@ -9,12 +9,13 @@ const CONNECTION = "Username-Password-Authentication";
 
 export class Auth0Service {
   #tokenService: Auth0TokenService;
-  #sdkClient: ManagementClient | undefined;
+  #managementClient: ManagementClient | undefined;
+  #authenticationClient: AuthenticationClient;
 
   constructor(
     baseUrl: string,
     secret: string,
-    clientId: string,
+    private readonly clientId: string,
     audience: string,
     private readonly domain: string
   ) {
@@ -24,22 +25,61 @@ export class Auth0Service {
       clientId,
       audience
     );
+
+    this.#authenticationClient = new AuthenticationClient({
+      domain,
+      clientId,
+    });
   }
 
-  async createUser(email: string): Promise<"already_exists" | "created"> {
+  async createUser(email: string): Promise<CreateUserResponse> {
     const client = await this.#client();
     const users = await client.getUsersByEmail(email);
 
+    // do we have to check for multiple connections here?
     if (users.length > 0) {
-      return "already_exists";
+      console.log(`Not creating email=${email} as they already exist`);
+      const id = users[0]?.user_id;
+      if (id === undefined) {
+        throw new Error("User ID is undefined");
+      }
+      return {
+        status: "already_exists",
+        user: {
+          email,
+          sub: id,
+          connectionType: this.#getConnectionType(id),
+        },
+      };
     }
 
-    await client.createUser({
+    const user = await client.createUser({
       connection: CONNECTION,
       email,
       password: `${crypto.randomBytes(20).toString("hex")}XYZxyz123!@#`,
+      email_verified: true,
     });
-    return "created";
+    const sub = user.user_id;
+    if (sub === undefined) {
+      throw new Error("id is undefined");
+    }
+
+    return {
+      status: "created",
+      user: {
+        email,
+        sub,
+        connectionType: this.#getConnectionType(sub),
+      },
+    };
+  }
+
+  async sendPasswordReset(email: string) {
+    return this.#authenticationClient.requestChangePasswordEmail({
+      client_id: this.clientId,
+      email,
+      connection: CONNECTION,
+    });
   }
 
   async sendEmailVerification(id: string): Promise<EmailVerification> {
@@ -63,23 +103,39 @@ export class Auth0Service {
     const user = await client.getUser({
       id,
     });
-    return fromAuth0(Auth0Profile.parse(user));
+    return fromAuth0(ZAuth0Profile.parse(user));
+  }
+
+  #getConnectionType(id: string): "google-oauth2" | "auth0" {
+    const [type] = id.split("|", 1);
+    return ZConnectionType.parse(type);
   }
 
   async #client(): Promise<ManagementClient> {
     // TODO ... do we have to refetch periodically?
-    if (this.#sdkClient) {
-      return this.#sdkClient;
+    if (this.#managementClient) {
+      return this.#managementClient;
     }
 
     const token = await this.#tokenService.token();
-    this.#sdkClient = new ManagementClient({
+    this.#managementClient = new ManagementClient({
       token,
       domain: this.domain,
     });
 
-    return this.#sdkClient;
+    return this.#managementClient;
   }
+}
+
+interface UserObject {
+  sub: string;
+  email: string;
+  connectionType: ConnectionType;
+}
+
+interface CreateUserResponse {
+  user: UserObject;
+  status: "already_exists" | "created";
 }
 
 function fromAuth0({
@@ -100,13 +156,20 @@ function fromAuth0({
   };
 }
 
-const Auth0Profile = z.object({
+const ZConnectionType = z.union([
+  z.literal("auth0"),
+  z.literal("google-oauth2"),
+]);
+
+type ConnectionType = z.infer<typeof ZConnectionType>;
+
+const ZAuth0Profile = z.object({
   user_id: z.string(),
   email: z.string(),
   email_verified: z.boolean(),
-  given_name: z.optional(z.string()),
-  family_name: z.optional(z.string()),
-  name: z.optional(z.string()),
+  given_name: z.string().optional(),
+  family_name: z.string().optional(),
+  name: z.string().optional(),
 });
 
-export type Auth0Profile = z.infer<typeof Auth0Profile>;
+export type Auth0Profile = z.infer<typeof ZAuth0Profile>;

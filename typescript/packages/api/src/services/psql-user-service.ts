@@ -10,7 +10,7 @@ export class PsqlUserService implements UserService {
   async get(sub: string): Promise<UserModel | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
-        sql.type(UserFromSql)`
+        sql.type(ZUserFromSql)`
 SELECT
     id,
     sub,
@@ -47,15 +47,17 @@ INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name)
           }, ${givenName ?? null})
 ON CONFLICT (sub)
     DO UPDATE SET
-        email_verified = ${emailVerified}, name = ${
+        email_verified = ${emailVerified}, name = COALESCE(${
             name ?? null
-          }, family_name = ${familyName ?? null}, given_name = ${
+          }, sb_user.name), family_name = COALESCE(${
+            familyName ?? null
+          }, sb_user.family_name), given_name = COALESCE(${
             givenName ?? null
-          }
+          }, sb_user.given_name)
 `
         );
 
-        const user = await trx.one(sql.type(UserFromSql)`
+        const user = await trx.one(sql.type(ZUserFromSql)`
 SELECT
     id,
     sub,
@@ -91,9 +93,9 @@ function fromSQL({
   };
 }
 
-export type UserFromSql = z.infer<typeof UserFromSql>;
+export type UserFromSql = z.infer<typeof ZUserFromSql>;
 
-const UserFromSql = z.object({
+const ZUserFromSql = z.object({
   id: z.string(),
   sub: z.string(),
   email: z.string(),

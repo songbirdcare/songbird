@@ -5,8 +5,8 @@ const EMAIL_KEY = "email_address";
 export class PsqlFormSubmissionService implements FormSubmissionService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async insert({ raw }: InsertFormSubmissionArgs): Promise<Form> {
-    const parsed = RawForm.parse(raw);
+  async insert(raw: ParsedForm): Promise<Form> {
+    const parsed = ParsedForm.parse(raw);
     const {
       answers,
       responder_uuid,
@@ -20,35 +20,40 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
 
     const form = await this.pool.connect(async (connection) =>
       connection.one(
-        sql.type(Form)`
+        sql.type(ZForm)`
 INSERT INTO form_submissions (email, submission, flow_label, variant_label, variant_uuid, responder_uuid, form_created_at, finalized)
     VALUES (${email}, ${JSON.stringify(
           parsed
         )}, ${flow_label}, ${variant_label}, ${variant_uuid}, ${responder_uuid}, ${created_at}, ${finalized})
-RETURNING (id)
+RETURNING
+    id, email
 `
       )
     );
 
     return form;
   }
+
+  parse = (raw: Record<string, unknown>): ParsedForm => ParsedForm.parse(raw);
 }
 
 export interface FormSubmissionService {
-  insert: (args: InsertFormSubmissionArgs) => Promise<Form>;
+  insert: (form: ParsedForm) => Promise<Form>;
+  parse: (raw: Record<string, unknown>) => ParsedForm;
 }
 
 export interface InsertFormSubmissionArgs {
   raw: Record<string, any>;
 }
 
-const Form = z.object({
+const ZForm = z.object({
   id: z.string(),
+  email: z.string(),
 });
+type Form = z.infer<typeof ZForm>;
+export type ParsedForm = z.infer<typeof ParsedForm>;
 
-export type Form = z.infer<typeof Form>;
-
-const RawForm = z.object({
+const ParsedForm = z.object({
   answers: z.record(z.string().min(1), z.any()),
   responder_uuid: z.string(),
   flow_label: z.string(),

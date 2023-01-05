@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const Settings = z.object({
+const ZSettings = z.object({
   host: z.string(),
   port: z.number(),
   auth: z.object({
@@ -21,13 +21,11 @@ const Settings = z.object({
   }),
 });
 
-type Settings = z.infer<typeof Settings>;
-
 const domain = process.env["AUTH0_DOMAIN"];
 const issuer: string[] = [`https://${domain}/`];
 const issuerBaseUrl = `https://${domain}`;
 
-export const SETTINGS = Settings.parse({
+export const SETTINGS = ZSettings.parse({
   host: process.env["HOST"] ?? "0.0.0.0",
   port: Number(process.env["PORT"] ?? "8080"),
   auth: {
