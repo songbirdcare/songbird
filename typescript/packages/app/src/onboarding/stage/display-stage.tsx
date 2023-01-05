@@ -9,7 +9,12 @@ import type { StageDisplayInformation } from "./stage-display-information";
 export const DisplayStage: React.FC<{
   stageDisplayInformation: StageDisplayInformation;
   index: number;
-}> = ({ stageDisplayInformation: { title, byline, asset }, index }) => {
+  isEnabled: boolean;
+}> = ({
+  stageDisplayInformation: { title, byline, asset },
+  index,
+  isEnabled,
+}) => {
   return (
     <Paper sx={{ width: "100%" }} variant="outlined">
       <Box
@@ -41,7 +46,7 @@ export const DisplayStage: React.FC<{
             <Typography>{byline}</Typography>
           </Box>
         </Box>
-        <Button variant="contained" disabled={index !== 0}>
+        <Button variant="contained" disabled={!isEnabled}>
           Start
         </Button>
       </Box>

@@ -27,6 +27,7 @@ export const DisplayStages: React.FC<{
           return (
             <DisplayStage
               stageDisplayInformation={stageDisplayInformation}
+              isEnabled={index === currentStageIndex}
               index={index}
               key={stage.type}
             />

@@ -3,8 +3,15 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import type { Stage } from "@songbird/precedent-iso";
 
+import flower from "../../public/background-flower.svg";
 import { SONG_BIRD_BIEGE } from "../style/colors";
 import { DisplayStages } from "./stage/display-stages";
+
+const BACKGROUND_STYLE = {
+  backgroundImage: `url(${flower.src})`,
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center right 20px",
+};
 
 export const OnboardingFlow: React.FC<{
   currentStageIndex: number;
@@ -16,6 +23,7 @@ export const OnboardingFlow: React.FC<{
       justifyContent="center"
       bgcolor={SONG_BIRD_BIEGE}
       height="100%"
+      sx={BACKGROUND_STYLE}
     >
       <Box
         display="flex"

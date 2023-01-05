@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import type { Stage } from "@songbird/precedent-iso";
 
 import { SONG_BIRD_GREEN } from "../../style/colors";
 import { STAGE_DISPLAY_INFO_LOOKUP } from "../stage-display-information-lookup";

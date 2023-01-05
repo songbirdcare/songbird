@@ -7,7 +7,17 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
   StageDisplayInformation
 > = {
   create_account: {
-    title: "Check insurance coverage",
+    title: "Create account and book time",
+    byline: "COPY TODO",
+    asset: {
+      path: "/onboarding/hands.svg",
+      width: 64,
+      height: 60,
+      alt: "Create account and book time",
+    },
+  },
+  check_insurance_coverage: {
+    title: "Submit records",
     byline:
       "If you’d like to know your insurance coverage sooner, just submit additional info here.",
     asset: {
@@ -17,26 +27,16 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
       alt: "Insurance coverage",
     },
   },
-  check_insurance_coverage: {
-    title: "Submit records",
-    byline:
-      "With a few medical records, we’ll be able to begin the process of insurance covering care.",
+  submit_records: {
+    title: "Meet your care team",
 
+    byline:
+      "With medical records & your availability, we’ll be able to begin the process of insurance covering care.",
     asset: {
       path: "/onboarding/flower-pot.svg",
       width: 33,
       height: 42,
       alt: "Submit records",
-    },
-  },
-  submit_records: {
-    title: "Meet your care team",
-    byline: "We’ll find time for you to meet your family’s care team",
-    asset: {
-      path: "/onboarding/heart.svg",
-      width: 39,
-      height: 31,
-      alt: "Care team",
     },
   },
   commitment_to_care: {
@@ -47,7 +47,7 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
       path: "/onboarding/heart.svg",
       width: 39,
       height: 31,
-      alt: "Commitment to care",
+      alt: "Care team",
     },
   },
 };
