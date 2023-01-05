@@ -16,10 +16,9 @@ export class WorkflowRouter {
       async (req: express.Request, res: express.Response) => {
         console.log(req.user.id);
         const child = await this.childService.getOrCreate(req.user.id);
-        const workflow = await this.workflowService.getOrCreate({
+        const workflow = await this.workflowService.getOrCreateInitial({
           userId: req.user.id,
           childId: child.id,
-          slug: "onboarding",
         });
         res.json({
           data: {

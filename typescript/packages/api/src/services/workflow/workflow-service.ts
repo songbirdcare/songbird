@@ -1,7 +1,7 @@
 import type { Workflow } from "@songbird/precedent-iso";
 
 export interface WorkflowService {
-  getOrCreate({
+  getOrCreateInitial({
     userId,
     childId,
   }: GetOrCreateWorkflowOptions): Promise<Workflow>;
@@ -10,5 +10,4 @@ export interface WorkflowService {
 export interface GetOrCreateWorkflowOptions {
   userId: string;
   childId: string;
-  slug: string;
 }

@@ -1,4 +1,4 @@
-import type { Workflow } from "@songbird/precedent-iso";
+import type { Stage, Workflow } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
@@ -7,31 +7,69 @@ import type {
   WorkflowService,
 } from "./workflow-service";
 
+const FIELDS = sql.fragment`
+id,
+sb_user_id,
+child_id,
+workflow_slug,
+version,
+stages,
+current_stage_idx
+`;
 const CURRENT_VERSION = 1 as const;
+const INITIAL_SLUG = "onboarding";
+const INITIAL_STAGES: Stage[] = [
+  {
+    type: "create_account",
+    blockingTasks: [],
+  },
+  {
+    type: "check_insurance_coverage",
+    blockingTasks: [
+      {
+        type: "form_blocking",
+        formId: "hi",
+      },
+    ],
+  },
+  {
+    type: "submit_records",
+    blockingTasks: [
+      {
+        type: "form_blocking",
+        formId: "bye",
+      },
+    ],
+  },
+  {
+    type: "commitment_to_care",
+    blockingTasks: [
+      {
+        type: "signature",
+      },
+    ],
+  },
+];
+
 export class PsqWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async getOrCreate({
+  async getOrCreateInitial({
     userId,
     childId,
-    slug,
   }: GetOrCreateWorkflowOptions): Promise<Workflow> {
     const workflow = await this.pool.connect(async (connection) => {
       const workflows = await connection.query(
         sql.type(ZWorkflowFromSql)`
+
 SELECT
-    id,
-    sb_user_id,
-    child_id,
-    workflow_slug,
-    version,
-    stages
+    ${FIELDS}
 FROM
     workflow
 WHERE
     sb_user_id = ${userId}
     AND child_id = ${childId}
-    AND workflow_slug = ${slug}
+    AND workflow_slug = ${INITIAL_SLUG}
 `
       );
 
@@ -40,15 +78,18 @@ WHERE
       if (workflow === undefined) {
         return connection.one(
           sql.type(ZWorkflowFromSql)`
-INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages)
-    VALUES (${userId}, ${childId}, ${slug}, ${CURRENT_VERSION}, '{}')
+
+INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
+    VALUES (${userId}, ${childId}, ${INITIAL_SLUG}, ${CURRENT_VERSION}, ${JSON.stringify(
+            INITIAL_STAGES
+          )}, 0)
 RETURNING
-    id, sb_user_id, child_id, workflow_slug, version, stages
+    ${FIELDS}
 `
         );
       } else if (workflows.rows.length > 1) {
         throw new Error(
-          `Multiple workflows found for user=${userId} child=${childId} slug=${slug}`
+          `Multiple workflows found for user=${userId} child=${childId} slug=${INITIAL_SLUG}`
         );
       }
 
@@ -56,6 +97,10 @@ RETURNING
     });
 
     return fromSQL(workflow);
+  }
+
+  async tryAdvanceWorkflow(): Promise<Workflow> {
+    return undefined!;
   }
 }
 
@@ -66,6 +111,7 @@ function fromSQL({
   workflow_slug,
   version,
   stages,
+  current_stage_idx,
 }: WorkflowFromSql): Workflow {
   console.log({ stages });
   return {
@@ -75,6 +121,7 @@ function fromSQL({
     slug: workflow_slug,
     version,
     stages,
+    currentStageIndex: current_stage_idx,
   };
 }
 
@@ -87,4 +134,5 @@ const ZWorkflowFromSql = z.object({
   workflow_slug: z.string(),
   version: z.string(),
   stages: z.any(),
+  current_stage_idx: z.number(),
 });
