@@ -1,8 +1,8 @@
 import type { Stage, Workflow } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
-import type { S } from "vitest/dist/types-bae746aa";
 import { z } from "zod";
 
+import { WorkflowEngineImpl } from "./workflow-engine";
 import type {
   GetOrCreateWorkflowOptions,
   WorkflowService,
@@ -55,25 +55,30 @@ const INITIAL_STAGES: Stage[] = [
 export class PsqWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
-  //async getAndTryToAdvanced({userId, childId}: GetOrCreateWorkflowOptions) {
-
-  //const workflow =
-  //}
-
   async getOrCreateInitial({
     userId,
     childId,
   }: GetOrCreateWorkflowOptions): Promise<Workflow> {
-    const workflow = await this.pool.connect(async (connection) =>
+    return this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
-        const workflow = await this.#getOrCreate(trx, { userId, childId });
+        const workflow = fromSQL(
+          await this.#getOrCreateSql(trx, { userId, childId })
+        );
+        const result = WorkflowEngineImpl.tryAdvanceWorkflow(workflow);
+        if (!result.hasChanged) {
+          return workflow;
+        }
+        const updated = await this.#update(trx, {
+          id: workflow.id,
+          currentStageIndex: result.workflow.currentStageIndex,
+          stages: result.workflow.stages,
+        });
+        return fromSQL(updated);
       })
     );
-
-    return fromSQL(workflow);
   }
 
-  async #getOrCreate(
+  async #getOrCreateSql(
     trx: DatabaseTransactionConnection,
 
     { userId, childId }: GetOrCreateWorkflowOptions
@@ -118,22 +123,20 @@ RETURNING
 
     { id, stages, currentStageIndex }: UpdateWorkflow
   ): Promise<WorkflowFromSql> {
-    const workflows = await trx.one(
+    return trx.one(
       sql.type(ZWorkflowFromSql)`
 
 UPDATE
-    stages = ${stages},
-    current_stage_idx = ${currentStageIndex}
-FROM
     workflow
+SET
+    stages = ${JSON.stringify(stages)},
+    current_stage_idx = ${currentStageIndex}
 WHERE
     id = ${id}
 RETURNING
     ${FIELDS}
 `
     );
-
-    return workflows;
   }
 }
 
@@ -146,7 +149,6 @@ function fromSQL({
   stages,
   current_stage_idx,
 }: WorkflowFromSql): Workflow {
-  console.log({ stages });
   return {
     id,
     userId: sb_user_id,
@@ -162,7 +164,7 @@ export type WorkflowFromSql = z.infer<typeof ZWorkflowFromSql>;
 
 interface UpdateWorkflow {
   id: string;
-  stages: Stages[];
+  stages: Stage[];
   currentStageIndex: number;
 }
 
