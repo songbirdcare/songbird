@@ -34,7 +34,7 @@ const Home: React.FC = () => {
         <meta name="description" content="Innovative care" />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <Box>
+      <Box position="sticky" top={0} zIndex={100}>
         <AppBar displayName={user?.name ?? undefined} />
       </Box>
       {userIsLoading && <LinearProgress />}

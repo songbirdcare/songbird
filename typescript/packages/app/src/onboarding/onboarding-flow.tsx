@@ -39,7 +39,6 @@ export const OnboardingFlow: React.FC<{
           display="flex"
           width="100%"
           marginTop={7}
-          marginBottom={5}
           flexDirection="column"
           gap={1 / 2}
         >
@@ -53,7 +52,7 @@ export const OnboardingFlow: React.FC<{
           </Typography>
         </Box>
 
-        <DisplayStages stages={stages} />
+        <DisplayStages currentStageIndex={currentStageIndex} stages={stages} />
       </Box>
     </Box>
   );
