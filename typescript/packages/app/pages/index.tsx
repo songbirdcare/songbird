@@ -19,14 +19,14 @@ const Home: React.FC = () => {
     }
   );
 
-  const { data: workflow, isLoading: workflowIsLoading } =
-    useSWR<WorkflowModel>("/api/proxy/workflows/start", async (url) => {
+  const { data: workflow } = useSWR<WorkflowModel>(
+    "/api/proxy/workflows/start",
+    async (url) => {
       const response = await fetch(url);
-      return response.json();
-    });
-
-  console.log({ workflow, workflowIsLoading });
-
+      const data = await response.json();
+      return data.data;
+    }
+  );
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <Head>

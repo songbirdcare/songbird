@@ -5,7 +5,6 @@ import type { Stage } from "@songbird/precedent-iso";
 
 import { SONG_BIRD_BIEGE } from "../style/colors";
 import { DisplayStages } from "./stage/display-stages";
-import type { StageDisplayInformation } from "./stage/stage-display-information";
 
 export const OnboardingFlow: React.FC<{
   currentStageIndex: number;

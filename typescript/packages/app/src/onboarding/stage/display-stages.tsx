@@ -1,9 +1,8 @@
 import Box from "@mui/material/Box";
 import type { Stage } from "@songbird/precedent-iso";
 
-import { DisplayStage } from "./display-stage";
-import type { StageDisplayInformation } from "./step";
 import { STAGE_DISPLAY_INFO_LOOKUP } from "../stage-display-information-lookup";
+import { DisplayStage } from "./display-stage";
 
 export const DisplayStages: React.FC<{ stages: Stage[] }> = ({ stages }) => {
   return (

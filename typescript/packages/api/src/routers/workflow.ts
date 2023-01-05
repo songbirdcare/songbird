@@ -20,9 +20,7 @@ export class WorkflowRouter {
           childId: child.id,
         });
         res.json({
-          data: {
-            workflow,
-          },
+          data: workflow,
         });
       }
     );
