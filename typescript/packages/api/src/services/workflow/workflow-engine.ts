@@ -1,4 +1,4 @@
-import type { Workflow } from "@songbird/precedent-iso";
+import type { WorkflowModel } from "@songbird/precedent-iso";
 
 // this could in theory be a while loop
 // but I think it's better to cap iterations
@@ -7,8 +7,8 @@ import type { Workflow } from "@songbird/precedent-iso";
 const MAX_ATTEMPTS = 10;
 
 export class WorkflowEngineImpl {
-  static tryAdvanceWorkflow(workflow: Workflow): TryAdvanceWorkflowResult {
-    const clone = JSON.parse(JSON.stringify(workflow)) as Workflow;
+  static tryAdvanceWorkflow(workflow: WorkflowModel): TryAdvanceWorkflowResult {
+    const clone = JSON.parse(JSON.stringify(workflow)) as WorkflowModel;
 
     let hasChanged = false;
 
@@ -36,5 +36,5 @@ export class WorkflowEngineImpl {
 
 export interface TryAdvanceWorkflowResult {
   hasChanged: boolean;
-  workflow: Workflow;
+  workflow: WorkflowModel;
 }

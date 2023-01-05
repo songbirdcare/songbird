@@ -32,7 +32,7 @@ interface SignatureTask {
   type: "signature";
 }
 
-export interface Workflow {
+export interface WorkflowModel {
   id: string;
   userId: string;
   childId: string;

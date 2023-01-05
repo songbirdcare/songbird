@@ -1,10 +1,10 @@
-import type { Workflow } from "@songbird/precedent-iso";
+import type { WorkflowModel } from "@songbird/precedent-iso";
 
 export interface WorkflowService {
   getOrCreateInitial({
     userId,
     childId,
-  }: GetOrCreateWorkflowOptions): Promise<Workflow>;
+  }: GetOrCreateWorkflowOptions): Promise<WorkflowModel>;
 }
 
 export interface GetOrCreateWorkflowOptions {

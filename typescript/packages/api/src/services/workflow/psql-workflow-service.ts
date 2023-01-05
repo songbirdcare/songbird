@@ -1,4 +1,4 @@
-import type { Stage, Workflow } from "@songbird/precedent-iso";
+import type { Stage, WorkflowModel } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
@@ -58,7 +58,7 @@ export class PsqWorkflowService implements WorkflowService {
   async getOrCreateInitial({
     userId,
     childId,
-  }: GetOrCreateWorkflowOptions): Promise<Workflow> {
+  }: GetOrCreateWorkflowOptions): Promise<WorkflowModel> {
     return this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
         const workflow = fromSQL(
@@ -125,7 +125,6 @@ RETURNING
   ): Promise<WorkflowFromSql> {
     return trx.one(
       sql.type(ZWorkflowFromSql)`
-
 UPDATE
     workflow
 SET
@@ -148,7 +147,7 @@ function fromSQL({
   version,
   stages,
   current_stage_idx,
-}: WorkflowFromSql): Workflow {
+}: WorkflowFromSql): WorkflowModel {
   return {
     id,
     userId: sb_user_id,
