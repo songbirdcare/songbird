@@ -1,3 +1,5 @@
+import type { Workflow } from "@songbird/precedent-iso";
+
 export interface WorkflowService {
   getOrCreate({
     userId,
@@ -9,17 +11,4 @@ export interface GetOrCreateWorkflowOptions {
   userId: string;
   childId: string;
   slug: string;
-}
-
-interface Stage {
-  stageName: string;
-}
-
-export interface Workflow {
-  id: string;
-  userId: string;
-  childId: string;
-  slug: string;
-  version: string;
-  stages: Stage[];
 }

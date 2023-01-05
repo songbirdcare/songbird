@@ -21,6 +21,9 @@ import { POOL } from "./sql";
 import { errorLogger } from "./middleware/error-logger";
 import { errorResponder } from "./middleware/error-responder";
 import { invalidPathHandler } from "./middleware/invalid-path-handler";
+import { WorkflowRouter } from "./routers/workflow";
+import { PsqlChildService } from "./services/child/psql-child-service";
+import { PsqWorkflowService } from "./services/workflow/psql-workflow-service";
 
 console.log("Booting application!");
 
@@ -65,6 +68,9 @@ async function start() {
 
   const userService = new PsqlUserService(pool);
 
+  const childService = new PsqlChildService(pool);
+  const workflowService = new PsqWorkflowService(pool);
+
   const healthRouter = new HealthRouter(healthService).init();
   const formSubmissionRouter = new FormSubmissionRouter(
     formSubmissionService,
@@ -96,6 +102,14 @@ async function start() {
     addUser,
     userIsVerified,
     new TokenRouter().init()
+  );
+
+  app.use(
+    "/api/v1/workflow",
+    jwtCheck,
+    addUser,
+    userIsVerified,
+    new WorkflowRouter(childService, workflowService).init()
   );
 
   app.use(errorLogger);
