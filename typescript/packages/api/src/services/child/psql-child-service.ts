@@ -9,7 +9,7 @@ export class PsqlChildService implements ChildService {
   async getOrCreate(userId: string): Promise<Child> {
     return this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
-        const users = await trx.many(
+        const users = await trx.query(
           sql.type(ZChildFromSql)`
 SELECT
     id
@@ -21,7 +21,7 @@ LIMIT 2
 `
         );
 
-        const [user] = users;
+        const [user] = users.rows;
 
         if (user === undefined) {
           return trx.one(
@@ -32,7 +32,7 @@ RETURNING
     id
 `
           );
-        } else if (users.length > 1) {
+        } else if (users.rows.length > 1) {
           throw new Error(`Multiple children found for user=${userId}`);
         }
 

@@ -14,6 +14,7 @@ export class WorkflowRouter {
     router.get(
       "/start",
       async (req: express.Request, res: express.Response) => {
+        console.log(req.user.id);
         const child = await this.childService.getOrCreate(req.user.id);
         const workflow = await this.workflowService.getOrCreate({
           userId: req.user.id,

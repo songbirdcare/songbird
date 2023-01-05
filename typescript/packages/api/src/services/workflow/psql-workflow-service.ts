@@ -17,7 +17,7 @@ export class PsqWorkflowService implements WorkflowService {
     slug,
   }: GetOrCreateWorkflowOptions): Promise<Workflow> {
     const workflow = await this.pool.connect(async (connection) => {
-      const workflows = await connection.many(
+      const workflows = await connection.query(
         sql.type(ZWorkflowFromSql)`
 SELECT
     id,
@@ -35,7 +35,7 @@ WHERE
 `
       );
 
-      const [workflow] = workflows;
+      const [workflow] = workflows.rows;
 
       if (workflow === undefined) {
         return connection.one(
@@ -46,7 +46,7 @@ RETURNING
     id, sb_user_id, child_id, workflow_slug, version, stages
 `
         );
-      } else if (workflows.length > 1) {
+      } else if (workflows.rows.length > 1) {
         throw new Error(
           `Multiple workflows found for user=${userId} child=${childId} slug=${slug}`
         );
@@ -67,13 +67,14 @@ function fromSQL({
   version,
   stages,
 }: WorkflowFromSql): Workflow {
+  console.log({ stages });
   return {
     id,
     userId: sb_user_id,
     childId: child_id,
     slug: workflow_slug,
     version,
-    stages: JSON.parse(stages),
+    stages,
   };
 }
 
@@ -85,5 +86,5 @@ const ZWorkflowFromSql = z.object({
   child_id: z.string(),
   workflow_slug: z.string(),
   version: z.string(),
-  stages: z.string(),
+  stages: z.any(),
 });

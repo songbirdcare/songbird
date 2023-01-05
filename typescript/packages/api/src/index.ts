@@ -105,7 +105,7 @@ async function start() {
   );
 
   app.use(
-    "/api/v1/workflow",
+    "/api/v1/workflows",
     jwtCheck,
     addUser,
     userIsVerified,

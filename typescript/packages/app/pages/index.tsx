@@ -1,7 +1,7 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import type { UserModel } from "@songbird/precedent-iso";
+import type { UserModel, WorkflowModel } from "@songbird/precedent-iso";
 import Head from "next/head";
 import * as React from "react";
 import useSWR from "swr";
@@ -12,13 +12,22 @@ import { STEPS } from "../src/onboarding/steps";
 import { VerifyEmail } from "../src/verify-email";
 
 const Home: React.FC = () => {
-  const { data: user, isLoading } = useSWR<UserModel>(
+  const { data: user, isLoading: userIsLoading } = useSWR<UserModel>(
     "/api/proxy/users/me",
     async (url) => {
       const response = await fetch(url);
       return response.json();
     }
   );
+
+  const { data: workflow, isLoading: workflowIsLoading } =
+    useSWR<WorkflowModel>("/api/proxy/workflows/start", async (url) => {
+      const response = await fetch(url);
+      return response.json();
+    });
+
+  console.log({ workflow, workflowIsLoading });
+
   return (
     <Box display="flex" flexDirection="column" height="100%">
       <Head>
@@ -29,9 +38,9 @@ const Home: React.FC = () => {
       <Box>
         <AppBar displayName={user?.name ?? undefined} />
       </Box>
-      {isLoading && <LinearProgress />}
-      {!isLoading && user && !user.emailVerified && <VerifyEmail />}
-      {!isLoading && user && user.emailVerified && (
+      {userIsLoading && <LinearProgress />}
+      {!userIsLoading && user && !user.emailVerified && <VerifyEmail />}
+      {!userIsLoading && user && user.emailVerified && (
         <OnboardingFlow steps={STEPS} />
       )}
     </Box>
