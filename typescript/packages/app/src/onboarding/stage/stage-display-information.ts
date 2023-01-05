@@ -1,9 +1,6 @@
-export type StepStatus = "disabled" | "in-progress";
-
-export interface Step {
+export interface StageDisplayInformation {
   title: string;
   byline: string;
-  status: StepStatus;
   asset: {
     path: string;
     alt: string;

@@ -1,13 +1,16 @@
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
+import type { Stage } from "@songbird/precedent-iso";
 
 import { SONG_BIRD_BIEGE } from "../style/colors";
-import { DisplaySteps } from "./step/display-steps";
-import type { Step } from "./step/step";
+import { DisplayStages } from "./stage/display-stages";
+import type { StageDisplayInformation } from "./stage/stage-display-information";
 
-const CURRENT_STEP = 1;
-export const OnboardingFlow: React.FC<{ steps: Step[] }> = ({ steps }) => {
+export const OnboardingFlow: React.FC<{
+  currentStageIndex: number;
+  stages: Stage[];
+}> = ({ currentStageIndex, stages }) => {
   return (
     <Box
       display="flex"
@@ -43,15 +46,15 @@ export const OnboardingFlow: React.FC<{ steps: Step[] }> = ({ steps }) => {
         >
           <LinearProgress
             variant="buffer"
-            value={(CURRENT_STEP / steps.length) * 100}
+            value={(currentStageIndex + 1 / stages.length) * 100}
             valueBuffer={100}
           />
           <Typography variant="caption">
-            {CURRENT_STEP} of {steps.length} complete
+            {currentStageIndex + 1} of {stages.length} complete
           </Typography>
         </Box>
 
-        <DisplaySteps steps={steps} />
+        <DisplayStages stages={stages} />
       </Box>
     </Box>
   );

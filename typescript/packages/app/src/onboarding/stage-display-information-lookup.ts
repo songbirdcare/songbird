@@ -1,11 +1,15 @@
-import type { Step } from "./step/step";
+import type { StageType } from "@songbird/precedent-iso";
 
-export const STEPS: Step[] = [
-  {
+import type { StageDisplayInformation } from "./stage/stage-display-information";
+
+export const STAGE_DISPLAY_INFO_LOOKUP: Record<
+  StageType,
+  StageDisplayInformation
+> = {
+  create_account: {
     title: "Check insurance coverage",
     byline:
       "If you’d like to know your insurance coverage sooner, just submit additional info here.",
-    status: "in-progress",
     asset: {
       path: "/onboarding/hands.svg",
       width: 64,
@@ -13,11 +17,10 @@ export const STEPS: Step[] = [
       alt: "Insurance coverage",
     },
   },
-  {
+  check_insurance_coverage: {
     title: "Submit records",
     byline:
       "With a few medical records, we’ll be able to begin the process of insurance covering care.",
-    status: "disabled",
 
     asset: {
       path: "/onboarding/flower-pot.svg",
@@ -26,10 +29,9 @@ export const STEPS: Step[] = [
       alt: "Submit records",
     },
   },
-  {
+  submit_records: {
     title: "Meet your care team",
     byline: "We’ll find time for you to meet your family’s care team",
-    status: "disabled",
     asset: {
       path: "/onboarding/heart.svg",
       width: 39,
@@ -37,4 +39,15 @@ export const STEPS: Step[] = [
       alt: "Care team",
     },
   },
-];
+  commitment_to_care: {
+    title: "Complete our Commitment to Care",
+    byline:
+      "Understand and read our commitment to care, after which you’ll meet your Care Team",
+    asset: {
+      path: "/onboarding/heart.svg",
+      width: 39,
+      height: 31,
+      alt: "Commitment to care",
+    },
+  },
+};

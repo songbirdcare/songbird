@@ -8,7 +8,6 @@ import useSWR from "swr";
 
 import { AppBar } from "../src/app-bar";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
-import { STEPS } from "../src/onboarding/steps";
 import { VerifyEmail } from "../src/verify-email";
 
 const Home: React.FC = () => {
@@ -40,8 +39,11 @@ const Home: React.FC = () => {
       </Box>
       {userIsLoading && <LinearProgress />}
       {!userIsLoading && user && !user.emailVerified && <VerifyEmail />}
-      {!userIsLoading && user && user.emailVerified && (
-        <OnboardingFlow steps={STEPS} />
+      {!userIsLoading && user && user.emailVerified && workflow && (
+        <OnboardingFlow
+          currentStageIndex={workflow.currentStageIndex}
+          stages={workflow.stages}
+        />
       )}
     </Box>
   );

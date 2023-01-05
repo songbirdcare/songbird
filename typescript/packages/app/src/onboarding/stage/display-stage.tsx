@@ -4,12 +4,12 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
-import type { Step } from "./step";
+import type { StageDisplayInformation } from "./stage-display-information";
 
-export const DisplayStep: React.FC<{ step: Step; index: number }> = ({
-  step: { title, byline, asset },
-  index,
-}) => {
+export const DisplayStage: React.FC<{
+  stageDisplayInformation: StageDisplayInformation;
+  index: number;
+}> = ({ stageDisplayInformation: { title, byline, asset }, index }) => {
   return (
     <Paper sx={{ width: "100%" }} variant="outlined">
       <Box

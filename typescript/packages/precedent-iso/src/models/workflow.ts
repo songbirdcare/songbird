@@ -4,6 +4,8 @@ export type Stage =
   | SubmitRecords
   | CommitmentToCare;
 
+export type StageType = Stage["type"];
+
 interface CreateAccount {
   type: "create_account";
   blockingTasks: [];
