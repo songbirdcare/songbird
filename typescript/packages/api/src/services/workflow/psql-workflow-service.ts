@@ -2,13 +2,12 @@ import type { Stage, WorkflowModel } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
+import { SETTINGS } from "../../settings";
 import { WorkflowEngineImpl } from "./workflow-engine";
 import type {
   GetOrCreateWorkflowOptions,
   WorkflowService,
 } from "./workflow-service";
-
-import { SETTINGS } from "../../settings";
 
 const FIELDS = sql.fragment`
 id,
