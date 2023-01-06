@@ -3,7 +3,6 @@ import type { WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
-import type { userAgent } from "next/server";
 import * as React from "react";
 
 export const RenderWorkflow: React.FC<{ workflow: WorkflowModel }> = ({
