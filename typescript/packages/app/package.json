@@ -20,6 +20,7 @@
     "@auth0/nextjs-auth0": "^2.0.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@formsort/react-embed": "^3.1.0",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.3",
     "@next/font": "^13.1.1",
