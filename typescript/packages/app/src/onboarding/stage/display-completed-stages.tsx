@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { SONG_BIRD_GREEN } from "../../style/colors";
 import { STAGE_DISPLAY_INFO_LOOKUP } from "../stage-display-information-lookup";
 import type { StageWithIndex } from "./stage-display-information";
+import CheckIcon from "@mui/icons-material/Check";
 
 export const DisplayCompletedStages: React.FC<{
   stagesWithIndexes: StageWithIndex[];
@@ -40,9 +41,16 @@ const DisplayCompletedStage: React.FC<{
         <Typography variant="h6">
           {index + 1}. {title}
         </Typography>
-        <Typography color={SONG_BIRD_GREEN} textTransform="uppercase">
-          ✅ Completed
-        </Typography>
+        <Box display="flex" gap={1 / 2} alignItems="center">
+          <CheckIcon fontSize="small" />
+          <Typography
+            color={SONG_BIRD_GREEN}
+            textTransform="uppercase"
+            variant="body1"
+          >
+            Completed
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
