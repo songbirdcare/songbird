@@ -8,6 +8,8 @@ import type {
   WorkflowService,
 } from "./workflow-service";
 
+import { SETTINGS } from "../../settings";
+
 const FIELDS = sql.fragment`
 id,
 sb_user_id,
@@ -28,8 +30,8 @@ const INITIAL_STAGES: Stage[] = [
     type: "check_insurance_coverage",
     blockingTasks: [
       {
-        type: "form_blocking",
-        formId: "hi",
+        type: "form",
+        config: SETTINGS.formsort.config.onboarding,
       },
     ],
   },
@@ -37,8 +39,8 @@ const INITIAL_STAGES: Stage[] = [
     type: "submit_records",
     blockingTasks: [
       {
-        type: "form_blocking",
-        formId: "bye",
+        type: "form",
+        config: SETTINGS.formsort.config.onboarding,
       },
     ],
   },
