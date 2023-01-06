@@ -27,14 +27,9 @@ export class WorkflowRouter {
 
     router.get(
       "/submit-form",
-      async (req: express.Request, res: express.Response) => {
-        const child = await this.childService.getOrCreate(req.user.id);
-        const workflow = await this.workflowService.getOrCreateInitial({
-          userId: req.user.id,
-          childId: child.id,
-        });
+      async (_: express.Request, res: express.Response) => {
         res.json({
-          data: workflow,
+          data: "ok",
         });
       }
     );

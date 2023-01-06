@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 import type { FormSortConfig } from "./form-sort-config";
 
 export type Stage =
@@ -47,11 +45,3 @@ export interface WorkflowModel {
   stages: Stage[];
   currentStageIndex: number;
 }
-
-export const ZAction = z.object({
-  id: z.string(),
-  type: z.literal("form_submitted"),
-  formId: z.string(),
-});
-
-export type Action = z.infer<typeof ZAction>;
