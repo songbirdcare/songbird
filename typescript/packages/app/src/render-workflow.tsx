@@ -28,7 +28,6 @@ export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
       if (task === undefined) {
         throw new Error("illegal state");
       }
-      console.log({ c: task.config });
       return (
         <EmbedFlow
           clientLabel={task.config.client}
@@ -40,8 +39,8 @@ export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
               height: "100%",
             },
           }}
-          onRedirect={(url) => {
-            console.log({ url });
+          onFlowFinalized={() => {
+            router.push("/");
           }}
         />
       );
