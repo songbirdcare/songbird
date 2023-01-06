@@ -1,51 +1,21 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import type { UserModel, WorkflowModel } from "@songbird/precedent-iso";
-import Head from "next/head";
 import * as React from "react";
-import useSWR from "swr";
 
-import { AppBar } from "../src/app-bar";
+import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
-import { VerifyEmail } from "../src/verify-email";
-
 const Home: React.FC = () => {
-  const { data: user, isLoading: userIsLoading } = useSWR<UserModel>(
-    "/api/proxy/users/me",
-    async (url) => {
-      const response = await fetch(url);
-      return response.json();
-    }
-  );
-
-  const { data: workflow } = useSWR<WorkflowModel>(
-    "/api/proxy/workflows/start",
-    async (url) => {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.data;
-    }
-  );
+  const { data: workflow } = useFetchWorkflow();
   return (
-    <Box display="flex" flexDirection="column" height="100%">
-      <Head>
-        <title>Songbird Therapy</title>
-        <meta name="description" content="Innovative care" />
-        <link rel="icon" href="/favicon.svg" />
-      </Head>
-      <Box position="sticky" top={0} zIndex={100}>
-        <AppBar displayName={user?.name ?? undefined} />
-      </Box>
-      {userIsLoading && <LinearProgress />}
-      {!userIsLoading && user && !user.emailVerified && <VerifyEmail />}
-      {!userIsLoading && user && user.emailVerified && workflow && (
+    <>
+      {!workflow && <LinearProgress />}
+      {workflow && (
         <OnboardingFlow
           currentStageIndex={workflow.currentStageIndex}
           stages={workflow.stages}
         />
       )}
-    </Box>
+    </>
   );
 };
 

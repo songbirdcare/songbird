@@ -12,8 +12,14 @@ interface Props {
 
 export const AppBar: React.FC<Props> = ({ displayName }) => (
   <MuiAppBar
-    position="static"
-    sx={{ bgcolor: "white", paddingLeft: "0", paddingRight: "0" }}
+    position="sticky"
+    sx={{
+      bgcolor: "white",
+      paddingLeft: "0",
+      paddingRight: "0",
+      top: 0,
+      zIndex: 100,
+    }}
   >
     <Toolbar
       disableGutters

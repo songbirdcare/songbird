@@ -5,8 +5,6 @@ import type { EmailVerification } from "@songbird/precedent-iso";
 import React from "react";
 import useSWR from "swr";
 
-import { SONG_BIRD_BIEGE } from "./style/colors";
-
 export const VerifyEmail: React.FC = () => {
   const [url, setUrl] = React.useState<string | null>(null);
 
@@ -24,34 +22,29 @@ export const VerifyEmail: React.FC = () => {
   return (
     <Box
       display="flex"
-      justifyContent="center"
-      bgcolor={SONG_BIRD_BIEGE}
       height="100%"
+      alignItems="center"
+      justifyContent="center"
+      width="725px"
+      flexDirection="column"
     >
-      <Box
-        display="flex"
-        height="100%"
-        alignItems="center"
-        justifyContent="center"
-        width="725px"
-        flexDirection="column"
+      <Typography variant="h5" align="center">
+        Please verify your email
+      </Typography>
+
+      <Button
+        onClick={makeRequest}
+        disabled={isLoading || data !== undefined}
+        variant="contained"
       >
-        <Typography variant="h5" align="center">
-          Please verify your email
+        Send verification email
+      </Button>
+
+      {data?.data === "sent" && (
+        <Typography align="center" variant="subtitle1">
+          Email sent
         </Typography>
-
-        <Button
-          onClick={makeRequest}
-          disabled={isLoading || data !== undefined}
-          variant="contained"
-        >
-          Click here to resend a verification email
-        </Button>
-
-        {data?.data === "sent" && (
-          <Typography align="center">Email sent</Typography>
-        )}
-      </Box>
+      )}
     </Box>
   );
 };
