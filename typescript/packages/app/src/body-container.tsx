@@ -19,6 +19,7 @@ export const BodyContainer: React.FC<{
       bgcolor={SONG_BIRD_BIEGE}
       height="100%"
       sx={BACKGROUND_STYLE}
+      overflow="auto"
     >
       {children}
     </Box>

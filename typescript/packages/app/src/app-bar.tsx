@@ -32,7 +32,9 @@ export const AppBar: React.FC<Props> = ({ displayName }) => (
       }}
     >
       <Box gridArea="1 / 2 / 2 / 4" display="flex" justifyContent="center">
-        <Image src="/songbird-logo.svg" alt="me" width="128" height="64" />
+        <Link href="/" underline="none">
+          <Image src="/songbird-logo.svg" alt="me" width="128" height="64" />
+        </Link>
       </Box>
 
       <Box
