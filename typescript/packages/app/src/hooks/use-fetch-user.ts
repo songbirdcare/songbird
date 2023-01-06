@@ -1,5 +1,4 @@
 import type { UserModel } from "@songbird/precedent-iso";
-import * as React from "react";
 import useSWR from "swr";
 
 export const useFetchUser = () => {

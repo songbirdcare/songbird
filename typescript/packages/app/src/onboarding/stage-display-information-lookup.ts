@@ -8,7 +8,7 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
 > = {
   create_account: {
     title: "Create account and book time",
-    byline: "COPY TODO",
+    byline: "Book time with a care consultant.",
     asset: {
       path: "/onboarding/hands.svg",
       width: 64,

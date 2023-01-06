@@ -46,7 +46,11 @@ export const DisplayStage: React.FC<{
             <Typography>{byline}</Typography>
           </Box>
         </Box>
-        <Button variant="contained" disabled={!isEnabled}>
+        <Button
+          href="/complete-stage"
+          variant="contained"
+          disabled={!isEnabled}
+        >
           Start
         </Button>
       </Box>
