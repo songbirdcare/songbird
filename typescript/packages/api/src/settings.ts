@@ -1,3 +1,4 @@
+import { ZFormSortConfig } from "@songbird/precedent-iso";
 import { z } from "zod";
 
 const ZSettings = z.object({
@@ -18,6 +19,9 @@ const ZSettings = z.object({
   }),
   formsort: z.object({
     signingKey: z.string(),
+    config: z.object({
+      onboarding: ZFormSortConfig,
+    }),
   }),
 });
 
@@ -45,5 +49,12 @@ export const SETTINGS = ZSettings.parse({
   },
   formsort: {
     signingKey: process.env["FORM_SORT_SIGNING_KEY"],
+    config: {
+      onboarding: {
+        client: process.env["FORM_ONBOARDING_CLIENT"],
+        flowLabel: process.env["FORM_ONBOARDING_FLOW_LABEL"],
+        variantLabel: process.env["FORM_ONBOARDING_VARIANT_LABEL"],
+      },
+    },
   },
 });

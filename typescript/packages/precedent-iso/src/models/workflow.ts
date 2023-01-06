@@ -1,3 +1,5 @@
+import type { FormSortConfig } from "./form-sort-config";
+
 export type Stage =
   | CreateAccount
   | CheckInsuranceCoverage
@@ -27,8 +29,8 @@ interface CommitmentToCare {
 }
 
 interface FormBlockingTask {
-  type: "form_blocking";
-  formId: string;
+  type: "form";
+  config: FormSortConfig;
 }
 interface SignatureTask {
   type: "signature";

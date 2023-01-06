@@ -25,6 +25,15 @@ export class WorkflowRouter {
       }
     );
 
+    router.get(
+      "/submit-form",
+      async (_: express.Request, res: express.Response) => {
+        res.json({
+          data: "ok",
+        });
+      }
+    );
+
     return router;
   }
 }

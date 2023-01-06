@@ -2,6 +2,7 @@ import type { Stage, WorkflowModel } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
+import { SETTINGS } from "../../settings";
 import { WorkflowEngineImpl } from "./workflow-engine";
 import type {
   GetOrCreateWorkflowOptions,
@@ -28,8 +29,8 @@ const INITIAL_STAGES: Stage[] = [
     type: "check_insurance_coverage",
     blockingTasks: [
       {
-        type: "form_blocking",
-        formId: "hi",
+        type: "form",
+        config: SETTINGS.formsort.config.onboarding,
       },
     ],
   },
@@ -37,8 +38,8 @@ const INITIAL_STAGES: Stage[] = [
     type: "submit_records",
     blockingTasks: [
       {
-        type: "form_blocking",
-        formId: "bye",
+        type: "form",
+        config: SETTINGS.formsort.config.onboarding,
       },
     ],
   },
