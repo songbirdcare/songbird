@@ -1,14 +1,15 @@
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-const EMAIL_KEY = "email_address";
 export class PsqlFormSubmissionService implements FormSubmissionService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async insert(raw: ParsedForm): Promise<Form> {
-    const parsed = ParsedForm.parse(raw);
+  async insert(
+    raw: ParsedForm,
+    { email }: OptionalArguments = {}
+  ): Promise<Form> {
+    const parsed = ZParsedForm.parse(raw);
     const {
-      answers,
       responder_uuid,
       flow_label,
       variant_label,
@@ -16,17 +17,16 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
       created_at,
       finalized,
     } = parsed;
-    const email = answers[EMAIL_KEY] ?? null;
 
     const form = await this.pool.connect(async (connection) =>
       connection.one(
         sql.type(ZForm)`
 INSERT INTO form_submissions (email, submission, flow_label, variant_label, variant_uuid, responder_uuid, form_created_at, finalized)
-    VALUES (${email}, ${JSON.stringify(
+    VALUES (${email ?? null}, ${JSON.stringify(
           parsed
         )}, ${flow_label}, ${variant_label}, ${variant_uuid}, ${responder_uuid}, ${created_at}, ${finalized})
 RETURNING
-    id, email
+    id
 `
       )
     );
@@ -34,12 +34,16 @@ RETURNING
     return form;
   }
 
-  parse = (raw: Record<string, unknown>): ParsedForm => ParsedForm.parse(raw);
+  parse = (raw: Record<string, unknown>): ParsedForm => ZParsedForm.parse(raw);
 }
 
 export interface FormSubmissionService {
-  insert: (form: ParsedForm) => Promise<Form>;
+  insert: (form: ParsedForm, opts?: OptionalArguments) => Promise<Form>;
   parse: (raw: Record<string, unknown>) => ParsedForm;
+}
+
+interface OptionalArguments {
+  email?: string;
 }
 
 export interface InsertFormSubmissionArgs {
@@ -48,12 +52,11 @@ export interface InsertFormSubmissionArgs {
 
 const ZForm = z.object({
   id: z.string(),
-  email: z.string(),
 });
 type Form = z.infer<typeof ZForm>;
-export type ParsedForm = z.infer<typeof ParsedForm>;
+export type ParsedForm = z.infer<typeof ZParsedForm>;
 
-const ParsedForm = z.object({
+const ZParsedForm = z.object({
   answers: z.record(z.string().min(1), z.any()),
   responder_uuid: z.string(),
   flow_label: z.string(),

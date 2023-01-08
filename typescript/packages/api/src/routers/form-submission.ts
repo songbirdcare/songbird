@@ -1,4 +1,5 @@
 import { assertNever } from "@songbird/precedent-iso";
+import { z } from "zod";
 import crypto from "crypto";
 import express from "express";
 
@@ -18,48 +19,39 @@ export class FormSubmissionRouter {
     const router = express.Router();
 
     router.post(
-      "/callback",
+      "/post-onboarding",
+      validateSignatureMiddleware,
       async (req: express.Request, res: express.Response) => {
-        const validationResult = validateSignature({
-          signingKey: SETTINGS.formsort.signingKey,
-          signature: req.headers["x-formsort-signature"] as string | undefined,
-          body: req.rawBody,
-        });
+        await this.formSubmissionService.insert(
+          this.formSubmissionService.parse(req.body)
+        );
+        res.send("ok");
+      }
+    );
 
-        switch (validationResult) {
-          case "valid":
-          case "pass":
-            break;
-          case "invalid":
-            {
-              res.status(400).json({
-                status: "ERROR",
-                message: "Could not validate webhook result",
-              });
-              res.end();
-            }
-            return;
-
-          default:
-            assertNever(validationResult);
-        }
-
+    router.post(
+      "/onboarding-callback",
+      validateSignatureMiddleware,
+      async (req: express.Request, res: express.Response) => {
         console.log("Parsing form");
         const parsedForm = this.formSubmissionService.parse(req.body);
-        console.log("Inserting form");
-        const form = await this.formSubmissionService.insert(parsedForm);
+
+        const withEmail = ZFormWithEmail.parse(parsedForm.answers);
+        const email = withEmail.email_address;
+
+        await this.formSubmissionService.insert(parsedForm, { email });
         console.log("Creating Auth0 user");
-        const { user } = await this.auth0Service.createUser(form.email);
+        const { user } = await this.auth0Service.createUser(email);
 
         await this.userService.upsert({
-          email: form.email,
+          email,
           sub: user.sub,
           emailVerified: true,
         });
 
         if (user.connectionType === "auth0") {
-          console.log(`Sending email to ${form.email}`);
-          await this.auth0Service.sendPasswordReset(form.email);
+          console.log(`Sending email to ${email}`);
+          await this.auth0Service.sendPasswordReset(email);
         }
         res.json({ status: "OK" });
       }
@@ -99,3 +91,36 @@ function validateSignature({
   console.log(`The difference is ${hash} vs ${signature}`);
   return "invalid";
 }
+
+async function validateSignatureMiddleware(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+): Promise<void> {
+  const validationResult = validateSignature({
+    signingKey: SETTINGS.formsort.signingKey,
+    signature: req.headers["x-formsort-signature"] as string | undefined,
+    body: req.rawBody,
+  });
+
+  switch (validationResult) {
+    case "valid":
+    case "pass":
+      next();
+      break;
+    case "invalid":
+      {
+        res.status(400).json({
+          status: "ERROR",
+          message: "Could not validate webhook result",
+        });
+        res.end();
+      }
+      break;
+    default:
+      assertNever(validationResult);
+  }
+}
+const ZFormWithEmail = z.object({
+  email_address: z.string(),
+});

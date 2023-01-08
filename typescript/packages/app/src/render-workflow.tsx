@@ -7,9 +7,10 @@ import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
-export const RenderWorkflow: React.FC<{ workflow: WorkflowModel }> = ({
-  workflow,
-}) => {
+export const RenderWorkflow: React.FC<{
+  userId: string;
+  workflow: WorkflowModel;
+}> = ({ userId, workflow }) => {
   const { currentStageIndex, stages } = workflow;
 
   const currentStage = stages[currentStageIndex];
@@ -17,13 +18,16 @@ export const RenderWorkflow: React.FC<{ workflow: WorkflowModel }> = ({
     throw new Error("illegal state");
   }
 
-  return <RenderStage stage={currentStage} />;
+  return <RenderStage userId={userId} stage={currentStage} />;
 };
 
 type FormResponseData = Parameters<
   NonNullable<IReactEmbedEventMap["onFlowFinalized"]>
 >[0];
-export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
+
+export const RenderStage: React.FC<{ userId: string; stage: Stage }> = ({
+  stage,
+}) => {
   const router = useRouter();
 
   const [formData, setFormData] = React.useState<FormResponseData | undefined>(
@@ -39,6 +43,7 @@ export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
       return res.json();
     }
   );
+  console.log({ formData });
 
   React.useEffect(() => {
     if (formData === undefined) {
@@ -48,7 +53,7 @@ export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
 
   React.useEffect(() => {
     if (formData !== undefined) {
-      router.push("/");
+      //router.push("/");
     }
   }, [router, formData]);
 
@@ -68,6 +73,7 @@ export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
           clientLabel={task.config.client}
           flowLabel={task.config.flowLabel}
           variantLabel={task.config.variantLabel}
+          responderUuid={"00000000-0000-0000-0000-000000000000"}
           embedConfig={{
             style: {
               width: "100%",
@@ -75,6 +81,7 @@ export const RenderStage: React.FC<{ stage: Stage }> = ({ stage }) => {
             },
           }}
           onFlowFinalized={(payload) => {
+            console.log({ payload });
             setFormData(payload);
           }}
         />
