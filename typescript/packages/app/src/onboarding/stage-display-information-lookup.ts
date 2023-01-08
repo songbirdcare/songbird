@@ -17,7 +17,7 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
     },
   },
   check_insurance_coverage: {
-    title: "Submit records",
+    title: "Check insurance coverage",
     byline:
       "If you’d like to know your insurance coverage sooner, just submit additional info here.",
     asset: {
@@ -28,8 +28,7 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
     },
   },
   submit_records: {
-    title: "Meet your care team",
-
+    title: "Submit records",
     byline:
       "With medical records & your availability, we’ll be able to begin the process of insurance covering care.",
     asset: {
