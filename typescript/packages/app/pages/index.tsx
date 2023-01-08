@@ -2,19 +2,28 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import LinearProgress from "@mui/material/LinearProgress";
 import * as React from "react";
 
+import { AppBar } from "../src/app-bar/app-bar";
+import { BodyContainer } from "../src/body-container";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
+import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
+
 const Home: React.FC = () => {
   const { data: workflow } = useFetchWorkflow();
+  useRedirectIfNotVerified();
   return (
     <>
-      {!workflow && <LinearProgress />}
-      {workflow && (
-        <OnboardingFlow
-          currentStageIndex={workflow.currentStageIndex}
-          stages={workflow.stages}
-        />
-      )}
+      <AppBar />
+
+      <BodyContainer>
+        {!workflow && <LinearProgress />}
+        {workflow && (
+          <OnboardingFlow
+            currentStageIndex={workflow.currentStageIndex}
+            stages={workflow.stages}
+          />
+        )}
+      </BodyContainer>
     </>
   );
 };

@@ -25,7 +25,7 @@ export class WorkflowRouter {
       }
     );
 
-    router.get(
+    router.post(
       "/submit-form",
       async (_: express.Request, res: express.Response) => {
         res.json({
