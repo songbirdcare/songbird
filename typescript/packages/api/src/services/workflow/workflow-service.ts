@@ -5,7 +5,7 @@ export interface WorkflowService {
   getOrCreateInitial(
     args: GetOrCreateWorkflowArguments
   ): Promise<WorkflowModel>;
-  update(workflow: UpdateWorkflow): Promise<void>;
+  update(workflow: UpdateWorkflow): Promise<WorkflowModel>;
 }
 
 export interface GetOrCreateWorkflowArguments {

@@ -42,12 +42,20 @@ export class WorkflowRouter {
           WorkflowActionService.submitForm(workflow, stageIndex);
 
         if (hasChanged) {
-          await this.workflowService.update(changedWorkflow);
+          res.json({
+            data: {
+              hasChanged,
+              workflow: await this.workflowService.update(changedWorkflow),
+            },
+          });
+        } else {
+          res.json({
+            data: {
+              hasChanged: false,
+              workflow,
+            },
+          });
         }
-
-        res.json({
-          data: "ok",
-        });
       }
     );
 

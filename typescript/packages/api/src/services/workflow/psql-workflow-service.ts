@@ -30,7 +30,7 @@ const INITIAL_STAGES: Stage[] = [
     blockingTasks: [
       {
         type: "form",
-        config: SETTINGS.formsort.config.onboarding,
+        config: SETTINGS.formsort.config.checkInsuranceCoverage,
       },
     ],
   },
@@ -39,7 +39,7 @@ const INITIAL_STAGES: Stage[] = [
     blockingTasks: [
       {
         type: "form",
-        config: SETTINGS.formsort.config.onboarding,
+        config: SETTINGS.formsort.config.submitRecords,
       },
     ],
   },
@@ -52,6 +52,8 @@ const INITIAL_STAGES: Stage[] = [
     ],
   },
 ];
+
+console.log(JSON.stringify(INITIAL_SLUG, null, 2));
 
 export class PsqlWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
@@ -119,10 +121,12 @@ RETURNING
     return workflow;
   }
 
-  update = async (args: UpdateWorkflow): Promise<void> => {
-    this.pool.connect(async (connection) =>
+  update = async (args: UpdateWorkflow): Promise<WorkflowModel> => {
+    const response = await this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => this.#update(trx, args))
     );
+
+    return fromSQL(response);
   };
 
   async #update(

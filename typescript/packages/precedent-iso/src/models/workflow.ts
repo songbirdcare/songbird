@@ -8,31 +8,32 @@ export type Stage =
 
 export type StageType = Stage["type"];
 
-interface CreateAccount {
+export interface CreateAccount {
   type: "create_account";
   blockingTasks: [];
 }
 
-interface CheckInsuranceCoverage {
+export interface CheckInsuranceCoverage {
   type: "check_insurance_coverage";
   blockingTasks: [FormBlockingTask];
 }
 
-interface SubmitRecords {
+export interface SubmitRecords {
   type: "submit_records";
   blockingTasks: [FormBlockingTask];
 }
 
-interface CommitmentToCare {
+export interface CommitmentToCare {
   type: "commitment_to_care";
   blockingTasks: [SignatureTask];
 }
 
-interface FormBlockingTask {
+export interface FormBlockingTask {
   type: "form";
   config: FormSortConfig;
 }
-interface SignatureTask {
+
+export interface SignatureTask {
   type: "signature";
 }
 
