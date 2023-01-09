@@ -1,10 +1,9 @@
+import { ZSubmitFormRequest } from "@songbird/precedent-iso";
 import express from "express";
 
 import type { ChildService } from "../services/child/child-service";
 import { WorkflowActionService } from "../services/workflow/workflow-action-service";
 import type { WorkflowService } from "../services/workflow/workflow-service";
-
-import { ZSubmitFormRequest } from "@songbird/precedent-iso";
 
 export class WorkflowRouter {
   constructor(
@@ -45,7 +44,6 @@ export class WorkflowRouter {
         if (hasChanged) {
           await this.workflowService.update(changedWorkflow);
         }
-        console.log("hi");
 
         res.json({
           data: "ok",
