@@ -28,7 +28,7 @@ export const VerifyEmail: React.FC = () => {
       width="725px"
       flexDirection="column"
     >
-      <Typography variant="h5" align="center">
+      <Typography variant="h6" align="center">
         Please verify your email
       </Typography>
 

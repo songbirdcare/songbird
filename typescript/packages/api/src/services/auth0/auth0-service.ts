@@ -59,6 +59,7 @@ export class Auth0Service {
       password: `${crypto.randomBytes(20).toString("hex")}XYZxyz123!@#`,
       email_verified: true,
     });
+
     const sub = user.user_id;
     if (sub === undefined) {
       throw new Error("id is undefined");

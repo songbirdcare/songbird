@@ -93,7 +93,6 @@ async function start() {
     "/api/v1/users",
     jwtCheck,
     addUser,
-    userIsVerified,
     new UserRouter(auth0Service).init()
   );
   app.use(

@@ -11,7 +11,6 @@ import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 const Home: React.FC = () => {
   const { data: workflow } = useFetchWorkflow();
   useRedirectIfNotVerified();
-  console.log({ workflow });
   return (
     <>
       <AppBar />

@@ -6,6 +6,9 @@ import * as React from "react";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { VerifyEmail } from "../src/verify-email";
 
+import { AppBar } from "../src/app-bar/app-bar";
+import { BodyContainer } from "../src/body-container";
+
 const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
 
@@ -17,7 +20,15 @@ const Home: React.FC = () => {
     }
   }, [router, isEmailVerified]);
 
-  return <>{userIsLoading ? <LinearProgress /> : <VerifyEmail />}</>;
+  return (
+    <>
+      <AppBar />
+
+      <BodyContainer>
+        {userIsLoading ? <LinearProgress /> : <VerifyEmail />}
+      </BodyContainer>
+    </>
+  );
 };
 
 export default withPageAuthRequired(Home);
