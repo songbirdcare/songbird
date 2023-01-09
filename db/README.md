@@ -6,7 +6,7 @@ Install `dbmate`
 brew install dbmate
 ```
 
-Run migration through docker compose
+Run migration through docker
 
 ```sh
 docker compose up
