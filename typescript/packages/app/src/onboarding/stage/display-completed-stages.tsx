@@ -14,7 +14,7 @@ export const DisplayCompletedStages: React.FC<{
       <Box marginBottom={1}>
         <Typography variant="subtitle2">Completed</Typography>
       </Box>
-      <Box display="flex">
+      <Box display="flex" flexDirection="column">
         {stagesWithIndexes.map(({ stage, index }) => {
           const stageDisplayInformation = STAGE_DISPLAY_INFO_LOOKUP[stage.type];
           return (
@@ -38,9 +38,11 @@ const DisplayCompletedStage: React.FC<{
     <Box display="flex">
       <Typography variant="subtitle2"></Typography>
       <Box display="flex" gap={3} paddingLeft={1 / 2} alignItems="center">
-        <Typography variant="h6">
-          {index + 1}. {title}
-        </Typography>
+        <Box width="300px">
+          <Typography variant="h6">
+            {index + 1}. {title}
+          </Typography>
+        </Box>
         <Box display="flex" gap={1 / 2} alignItems="center">
           <CheckIcon fontSize="small" />
           <Typography

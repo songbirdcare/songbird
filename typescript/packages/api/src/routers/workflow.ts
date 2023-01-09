@@ -1,7 +1,10 @@
 import express from "express";
 
 import type { ChildService } from "../services/child/child-service";
+import { WorkflowActionService } from "../services/workflow/workflow-action-service";
 import type { WorkflowService } from "../services/workflow/workflow-service";
+
+import { ZSubmitFormRequest } from "@songbird/precedent-iso";
 
 export class WorkflowRouter {
   constructor(
@@ -25,9 +28,25 @@ export class WorkflowRouter {
       }
     );
 
-    router.post(
+    router.put(
       "/submit-form",
-      async (_: express.Request, res: express.Response) => {
+      async (req: express.Request, res: express.Response) => {
+        const { stageIndex } = ZSubmitFormRequest.parse(req.body);
+
+        const child = await this.childService.getOrCreate(req.user.id);
+        const workflow = await this.workflowService.getOrCreateInitial({
+          userId: req.user.id,
+          childId: child.id,
+        });
+
+        const { hasChanged, workflow: changedWorkflow } =
+          WorkflowActionService.submitForm(workflow, stageIndex);
+
+        if (hasChanged) {
+          await this.workflowService.update(changedWorkflow);
+        }
+        console.log("hi");
+
         res.json({
           data: "ok",
         });

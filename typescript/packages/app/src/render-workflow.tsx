@@ -1,4 +1,4 @@
-import EmbedFlow, { IReactEmbedEventMap } from "@formsort/react-embed";
+import EmbedFlow from "@formsort/react-embed";
 import { LinearProgress } from "@mui/material";
 import type { WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
@@ -18,44 +18,51 @@ export const RenderWorkflow: React.FC<{
     throw new Error("illegal state");
   }
 
-  return <RenderStage userId={userId} stage={currentStage} />;
+  return (
+    <RenderStage
+      userId={userId}
+      stage={currentStage}
+      currentStageIndex={currentStageIndex}
+    />
+  );
 };
 
-type FormResponseData = Parameters<
-  NonNullable<IReactEmbedEventMap["onFlowFinalized"]>
->[0];
-
-export const RenderStage: React.FC<{ userId: string; stage: Stage }> = ({
-  stage,
-}) => {
+export const RenderStage: React.FC<{
+  userId: string;
+  stage: Stage;
+  currentStageIndex: number;
+}> = ({ stage, currentStageIndex, userId }) => {
   const router = useRouter();
 
-  const [formData, setFormData] = React.useState<FormResponseData | undefined>(
-    undefined
-  );
+  const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
 
-  const { trigger, isMutating } = useSWRMutation(
+  const { trigger, isMutating, data } = useSWRMutation(
     "/api/proxy/workflows/submit-form",
     async (url) => {
       const res = await fetch(url, {
-        method: "POST",
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stageIndex: currentStageIndex,
+        }),
       });
       return res.json();
     }
   );
-  console.log({ formData });
 
   React.useEffect(() => {
-    if (formData === undefined) {
+    if (hasSubmittedForm) {
       trigger();
     }
-  }, [trigger, formData]);
+  }, [trigger, hasSubmittedForm]);
 
   React.useEffect(() => {
-    if (formData !== undefined) {
-      //router.push("/");
+    if (data) {
+      router.push("/");
     }
-  }, [router, formData]);
+  }, [router, data]);
 
   if (isMutating) {
     return <LinearProgress />;
@@ -63,6 +70,8 @@ export const RenderStage: React.FC<{ userId: string; stage: Stage }> = ({
 
   switch (stage.type) {
     case "create_account":
+      throw Error("not implemented");
+    case "submit_records":
     case "check_insurance_coverage": {
       const [task] = stage.blockingTasks;
       if (task === undefined) {
@@ -73,23 +82,19 @@ export const RenderStage: React.FC<{ userId: string; stage: Stage }> = ({
           clientLabel={task.config.client}
           flowLabel={task.config.flowLabel}
           variantLabel={task.config.variantLabel}
-          responderUuid={"00000000-0000-0000-0000-000000000000"}
+          responderUuid={userId}
           embedConfig={{
             style: {
               width: "100%",
               height: "100%",
             },
           }}
-          onFlowFinalized={(payload) => {
-            console.log({ payload });
-            setFormData(payload);
-          }}
+          onFlowFinalized={() => setHasSubmittedForm(true)}
         />
       );
     }
-    case "submit_records":
     case "commitment_to_care":
-      throw new Error("not implemented");
+      return <div>Commitment To Care</div>;
 
     default:
       assertNever(stage);

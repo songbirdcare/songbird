@@ -3,9 +3,9 @@ import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
 import { SETTINGS } from "../../settings";
-import { WorkflowEngineImpl } from "./workflow-engine";
+import { WorkflowActionService } from "./workflow-action-service";
 import type {
-  GetOrCreateWorkflowOptions,
+  GetOrCreateWorkflowArguments,
   WorkflowService,
 } from "./workflow-service";
 
@@ -53,19 +53,19 @@ const INITIAL_STAGES: Stage[] = [
   },
 ];
 
-export class PsqWorkflowService implements WorkflowService {
+export class PsqlWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
   async getOrCreateInitial({
     userId,
     childId,
-  }: GetOrCreateWorkflowOptions): Promise<WorkflowModel> {
+  }: GetOrCreateWorkflowArguments): Promise<WorkflowModel> {
     return this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
         const workflow = fromSQL(
           await this.#getOrCreateSql(trx, { userId, childId })
         );
-        const result = WorkflowEngineImpl.tryAdvanceWorkflow(workflow);
+        const result = WorkflowActionService.tryAdvance(workflow);
         if (!result.hasChanged) {
           return workflow;
         }
@@ -82,7 +82,7 @@ export class PsqWorkflowService implements WorkflowService {
   async #getOrCreateSql(
     trx: DatabaseTransactionConnection,
 
-    { userId, childId }: GetOrCreateWorkflowOptions
+    { userId, childId }: GetOrCreateWorkflowArguments
   ): Promise<WorkflowFromSql> {
     const workflows = await trx.query(
       sql.type(ZWorkflowFromSql)`
@@ -118,6 +118,12 @@ RETURNING
 
     return workflow;
   }
+
+  update = async (args: UpdateWorkflow): Promise<void> => {
+    this.pool.connect(async (connection) =>
+      connection.transaction(async (trx) => this.#update(trx, args))
+    );
+  };
 
   async #update(
     trx: DatabaseTransactionConnection,

@@ -6,8 +6,32 @@ import type { WorkflowModel } from "@songbird/precedent-iso";
 
 const MAX_ATTEMPTS = 10;
 
-export class WorkflowEngineImpl {
-  static tryAdvanceWorkflow(workflow: WorkflowModel): TryAdvanceWorkflowResult {
+export class WorkflowActionService {
+  static submitForm(
+    workflow: WorkflowModel,
+    stageIndex: number
+  ): WorkflowWithHasChanged {
+    const clone = JSON.parse(JSON.stringify(workflow)) as WorkflowModel;
+
+    if (stageIndex !== clone.currentStageIndex) {
+      console.warn(
+        `Stage mismatch ${stageIndex} !== ${clone.currentStageIndex}`
+      );
+      return {
+        hasChanged: false,
+        workflow: clone,
+      };
+    }
+
+    // TODO we might want to update blockingTasks here
+    clone.currentStageIndex += 1;
+    return {
+      hasChanged: true,
+      workflow: clone,
+    };
+  }
+
+  static tryAdvance(workflow: WorkflowModel): WorkflowWithHasChanged {
     const clone = JSON.parse(JSON.stringify(workflow)) as WorkflowModel;
 
     let hasChanged = false;
@@ -34,7 +58,7 @@ export class WorkflowEngineImpl {
   }
 }
 
-export interface TryAdvanceWorkflowResult {
+export interface WorkflowWithHasChanged {
   hasChanged: boolean;
   workflow: WorkflowModel;
 }
