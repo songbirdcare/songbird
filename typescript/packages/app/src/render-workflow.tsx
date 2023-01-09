@@ -1,11 +1,14 @@
 import EmbedFlow from "@formsort/react-embed";
 import { LinearProgress } from "@mui/material";
-import type { WorkflowModel } from "@songbird/precedent-iso";
+import { Box, Typography } from "@mui/material";
+import type { FormBlockingTask, WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
+
+import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
 
 export const RenderWorkflow: React.FC<{
   userId: string;
@@ -32,7 +35,44 @@ export const RenderStage: React.FC<{
   stage: Stage;
   currentStageIndex: number;
 }> = ({ stage, currentStageIndex, userId }) => {
+  switch (stage.type) {
+    case "create_account":
+      throw Error("not implemented");
+    case "submit_records":
+    case "check_insurance_coverage": {
+      const [task] = stage.blockingTasks;
+
+      if (task === undefined) {
+        throw new Error("illegal state");
+      }
+
+      return (
+        <RenderForm
+          task={task}
+          userId={userId}
+          currentStageIndex={currentStageIndex}
+        />
+      );
+    }
+    case "commitment_to_care":
+      return (
+        <Box display="flex" marginTop={3}>
+          <Typography> Please sign the agreement</Typography>
+        </Box>
+      );
+
+    default:
+      assertNever(stage);
+  }
+};
+
+const RenderForm: React.FC<{
+  task: FormBlockingTask;
+  userId: string;
+  currentStageIndex: number;
+}> = ({ task, userId, currentStageIndex }) => {
   const router = useRouter();
+  const { mutate } = useFetchWorkflow();
 
   const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
 
@@ -60,43 +100,27 @@ export const RenderStage: React.FC<{
 
   React.useEffect(() => {
     if (data) {
+      mutate();
       router.push("/");
     }
-  }, [router, data]);
+  }, [router, data, mutate]);
 
   if (isMutating) {
     return <LinearProgress />;
   }
-
-  switch (stage.type) {
-    case "create_account":
-      throw Error("not implemented");
-    case "submit_records":
-    case "check_insurance_coverage": {
-      const [task] = stage.blockingTasks;
-      if (task === undefined) {
-        throw new Error("illegal state");
-      }
-      return (
-        <EmbedFlow
-          clientLabel={task.config.client}
-          flowLabel={task.config.flowLabel}
-          variantLabel={task.config.variantLabel}
-          responderUuid={userId}
-          embedConfig={{
-            style: {
-              width: "100%",
-              height: "100%",
-            },
-          }}
-          onFlowFinalized={() => setHasSubmittedForm(true)}
-        />
-      );
-    }
-    case "commitment_to_care":
-      return <div>Commitment To Care</div>;
-
-    default:
-      assertNever(stage);
-  }
+  return (
+    <EmbedFlow
+      clientLabel={task.config.client}
+      flowLabel={task.config.flowLabel}
+      variantLabel={task.config.variantLabel}
+      responderUuid={userId}
+      embedConfig={{
+        style: {
+          width: "100%",
+          height: "100%",
+        },
+      }}
+      onFlowFinalized={() => setHasSubmittedForm(true)}
+    />
+  );
 };

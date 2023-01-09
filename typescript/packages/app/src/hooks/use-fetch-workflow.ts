@@ -2,7 +2,7 @@ import type { WorkflowModel } from "@songbird/precedent-iso";
 import useSWR from "swr";
 
 export const useFetchWorkflow = () => {
-  const { data, isLoading } = useSWR<WorkflowModel>(
+  const { data, isLoading, mutate } = useSWR<WorkflowModel>(
     "/api/proxy/workflows/start",
     async (url) => {
       const response = await fetch(url);
@@ -11,5 +11,5 @@ export const useFetchWorkflow = () => {
     }
   );
 
-  return { data, isLoading };
+  return { data, isLoading, mutate };
 };
