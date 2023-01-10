@@ -24,6 +24,8 @@ import { invalidPathHandler } from "./middleware/invalid-path-handler";
 import { WorkflowRouter } from "./routers/workflow";
 import { PsqlChildService } from "./services/child/psql-child-service";
 import { PsqlWorkflowService } from "./services/workflow/psql-workflow-service";
+import { CalendarRouter } from "./routers/calender";
+import { SignatureRouter } from "./routers/signature";
 
 console.log("Booting application!");
 
@@ -110,6 +112,10 @@ async function start() {
     userIsVerified,
     new WorkflowRouter(childService, workflowService).init()
   );
+
+  app.use("/api/v1/calendar", new CalendarRouter().init());
+
+  app.use("/api/v1/signature", new SignatureRouter().init());
 
   app.use(errorLogger);
   app.use(errorResponder);
