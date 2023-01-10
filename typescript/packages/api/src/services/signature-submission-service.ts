@@ -20,8 +20,6 @@ INSERT INTO signature_submissions (raw, envelope_id, email_subject, event_create
     VALUES (${JSON.stringify(
       raw
     )}, ${envelopeId}, ${emailSubject}, ${eventCreatedAt}, ${counterPartyEmail}, ${status})
-RETURNING
-    id
 `
       )
     );
