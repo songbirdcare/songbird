@@ -26,6 +26,7 @@ import { PsqlChildService } from "./services/child/psql-child-service";
 import { PsqlWorkflowService } from "./services/workflow/psql-workflow-service";
 import { CalendarRouter } from "./routers/calender";
 import { SignatureRouter } from "./routers/signature";
+import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-service";
 
 console.log("Booting application!");
 
@@ -69,6 +70,7 @@ async function start() {
   );
 
   const userService = new PsqlUserService(pool);
+  const calendarService = new PsqlCalendarSubmissionsService(pool);
 
   const childService = new PsqlChildService(pool);
   const workflowService = new PsqlWorkflowService(pool);
@@ -113,7 +115,7 @@ async function start() {
     new WorkflowRouter(childService, workflowService).init()
   );
 
-  app.use("/api/v1/calendar", new CalendarRouter().init());
+  app.use("/api/v1/calendar", new CalendarRouter(calendarService).init());
 
   app.use("/api/v1/signature", new SignatureRouter().init());
 
