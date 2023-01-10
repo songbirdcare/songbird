@@ -28,6 +28,8 @@ import { CalendarRouter } from "./routers/calender";
 import { SignatureRouter } from "./routers/signature";
 import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-service";
 
+import { PsqlSignatureSubmissionService } from "./services/signature-submission-service";
+
 console.log("Booting application!");
 
 const jwtCheck = expressjwt({
@@ -71,6 +73,7 @@ async function start() {
 
   const userService = new PsqlUserService(pool);
   const calendarService = new PsqlCalendarSubmissionsService(pool);
+  const signatureSubmissionService = new PsqlSignatureSubmissionService(pool);
 
   const childService = new PsqlChildService(pool);
   const workflowService = new PsqlWorkflowService(pool);
@@ -117,7 +120,10 @@ async function start() {
 
   app.use("/api/v1/calendar", new CalendarRouter(calendarService).init());
 
-  app.use("/api/v1/signature", new SignatureRouter().init());
+  app.use(
+    "/api/v1/signature",
+    new SignatureRouter(signatureSubmissionService).init()
+  );
 
   app.use(errorLogger);
   app.use(errorResponder);
