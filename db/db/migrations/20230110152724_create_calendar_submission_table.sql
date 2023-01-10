@@ -10,7 +10,5 @@ CREATE TABLE
     invitee_email text not null
   );
 
-CREATE INDEX IF NOT EXISTS "email_calendar_submissions_index" ON "calendar_submissions" ("invitee_email", "event_type_slug");
-
 -- migrate:down
 DROP TABLE IF EXISTS calendar_submissions;
