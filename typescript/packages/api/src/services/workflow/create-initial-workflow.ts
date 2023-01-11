@@ -14,6 +14,7 @@ export function createInitialStages(): Stage[] {
       blockingTasks: [
         {
           id: randomUUID(),
+          status: "pending",
           type: "schedule",
         },
       ],
@@ -24,6 +25,7 @@ export function createInitialStages(): Stage[] {
       blockingTasks: [
         {
           id: randomUUID(),
+          status: "pending",
           type: "form",
           config: SETTINGS.formsort.config.checkInsuranceCoverage,
         },
@@ -35,6 +37,7 @@ export function createInitialStages(): Stage[] {
       blockingTasks: [
         {
           id: randomUUID(),
+          status: "pending",
           type: "form",
           config: SETTINGS.formsort.config.submitRecords,
         },
@@ -46,6 +49,7 @@ export function createInitialStages(): Stage[] {
       blockingTasks: [
         {
           id: randomUUID(),
+          status: "pending",
           type: "signature",
         },
       ],

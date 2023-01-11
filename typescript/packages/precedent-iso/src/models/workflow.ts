@@ -14,6 +14,7 @@ export type Task = Unarray<Stage["blockingTasks"]>;
 
 interface BaseTask {
   id: string;
+  status: "pending" | "complete";
 }
 
 interface BaseStage {
@@ -111,18 +112,34 @@ export class WorkflowWrapper {
 
   advance(): void {
     const stage = this.currentStage;
-    this.#hasChanged = true;
-    console.log("wtf");
 
-    debugger;
-    stage.blockingTasks.shift();
-    if (stage.blockingTasks.length === 0) {
-      if (this.#copy.currentStageIndex === this.#copy.stages.length - 1) {
-        this.#copy.status = "completed";
-      } else {
-        this.#copy.currentStageIndex++;
-      }
+    this.#hasChanged = true;
+
+    const firstPendingTaskIndex = (stage.blockingTasks as Task[]).findIndex(
+      (t) => t.status === "pending"
+    );
+
+    if (firstPendingTaskIndex === -1) {
+      throw new Error("no pending tasks available");
     }
+
+    const task = stage.blockingTasks[firstPendingTaskIndex];
+    if (task === undefined) {
+      throw new Error("illegal state");
+    }
+
+    task.status = "complete";
+
+    const isLastTask = firstPendingTaskIndex === stage.blockingTasks.length - 1;
+    if (isLastTask && this.isLastStage) {
+      this.#copy.status = "completed";
+    } else if (isLastTask) {
+      this.#copy.currentStageIndex++;
+    }
+  }
+
+  get isLastStage() {
+    return this.#copy.currentStageIndex === this.#copy.stages.length - 1;
   }
 
   static getLatestBlockingTask<S extends Stage>({

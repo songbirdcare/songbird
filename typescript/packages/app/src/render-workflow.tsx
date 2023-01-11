@@ -1,7 +1,11 @@
 import EmbedFlow from "@formsort/react-embed";
 import { LinearProgress } from "@mui/material";
-import { Box, Typography } from "@mui/material";
-import type { FormTask, WorkflowModel } from "@songbird/precedent-iso";
+import { Box, Typography, Button } from "@mui/material";
+import type {
+  FormTask,
+  ScheduleTask,
+  WorkflowModel,
+} from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
@@ -9,6 +13,7 @@ import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
 import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
+import { SETTINGS } from "./settings";
 
 export const RenderWorkflow: React.FC<{
   userId: string;
@@ -36,8 +41,21 @@ export const RenderStage: React.FC<{
   workflowId: string;
 }> = ({ stage, userId, workflowId }) => {
   switch (stage.type) {
-    case "create_account":
-      throw Error("not implemented");
+    case "create_account": {
+      const [task] = stage.blockingTasks;
+
+      if (task === undefined) {
+        throw new Error("illegal state");
+      }
+      return (
+        <RenderSchedule
+          stageId={stage.id}
+          taskId={task.id}
+          workflowId={workflowId}
+        />
+      );
+    }
+
     case "submit_records":
     case "check_insurance_coverage": {
       const [task] = stage.blockingTasks;
@@ -70,8 +88,8 @@ export const RenderStage: React.FC<{
 const RenderForm: React.FC<{
   workflowId: string;
   task: FormTask;
-  userId: string;
   stageId: string;
+  userId: string;
 }> = ({ workflowId, task, userId, stageId }) => {
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
@@ -126,5 +144,52 @@ const RenderForm: React.FC<{
       }}
       onFlowFinalized={() => setHasSubmittedForm(true)}
     />
+  );
+};
+
+const RenderSchedule: React.FC<{
+  workflowId: string;
+  taskId: string;
+  stageId: string;
+}> = ({ workflowId, taskId, stageId }) => {
+  const router = useRouter();
+  const { mutate } = useFetchWorkflow();
+
+  const { trigger, isMutating, data } = useSWRMutation(
+    `/api/proxy/workflows/action/${workflowId}`,
+    async (url) => {
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "schedule",
+          taskId,
+          stageId,
+        }),
+      });
+      return res.json();
+    }
+  );
+
+  React.useEffect(() => {
+    if (data) {
+      mutate();
+      router.push("/");
+    }
+  }, [router, data, mutate]);
+
+  if (isMutating) {
+    return <LinearProgress />;
+  }
+  return (
+    <Box>
+      {SETTINGS.enableDebuggingAction && (
+        <Button onClick={trigger} disabled={isMutating}>
+          Skip to next step
+        </Button>
+      )}
+    </Box>
   );
 };

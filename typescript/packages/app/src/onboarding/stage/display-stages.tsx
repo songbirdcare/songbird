@@ -31,10 +31,12 @@ export const DisplayStages: React.FC<{
           const stageDisplayInformation = STAGE_DISPLAY_INFO_LOOKUP[stage.type];
           return (
             <DisplayStage
+              stage={stage}
               stageDisplayInformation={stageDisplayInformation}
-              isEnabled={index === currentStageIndex}
+              isCurrentStage={index === currentStageIndex}
               index={index}
               key={stage.type}
+              currentStageIndex={currentStageIndex}
             />
           );
         })}

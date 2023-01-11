@@ -34,7 +34,7 @@ export class WorkflowActionService {
       return workflow;
     }
     switch (action.type) {
-      case "form":
+      case "form": {
         if (info.task.type !== "form") {
           throw new Error("task is not a form");
         }
@@ -42,8 +42,26 @@ export class WorkflowActionService {
         wrapper.advance();
 
         return this.workflowService.update(wrapper.workflow);
+      }
+
+      case "signature": {
+        if (info.task.type !== "signature") {
+          throw new Error("task is not a schedule");
+        }
+        throw new Error("not implemented");
+      }
+
+      case "schedule": {
+        if (info.task.type !== "schedule") {
+          throw new Error("task is not a schedule");
+        }
+
+        wrapper.advance();
+        return this.workflowService.update(wrapper.workflow);
+      }
+
       default:
-        assertNever(action.type);
+        assertNever(action);
     }
   }
 
@@ -54,7 +72,6 @@ export class WorkflowActionService {
     const wrapper = new WorkflowWrapper(workflow);
     const result = await this.#tryAdvance(context, wrapper);
 
-    console.log({ hasChanged: result.hasChanged });
     if (result.hasChanged) {
       return await this.workflowService.update(result.workflow);
     }
@@ -74,6 +91,10 @@ export class WorkflowActionService {
 
     switch (currentStage.type) {
       case "create_account": {
+        //TODO TAKE THIS OUT
+        if (1 + 1 === 2) {
+          return workflow;
+        }
         // check if time exists for email
         const user = await this.userService.getById(context.userId);
         const exists = await this.calendarSubmissionService.exists({
@@ -85,14 +106,11 @@ export class WorkflowActionService {
         }
         break;
       }
-      case "check_insurance_coverage": {
+      case "check_insurance_coverage":
+      case "submit_records":
         break;
-      }
-      case "submit_records": {
-        break;
-      }
       case "commitment_to_care": {
-        // check if time exists for email
+        // check if signature exists for email
         const user = await this.userService.getById(context.userId);
 
         const exists = await this.signatureSubmissionService.exists({

@@ -9,8 +9,7 @@ export class PsqlSignatureSubmissionService
     counterPartyEmail,
     emailSubjectStartsWith,
   }: Exists): Promise<boolean> {
-    console.log("checking exists", counterPartyEmail, emailSubjectStartsWith);
-    const value = await this.pool.connect(async (connection) =>
+    return this.pool.connect(async (connection) =>
       connection.exists(sql.unsafe`
 SELECT
     1
@@ -21,8 +20,6 @@ WHERE
     AND email_subject LIKE ${"%" + emailSubjectStartsWith + "%"}
 `)
     );
-
-    return value;
   }
 
   async insert({
