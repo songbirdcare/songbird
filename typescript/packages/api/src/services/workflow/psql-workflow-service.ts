@@ -3,7 +3,6 @@ import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
 import { SETTINGS } from "../../settings";
-import { WorkflowActionService } from "./workflow-action-service";
 import type {
   GetOrCreateWorkflowArguments,
   WorkflowService,
@@ -23,7 +22,11 @@ const INITIAL_SLUG = "onboarding";
 const INITIAL_STAGES: Stage[] = [
   {
     type: "create_account",
-    blockingTasks: [],
+    blockingTasks: [
+      {
+        type: "schedule",
+      },
+    ],
   },
   {
     type: "check_insurance_coverage",
@@ -53,8 +56,6 @@ const INITIAL_STAGES: Stage[] = [
   },
 ];
 
-console.log(JSON.stringify(INITIAL_SLUG, null, 2));
-
 export class PsqlWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
@@ -62,22 +63,10 @@ export class PsqlWorkflowService implements WorkflowService {
     userId,
     childId,
   }: GetOrCreateWorkflowArguments): Promise<WorkflowModel> {
-    return this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) => {
-        const workflow = fromSQL(
-          await this.#getOrCreateSql(trx, { userId, childId })
-        );
-        const result = WorkflowActionService.tryAdvance(workflow);
-        if (!result.hasChanged) {
-          return workflow;
-        }
-        const updated = await this.#update(trx, {
-          id: workflow.id,
-          currentStageIndex: result.workflow.currentStageIndex,
-          stages: result.workflow.stages,
-        });
-        return fromSQL(updated);
-      })
+    return this.pool.connect(async (cnx) =>
+      cnx.transaction(async (trx) =>
+        fromSQL(await this.#getOrCreateSql(trx, { userId, childId }))
+      )
     );
   }
 

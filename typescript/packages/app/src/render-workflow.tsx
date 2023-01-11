@@ -1,7 +1,7 @@
 import EmbedFlow from "@formsort/react-embed";
 import { LinearProgress } from "@mui/material";
 import { Box, Typography } from "@mui/material";
-import type { FormBlockingTask, WorkflowModel } from "@songbird/precedent-iso";
+import type { FormTask, WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
@@ -67,7 +67,7 @@ export const RenderStage: React.FC<{
 };
 
 const RenderForm: React.FC<{
-  task: FormBlockingTask;
+  task: FormTask;
   userId: string;
   currentStageIndex: number;
 }> = ({ task, userId, currentStageIndex }) => {

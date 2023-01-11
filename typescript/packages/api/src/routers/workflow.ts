@@ -8,7 +8,8 @@ import type { WorkflowService } from "../services/workflow/workflow-service";
 export class WorkflowRouter {
   constructor(
     private readonly childService: ChildService,
-    private readonly workflowService: WorkflowService
+    private readonly workflowService: WorkflowService,
+    private readonly workflowActionService: WorkflowActionService
   ) {}
 
   init() {
@@ -21,8 +22,14 @@ export class WorkflowRouter {
           userId: req.user.id,
           childId: child.id,
         });
+
+        const advancedWorkflow = await this.workflowActionService.tryAdvance(
+          { userId: req.user.id },
+          workflow
+        );
+
         res.json({
-          data: workflow,
+          data: advancedWorkflow,
         });
       }
     );

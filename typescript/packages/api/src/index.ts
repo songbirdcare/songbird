@@ -29,6 +29,7 @@ import { SignatureRouter } from "./routers/signature";
 import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-service";
 
 import { PsqlSignatureSubmissionService } from "./services/signature-submission-service";
+import { WorkflowActionService } from "./services/workflow/workflow-action-service";
 
 console.log("Booting application!");
 
@@ -77,6 +78,11 @@ async function start() {
 
   const childService = new PsqlChildService(pool);
   const workflowService = new PsqlWorkflowService(pool);
+  const workflowActionService = new WorkflowActionService(
+    calendarService,
+    userService,
+    workflowService
+  );
 
   const healthRouter = new HealthRouter(healthService).init();
   const formSubmissionRouter = new FormSubmissionRouter(
@@ -115,7 +121,11 @@ async function start() {
     jwtCheck,
     addUser,
     userIsVerified,
-    new WorkflowRouter(childService, workflowService).init()
+    new WorkflowRouter(
+      childService,
+      workflowService,
+      workflowActionService
+    ).init()
   );
 
   app.use("/api/v1/calendar", new CalendarRouter(calendarService).init());

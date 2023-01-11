@@ -1,12 +1,20 @@
-import type { WorkflowModel } from "@songbird/precedent-iso";
+import {
+  assertNever,
+  WorkflowModel,
+  WorkflowWrapper,
+} from "@songbird/precedent-iso";
 
-// this could in theory be a while loop
-// but I think it's better to cap iterations
-// so in case we have a logical bug we fail fast
-
-const MAX_ATTEMPTS = 10;
+import type { CalendarSubmissionService } from "../calendar-submissions-service";
+import type { UserService } from "../user-service";
+import type { WorkflowService } from "./workflow-service";
 
 export class WorkflowActionService {
+  constructor(
+    private readonly calendarSubmissionService: CalendarSubmissionService,
+    private readonly userService: UserService,
+    private readonly workflowService: WorkflowService
+  ) {}
+
   static submitForm(
     workflow: WorkflowModel,
     stageIndex: number
@@ -31,34 +39,62 @@ export class WorkflowActionService {
     };
   }
 
-  static tryAdvance(workflow: WorkflowModel): WorkflowWithHasChanged {
+  async tryAdvance(
+    context: Context,
+    workflow: WorkflowModel
+  ): Promise<WorkflowModel> {
     const clone = JSON.parse(JSON.stringify(workflow)) as WorkflowModel;
 
-    let hasChanged = false;
+    const result = await this.#tryAdvance(context, new WorkflowWrapper(clone));
 
-    for (let attempt = 0; attempt <= MAX_ATTEMPTS; attempt++) {
-      const { stages, currentStageIndex } = clone;
-      const currentStage = stages[currentStageIndex];
-      if (currentStage === undefined) {
-        throw new Error("Current stage is undefined");
-      }
-
-      if (currentStage.blockingTasks.length === 0) {
-        clone.currentStageIndex += 1;
-        hasChanged = true;
-      } else {
-        return {
-          hasChanged,
-          workflow: clone,
-        };
-      }
+    if (result.hasChanged) {
+      return await this.workflowService.update(result.workflow);
     }
 
-    throw new Error("Exceeded attempt limit");
+    return result.workflow;
+  }
+
+  async #tryAdvance(
+    context: Context,
+    workflow: WorkflowWrapper
+  ): Promise<WorkflowWrapper> {
+    const currentStage = workflow.currentStage;
+
+    switch (currentStage.type) {
+      case "create_account": {
+        // check if time exists for email
+        const user = await this.userService.getById(context.userId);
+        const exists = await this.calendarSubmissionService.exists({
+          email: user.email,
+        });
+        console.log("Calendar entry for ${user.email} exists: ${exists}");
+        if (exists) {
+          workflow.advance();
+        }
+        break;
+      }
+      case "check_insurance_coverage": {
+        break;
+      }
+      case "submit_records": {
+        break;
+      }
+      case "commitment_to_care": {
+        break;
+      }
+      default:
+        assertNever(currentStage);
+    }
+
+    return workflow;
   }
 }
 
 export interface WorkflowWithHasChanged {
   hasChanged: boolean;
   workflow: WorkflowModel;
+}
+
+interface Context {
+  userId: string;
 }

@@ -4,26 +4,31 @@ import { z } from "zod";
 
 import type { UpsertUserArgs, UserService } from "./user-service";
 
+const FIELDS = sql.fragment`
+id,
+sub,
+email,
+email_verified,
+name,
+given_name,
+family_name
+`;
 export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}
+
+  async getById(id: string): Promise<UserModel> {
+    const user = await this.pool.connect(async (connection) =>
+      connection.one(
+        sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE id= ${id}`
+      )
+    );
+    return fromSQL(user);
+  }
 
   async get(sub: string): Promise<UserModel | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
-        sql.type(ZUserFromSql)`
-SELECT
-    id,
-    sub,
-    email,
-    email_verified,
-    name,
-    given_name,
-    family_name
-FROM
-    sb_user
-WHERE
-    sub = ${sub}
-`
+        sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE sub = ${sub}`
       )
     );
     return user ? fromSQL(user) : undefined;
