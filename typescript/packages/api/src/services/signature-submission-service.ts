@@ -5,6 +5,26 @@ export class PsqlSignatureSubmissionService
 {
   constructor(private readonly pool: DatabasePool) {}
 
+  async exists({
+    counterPartyEmail,
+    emailSubjectStartsWith,
+  }: Exists): Promise<boolean> {
+    console.log("checking exists", counterPartyEmail, emailSubjectStartsWith);
+    const value = await this.pool.connect(async (connection) =>
+      connection.exists(sql.unsafe`
+SELECT
+    1
+FROM
+    signature_submissions
+WHERE
+    LOWER(counterparty_email) = ${counterPartyEmail.toLowerCase()}
+    AND email_subject LIKE ${"%" + emailSubjectStartsWith + "%"}
+`)
+    );
+
+    return value;
+  }
+
   async insert({
     raw,
     envelopeId,
@@ -27,7 +47,13 @@ INSERT INTO signature_submissions (raw, envelope_id, email_subject, event_create
 }
 
 export interface SignatureSubmissionService {
+  exists: (args: Exists) => Promise<boolean>;
   insert: (form: Signature) => Promise<void>;
+}
+
+interface Exists {
+  counterPartyEmail: string;
+  emailSubjectStartsWith: string;
 }
 
 interface Signature {

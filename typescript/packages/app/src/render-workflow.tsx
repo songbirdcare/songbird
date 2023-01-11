@@ -24,8 +24,8 @@ export const RenderWorkflow: React.FC<{
   return (
     <RenderStage
       userId={userId}
+      workflowId={workflow.id}
       stage={currentStage}
-      currentStageIndex={currentStageIndex}
     />
   );
 };
@@ -33,8 +33,8 @@ export const RenderWorkflow: React.FC<{
 export const RenderStage: React.FC<{
   userId: string;
   stage: Stage;
-  currentStageIndex: number;
-}> = ({ stage, currentStageIndex, userId }) => {
+  workflowId: string;
+}> = ({ stage, userId, workflowId }) => {
   switch (stage.type) {
     case "create_account":
       throw Error("not implemented");
@@ -50,7 +50,8 @@ export const RenderStage: React.FC<{
         <RenderForm
           task={task}
           userId={userId}
-          currentStageIndex={currentStageIndex}
+          stageId={stage.id}
+          workflowId={workflowId}
         />
       );
     }
@@ -67,17 +68,18 @@ export const RenderStage: React.FC<{
 };
 
 const RenderForm: React.FC<{
+  workflowId: string;
   task: FormTask;
   userId: string;
-  currentStageIndex: number;
-}> = ({ task, userId, currentStageIndex }) => {
+  stageId: string;
+}> = ({ workflowId, task, userId, stageId }) => {
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
 
   const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
 
   const { trigger, isMutating, data } = useSWRMutation(
-    "/api/proxy/workflows/submit-form",
+    `/api/proxy/workflows/action/${workflowId}`,
     async (url) => {
       const res = await fetch(url, {
         method: "PUT",
@@ -85,7 +87,9 @@ const RenderForm: React.FC<{
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          stageIndex: currentStageIndex,
+          type: "form",
+          taskId: task.id,
+          stageId,
         }),
       });
       return res.json();

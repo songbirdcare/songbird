@@ -81,7 +81,8 @@ async function start() {
   const workflowActionService = new WorkflowActionService(
     calendarService,
     userService,
-    workflowService
+    workflowService,
+    signatureSubmissionService
   );
 
   const healthRouter = new HealthRouter(healthService).init();

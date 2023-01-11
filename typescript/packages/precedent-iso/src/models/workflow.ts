@@ -8,36 +8,48 @@ export type Stage =
 
 export type StageType = Stage["type"];
 
-export interface CreateAccount {
+type Unarray<T> = T extends Array<infer U> ? U : T;
+
+export type Task = Unarray<Stage["blockingTasks"]>;
+
+interface BaseTask {
+  id: string;
+}
+
+interface BaseStage {
+  id: string;
+}
+
+export interface CreateAccount extends BaseStage {
   type: "create_account";
   blockingTasks: ScheduleTask[];
 }
 
-export interface CheckInsuranceCoverage {
+export interface CheckInsuranceCoverage extends BaseStage {
   type: "check_insurance_coverage";
   blockingTasks: FormTask[];
 }
 
-export interface SubmitRecords {
+export interface SubmitRecords extends BaseStage {
   type: "submit_records";
   blockingTasks: FormTask[];
 }
 
-export interface CommitmentToCare {
+export interface CommitmentToCare extends BaseStage {
   type: "commitment_to_care";
   blockingTasks: SignatureTask[];
 }
 
-export interface ScheduleTask {
+export interface ScheduleTask extends BaseTask {
   type: "schedule";
 }
 
-export interface FormTask {
+export interface FormTask extends BaseTask {
   type: "form";
   config: FormSortConfig;
 }
 
-export interface SignatureTask {
+export interface SignatureTask extends BaseTask {
   type: "signature";
 }
 
@@ -49,24 +61,32 @@ export interface WorkflowModel {
   version: string;
   stages: Stage[];
   currentStageIndex: number;
+  status: "pending" | "completed";
 }
 
 export class WorkflowWrapper {
   #hasChanged: boolean;
-  constructor(private readonly wf: WorkflowModel) {
+  #copy: WorkflowModel;
+  constructor(original: WorkflowModel) {
+    this.#copy = JSON.parse(JSON.stringify(original)) as WorkflowModel;
+
     this.#hasChanged = false;
   }
 
   get workflow(): WorkflowModel {
-    return this.wf;
+    return this.#copy;
   }
 
   get hasChanged(): boolean {
     return this.#hasChanged;
   }
 
+  get isCompleted(): boolean {
+    return this.#copy.status === "completed";
+  }
+
   get currentStage(): Stage {
-    const { stages, currentStageIndex } = this.wf;
+    const { stages, currentStageIndex } = this.#copy;
     const stage = stages[currentStageIndex];
     if (stage === undefined) {
       throw new Error("invalid state");
@@ -74,14 +94,35 @@ export class WorkflowWrapper {
     return stage;
   }
 
+  fromIds(stageId: string, taskId: string) {
+    const stage = this.#copy.stages.find((s) => s.id === stageId);
+    if (!stage) {
+      throw new Error("stage does not exist");
+    }
+    const task = (stage.blockingTasks as Task[]).find(
+      (task) => task.id === taskId
+    );
+
+    return {
+      stage,
+      task,
+    };
+  }
+
   advance(): void {
     const stage = this.currentStage;
+    this.#hasChanged = true;
+    console.log("wtf");
+
+    debugger;
     stage.blockingTasks.shift();
     if (stage.blockingTasks.length === 0) {
-      this.wf.currentStageIndex++;
+      if (this.#copy.currentStageIndex === this.#copy.stages.length - 1) {
+        this.#copy.status = "completed";
+      } else {
+        this.#copy.currentStageIndex++;
+      }
     }
-
-    this.#hasChanged = true;
   }
 
   static getLatestBlockingTask<S extends Stage>({

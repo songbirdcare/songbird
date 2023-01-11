@@ -2,7 +2,11 @@ import type { Stage, WorkflowModel } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
-import { SETTINGS } from "../../settings";
+import {
+  createInitialStages,
+  CURRENT_VERSION,
+  INITIAL_SLUG,
+} from "./create-initial-workflow";
 import type {
   GetOrCreateWorkflowArguments,
   WorkflowService,
@@ -15,57 +19,35 @@ child_id,
 workflow_slug,
 version,
 stages,
-current_stage_idx
+current_stage_idx,
+status
 `;
-const CURRENT_VERSION = 1 as const;
-const INITIAL_SLUG = "onboarding";
-const INITIAL_STAGES: Stage[] = [
-  {
-    type: "create_account",
-    blockingTasks: [
-      {
-        type: "schedule",
-      },
-    ],
-  },
-  {
-    type: "check_insurance_coverage",
-    blockingTasks: [
-      {
-        type: "form",
-        config: SETTINGS.formsort.config.checkInsuranceCoverage,
-      },
-    ],
-  },
-  {
-    type: "submit_records",
-    blockingTasks: [
-      {
-        type: "form",
-        config: SETTINGS.formsort.config.submitRecords,
-      },
-    ],
-  },
-  {
-    type: "commitment_to_care",
-    blockingTasks: [
-      {
-        type: "signature",
-      },
-    ],
-  },
-];
-
 export class PsqlWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async getOrCreateInitial({
-    userId,
-    childId,
-  }: GetOrCreateWorkflowArguments): Promise<WorkflowModel> {
+  async getById(id: string): Promise<WorkflowModel> {
+    return this.pool.connect(async (cnx) => {
+      const workflow = await cnx.one(
+        sql.type(ZWorkflowFromSql)`
+SELECT
+    ${FIELDS}
+FROM
+    workflow
+WHERE
+    id = ${id}
+`
+      );
+
+      return fromSQL(workflow);
+    });
+  }
+
+  async getOrCreateInitial(
+    args: GetOrCreateWorkflowArguments
+  ): Promise<WorkflowModel> {
     return this.pool.connect(async (cnx) =>
       cnx.transaction(async (trx) =>
-        fromSQL(await this.#getOrCreateSql(trx, { userId, childId }))
+        fromSQL(await this.#getOrCreateSql(trx, args))
       )
     );
   }
@@ -73,7 +55,7 @@ export class PsqlWorkflowService implements WorkflowService {
   async #getOrCreateSql(
     trx: DatabaseTransactionConnection,
 
-    { userId, childId }: GetOrCreateWorkflowArguments
+    { userId, childId, slug }: GetOrCreateWorkflowArguments
   ): Promise<WorkflowFromSql> {
     const workflows = await trx.query(
       sql.type(ZWorkflowFromSql)`
@@ -84,7 +66,7 @@ FROM
 WHERE
     sb_user_id = ${userId}
     AND child_id = ${childId}
-    AND workflow_slug = ${INITIAL_SLUG}
+    AND workflow_slug = ${slug}
 `
     );
 
@@ -94,8 +76,8 @@ WHERE
       return trx.one(
         sql.type(ZWorkflowFromSql)`
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
-    VALUES (${userId}, ${childId}, ${INITIAL_SLUG}, ${CURRENT_VERSION}, ${JSON.stringify(
-          INITIAL_STAGES
+    VALUES (${userId}, ${childId}, ${slug}, ${CURRENT_VERSION}, ${JSON.stringify(
+          createInitialStages()
         )}, 0)
 RETURNING
     ${FIELDS}
@@ -121,15 +103,17 @@ RETURNING
   async #update(
     trx: DatabaseTransactionConnection,
 
-    { id, stages, currentStageIndex }: UpdateWorkflow
+    { id, stages, currentStageIndex, status }: UpdateWorkflow
   ): Promise<WorkflowFromSql> {
+    console.log({ status });
     return trx.one(
       sql.type(ZWorkflowFromSql)`
 UPDATE
     workflow
 SET
     stages = ${JSON.stringify(stages)},
-    current_stage_idx = ${currentStageIndex}
+    current_stage_idx = ${currentStageIndex},
+    status = ${status}
 WHERE
     id = ${id}
 RETURNING
@@ -147,6 +131,7 @@ function fromSQL({
   version,
   stages,
   current_stage_idx,
+  status,
 }: WorkflowFromSql): WorkflowModel {
   return {
     id,
@@ -156,6 +141,7 @@ function fromSQL({
     version,
     stages,
     currentStageIndex: current_stage_idx,
+    status,
   };
 }
 
@@ -165,7 +151,12 @@ interface UpdateWorkflow {
   id: string;
   stages: Stage[];
   currentStageIndex: number;
+  status: WorkflowStatus;
 }
+
+export type WorkflowStatus = z.infer<typeof ZWorkflowStatus>;
+
+const ZWorkflowStatus = z.union([z.literal("pending"), z.literal("completed")]);
 
 const ZWorkflowFromSql = z.object({
   id: z.string(),
@@ -175,4 +166,5 @@ const ZWorkflowFromSql = z.object({
   version: z.string(),
   stages: z.any(),
   current_stage_idx: z.number(),
+  status: ZWorkflowStatus,
 });
