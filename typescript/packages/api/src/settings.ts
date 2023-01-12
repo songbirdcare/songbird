@@ -19,6 +19,9 @@ const ZSettings = z.object({
   }),
   formsort: z.object({
     signingKey: z.string(),
+    // will drop all submissions with
+    // other variants
+    signupWhiteList: z.string().optional(),
     config: z.object({
       checkInsuranceCoverage: ZFormSortConfig,
       submitRecords: ZFormSortConfig,
@@ -29,6 +32,7 @@ const ZSettings = z.object({
 const domain = process.env["AUTH0_DOMAIN"];
 const issuer: string[] = [`https://${domain}/`];
 const issuerBaseUrl = `https://${domain}`;
+const signupWhiteList = process.env["SIGNUP_WHITE_LIST_ITEM"];
 
 export const SETTINGS = ZSettings.parse({
   host: process.env["HOST"] ?? "0.0.0.0",
@@ -49,6 +53,7 @@ export const SETTINGS = ZSettings.parse({
     uri: process.env["SQL_URI"],
   },
   formsort: {
+    signupWhiteList,
     signingKey: process.env["FORM_SORT_SIGNING_KEY"],
     config: {
       checkInsuranceCoverage: {

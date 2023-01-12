@@ -53,7 +53,11 @@ export const RenderForm: React.FC<{
   }, [router, data, mutate]);
 
   if (isLoading || !formData) {
-    return <LinearProgress />;
+    return (
+      <Box width="100%" height="100%">
+        <LinearProgress />
+      </Box>
+    );
   }
 
   return (

@@ -1,5 +1,5 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import LinearProgress from "@mui/material/LinearProgress";
+import { Box, LinearProgress } from "@mui/material";
 import type { Stage } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -26,7 +26,11 @@ const CompleteStage: React.FC = () => {
       <AppBar />
 
       <BodyContainer>
-        {(!workflow || !userId) && <LinearProgress />}
+        {(!workflow || !userId) && (
+          <Box width="100%" height="100%">
+            <LinearProgress />
+          </Box>
+        )}
         {workflow && userId && (
           <RenderWorkflow
             userId={userId}

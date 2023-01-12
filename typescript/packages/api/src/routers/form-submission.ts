@@ -75,6 +75,13 @@ export class FormSubmissionRouter {
           throw new Error("could not get email");
         }
 
+        const signupWhiteList = SETTINGS.formsort.signupWhiteList;
+        if (signupWhiteList && signupWhiteList !== parsedForm.variant_label) {
+          console.log("Form submitted for disabled variant. Dropping request");
+          res.send("ok");
+          return;
+        }
+
         await this.formSubmissionService.insert(parsedForm, { email });
         console.log("Creating Auth0 user");
         const { user } = await this.auth0Service.createUser(email);
