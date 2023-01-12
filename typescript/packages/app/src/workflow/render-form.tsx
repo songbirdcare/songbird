@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
-import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
+import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 
 export const RenderForm: React.FC<{
   workflowId: string;

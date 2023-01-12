@@ -5,9 +5,9 @@ import * as React from "react";
 import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 import useSWRMutation from "swr/mutation";
 
-import { useFetchUser } from "./hooks/use-fetch-user";
-import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
-import { SETTINGS } from "./settings";
+import { useFetchUser } from "../hooks/use-fetch-user";
+import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
+import { SETTINGS } from "../settings";
 
 export const RenderSchedule: React.FC<{
   workflowId: string;

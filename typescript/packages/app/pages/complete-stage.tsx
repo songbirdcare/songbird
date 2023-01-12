@@ -3,13 +3,14 @@ import LinearProgress from "@mui/material/LinearProgress";
 import type { Stage } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
+import { z } from "zod";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
-import { RenderWorkflow } from "../src/render-workflow";
+import { RenderWorkflow } from "../src/workflow/render-workflow";
 
 const CompleteStage: React.FC = () => {
   useRedirectIfNotVerified();
@@ -38,19 +39,20 @@ const CompleteStage: React.FC = () => {
   );
 };
 
+const ZStageType = z.union([
+  z.literal("create_account"),
+  z.literal("check_insurance_coverage"),
+  z.literal("submit_records"),
+  z.literal("commitment_to_care"),
+]);
+
 function useGetStageType(): Stage["type"] | undefined {
   const router = useRouter();
-  switch (router.query.stage) {
-    case "create_account":
-      return "create_account";
-    case "check_insurance_coverage":
-      return "check_insurance_coverage";
-    case "submit_records":
-      return "submit_records";
-    case "commitment_to_care":
-      return "commitment_to_care";
-    default:
-      return undefined;
+
+  try {
+    return ZStageType.parse(router.query.stageType);
+  } catch (_) {
+    return undefined;
   }
 }
 
