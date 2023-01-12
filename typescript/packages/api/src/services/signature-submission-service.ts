@@ -74,7 +74,7 @@ type SqlSignature = z.infer<typeof ZSqlSignature>;
 
 function fromSQL(args: SqlSignature): Signature {
   return {
-    raw: JSON.parse(args.raw),
+    raw: args.raw as any,
     envelopeId: args.envelope_id,
     emailSubject: args.email_subject,
     eventCreatedAt: args.event_created_at,

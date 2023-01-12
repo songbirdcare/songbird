@@ -65,12 +65,12 @@ export class FormSubmissionRouter {
       "/onboarding-callback",
       validateSignatureMiddleware,
       async (req: express.Request, res: express.Response) => {
-        console.log("Parsing form");
+        console.log("Onboarding callback triggered");
+
         const parsedForm = this.formSubmissionService.parse(req.body);
-
         const withEmail = ZFormWithEmail.parse(parsedForm.answers);
-
         const email = withEmail.email_address ?? withEmail.caregiver_2_email;
+
         if (email === undefined) {
           throw new Error("could not get email");
         }
