@@ -67,7 +67,7 @@ export const RenderSchedule: React.FC<{
           </Alert>
         </Box>
       )}
-      {SETTINGS.enableDebuggingAction && (
+      {SETTINGS.enableDebuggingAction && !data && (
         <Box display="flex" paddingY={3} justifyContent="center">
           <Button disabled={isMutating} onClick={trigger}>
             Advance to the next step
