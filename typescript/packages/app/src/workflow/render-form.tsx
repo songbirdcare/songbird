@@ -62,14 +62,6 @@ export const RenderForm: React.FC<{
 
   return (
     <Box display="flex" flexDirection={"column"} width="100%">
-      {SETTINGS.enableDebuggingAction && (
-        <Box display="flex" width="100%" paddingY={3} justifyContent="center">
-          <Button disabled={isMutating} onClick={trigger}>
-            Advance to the next step
-          </Button>
-        </Box>
-      )}
-
       {!hasSubmittedForm && (
         <EmbedFlow
           clientLabel={formData.client}
@@ -84,6 +76,13 @@ export const RenderForm: React.FC<{
           }}
           onFlowFinalized={() => setHasSubmittedForm(true)}
         />
+      )}
+      {SETTINGS.enableDebuggingAction && (
+        <Box display="flex" width="100%" paddingY={3} justifyContent="center">
+          <Button disabled={isMutating} onClick={trigger}>
+            Advance to the next step
+          </Button>
+        </Box>
       )}
     </Box>
   );

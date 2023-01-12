@@ -67,13 +67,7 @@ export const RenderSchedule: React.FC<{
           </Alert>
         </Box>
       )}
-      {SETTINGS.enableDebuggingAction && !data && (
-        <Box display="flex" paddingY={3} justifyContent="center">
-          <Button disabled={isMutating} onClick={trigger}>
-            Advance to the next step
-          </Button>
-        </Box>
-      )}
+
       <InlineWidget
         url={SETTINGS.schedulingUrl}
         prefill={{ email: user.email }}
@@ -82,6 +76,13 @@ export const RenderSchedule: React.FC<{
           height: "100%",
         }}
       />
+      {SETTINGS.enableDebuggingAction && !data && (
+        <Box display="flex" paddingY={3} justifyContent="center">
+          <Button disabled={isMutating} onClick={trigger}>
+            Advance to the next step
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };
