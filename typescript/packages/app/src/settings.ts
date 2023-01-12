@@ -10,6 +10,7 @@ const enableDebuggingAction =
   process.env["NEXT_PUBLIC_ENABLE_DEBUGGING_ACTION"] === "ENABLE_DEBUGGING";
 
 export const SETTINGS = ZSettings.parse({
+  logRocketId: process.env["NEXT_PUBLIC_LOG_ROCKET_ID"],
   enableDebuggingAction,
   schedulingUrl:
     process.env["NEXT_PUBLIC_SCHEDULING_URL"] ??

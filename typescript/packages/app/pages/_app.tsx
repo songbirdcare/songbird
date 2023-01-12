@@ -11,7 +11,7 @@ import React from "react";
 import { SETTINGS } from "../src/settings";
 
 // only initialize when in the browser
-if (typeof window === "undefined" && SETTINGS.logRocketId) {
+if (typeof window !== "undefined" && SETTINGS.logRocketId) {
   LogRocket.init(SETTINGS.logRocketId);
   // plugins should also only be initialized when in the browser
 }
