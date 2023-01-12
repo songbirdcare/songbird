@@ -69,7 +69,11 @@ export class FormSubmissionRouter {
         const parsedForm = this.formSubmissionService.parse(req.body);
 
         const withEmail = ZFormWithEmail.parse(parsedForm.answers);
-        const email = withEmail.email_address;
+
+        const email = withEmail.email_address ?? withEmail.caregiver_2_email;
+        if (email === undefined) {
+          throw new Error("could not get email");
+        }
 
         await this.formSubmissionService.insert(parsedForm, { email });
         console.log("Creating Auth0 user");
@@ -154,5 +158,6 @@ async function validateSignatureMiddleware(
   }
 }
 const ZFormWithEmail = z.object({
-  email_address: z.string(),
+  email_address: z.string().optional(),
+  caregiver_2_email: z.string().optional(),
 });
