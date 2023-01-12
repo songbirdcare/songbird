@@ -1,5 +1,5 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import LinearProgress from "@mui/material/LinearProgress";
+import { Box, LinearProgress } from "@mui/material";
 import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";

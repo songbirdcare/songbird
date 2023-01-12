@@ -2,6 +2,7 @@ import type { WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 
 export interface WorkflowService {
+  deleteAllForUser(userId: string): Promise<void>;
   getById(id: string): Promise<WorkflowModel>;
   getOrCreateInitial(
     args: GetOrCreateWorkflowArguments
@@ -14,6 +15,7 @@ export interface GetOrCreateWorkflowArguments {
   userId: string;
   childId: string;
 }
+
 export interface SubmitFormArguments {
   workflowId: string;
   stageIndex: number;

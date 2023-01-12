@@ -15,6 +15,16 @@ export class WorkflowRouter {
 
   init() {
     const router = express.Router();
+    router.delete(
+      "/all",
+      async (req: express.Request, res: express.Response) => {
+        await this.workflowService.deleteAllForUser(req.user.id);
+        res.json({
+          data: "ok",
+        });
+      }
+    );
+
     router.get(
       "/start",
       async (req: express.Request, res: express.Response) => {

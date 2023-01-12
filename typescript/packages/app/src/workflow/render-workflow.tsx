@@ -7,9 +7,9 @@ import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
+import { SETTINGS } from "../settings";
 import { RenderForm } from "./render-form";
 import { RenderSchedule } from "./render-schedule";
-import { SETTINGS } from "../settings";
 
 export const RenderWorkflow: React.FC<{
   userId: string;

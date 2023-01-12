@@ -25,6 +25,12 @@ status
 export class PsqlWorkflowService implements WorkflowService {
   constructor(private readonly pool: DatabasePool) {}
 
+  async deleteAllForUser(userId: string): Promise<void> {
+    await this.pool.connect(async (cnx) =>
+      cnx.query(sql.unsafe`DELETE FROM workflow where sb_user_id = ${userId}`)
+    );
+  }
+
   async getById(id: string): Promise<WorkflowModel> {
     return this.pool.connect(async (cnx) => {
       const workflow = await cnx.one(
