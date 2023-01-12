@@ -51,9 +51,9 @@ export const RenderForm: React.FC<{
   }, [router, data, mutate]);
 
   return (
-    <Box display="flex" flexDirection={"column"}>
+    <Box display="flex" flexDirection={"column"} width="100%">
       {SETTINGS.enableDebuggingAction && (
-        <Box paddingY={3}>
+        <Box display="flex" width="100%" paddingY={3} justifyContent="center">
           <Button disabled={isMutating} onClick={trigger}>
             Advance to the next step
           </Button>
