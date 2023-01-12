@@ -1,5 +1,3 @@
-import type { FormSortConfig } from "./form-sort-config";
-
 export type Stage =
   | CreateAccount
   | CheckInsuranceCoverage
@@ -47,7 +45,7 @@ export interface ScheduleTask extends BaseTask {
 
 export interface FormTask extends BaseTask {
   type: "form";
-  config: FormSortConfig;
+  slug: "check_insurance_coverage" | "submit_records";
 }
 
 export interface SignatureTask extends BaseTask {

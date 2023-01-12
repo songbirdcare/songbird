@@ -18,6 +18,38 @@ export class FormSubmissionRouter {
   init() {
     const router = express.Router();
 
+    router.get(
+      "/form-config/:slug",
+      async (req: express.Request, res: express.Response) => {
+        const slug = req.params.slug;
+
+        switch (slug) {
+          case "check_insurance_coverage":
+            res.send({
+              data: SETTINGS.formsort.config.checkInsuranceCoverage,
+            });
+            break;
+          case "submit_records":
+            res.send({
+              data: SETTINGS.formsort.config.submitRecords,
+            });
+            break;
+          default:
+            throw Error("unrecognized slug");
+        }
+      }
+    );
+
+    router.get(
+      "/form-config/submit-records",
+      validateSignatureMiddleware,
+      async (_: express.Request, res: express.Response) => {
+        res.send({
+          data: SETTINGS.formsort.config.submitRecords,
+        });
+      }
+    );
+
     router.post(
       "/post-onboarding",
       validateSignatureMiddleware,

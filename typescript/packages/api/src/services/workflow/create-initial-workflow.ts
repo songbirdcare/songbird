@@ -1,8 +1,6 @@
 import type { Stage } from "@songbird/precedent-iso";
 import { randomUUID } from "crypto";
 
-import { SETTINGS } from "../../settings";
-
 export const CURRENT_VERSION = 1 as const;
 export const INITIAL_SLUG = "onboarding";
 
@@ -27,7 +25,7 @@ export function createInitialStages(): Stage[] {
           id: randomUUID(),
           status: "pending",
           type: "form",
-          config: SETTINGS.formsort.config.checkInsuranceCoverage,
+          slug: "check_insurance_coverage",
         },
       ],
     },
@@ -39,7 +37,7 @@ export function createInitialStages(): Stage[] {
           id: randomUUID(),
           status: "pending",
           type: "form",
-          config: SETTINGS.formsort.config.submitRecords,
+          slug: "submit_records",
         },
       ],
     },

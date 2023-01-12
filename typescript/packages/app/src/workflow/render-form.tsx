@@ -1,10 +1,11 @@
 import EmbedFlow from "@formsort/react-embed";
-import { Box, Button } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import type { FormTask } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
+import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
 
@@ -16,6 +17,7 @@ export const RenderForm: React.FC<{
 }> = ({ workflowId, task, userId, stageId }) => {
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
+  const { data: formData, isLoading } = useFetchFormConfig(task.slug);
 
   const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
 
@@ -50,6 +52,10 @@ export const RenderForm: React.FC<{
     }
   }, [router, data, mutate]);
 
+  if (isLoading || !formData) {
+    return <LinearProgress />;
+  }
+
   return (
     <Box display="flex" flexDirection={"column"} width="100%">
       {SETTINGS.enableDebuggingAction && (
@@ -60,19 +66,21 @@ export const RenderForm: React.FC<{
         </Box>
       )}
 
-      <EmbedFlow
-        clientLabel={task.config.client}
-        flowLabel={task.config.flowLabel}
-        variantLabel={task.config.variantLabel}
-        responderUuid={userId}
-        embedConfig={{
-          style: {
-            width: "100%",
-            height: "100%",
-          },
-        }}
-        onFlowFinalized={() => setHasSubmittedForm(true)}
-      />
+      {!hasSubmittedForm && (
+        <EmbedFlow
+          clientLabel={formData.client}
+          flowLabel={formData.flowLabel}
+          variantLabel={formData.variantLabel}
+          responderUuid={userId}
+          embedConfig={{
+            style: {
+              width: "100%",
+              height: "100%",
+            },
+          }}
+          onFlowFinalized={() => setHasSubmittedForm(true)}
+        />
+      )}
     </Box>
   );
 };
