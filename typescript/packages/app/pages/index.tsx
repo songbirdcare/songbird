@@ -19,6 +19,7 @@ const Home: React.FC = () => {
         {!workflow && <LinearProgress />}
         {workflow && (
           <OnboardingFlow
+            isCompleted={workflow.status === "completed"}
             currentStageIndex={workflow.currentStageIndex}
             stages={workflow.stages}
           />

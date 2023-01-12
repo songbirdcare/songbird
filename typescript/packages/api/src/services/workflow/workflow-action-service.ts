@@ -1,51 +1,82 @@
 import {
+  Action,
   assertNever,
   WorkflowModel,
   WorkflowWrapper,
 } from "@songbird/precedent-iso";
 
 import type { CalendarSubmissionService } from "../calendar-submissions-service";
+import type { SignatureSubmissionService } from "../signature-submission-service";
 import type { UserService } from "../user-service";
 import type { WorkflowService } from "./workflow-service";
+
+const EMAIL_STARTS_WITH = "Songbird Family Services";
 
 export class WorkflowActionService {
   constructor(
     private readonly calendarSubmissionService: CalendarSubmissionService,
     private readonly userService: UserService,
-    private readonly workflowService: WorkflowService
+    private readonly workflowService: WorkflowService,
+    private readonly signatureSubmissionService: SignatureSubmissionService
   ) {}
 
-  static submitForm(
-    workflow: WorkflowModel,
-    stageIndex: number
-  ): WorkflowWithHasChanged {
-    const clone = JSON.parse(JSON.stringify(workflow)) as WorkflowModel;
+  async processAction(
+    workflowId: string,
+    action: Action
+  ): Promise<WorkflowModel> {
+    const workflow = await this.workflowService.getById(workflowId);
 
-    if (stageIndex !== clone.currentStageIndex) {
-      console.warn(
-        `Stage mismatch ${stageIndex} !== ${clone.currentStageIndex}`
-      );
-      return {
-        hasChanged: false,
-        workflow: clone,
-      };
+    const wrapper = new WorkflowWrapper(workflow);
+
+    const info = wrapper.fromIds(action.stageId, action.taskId);
+    if (info.task === undefined) {
+      console.warn("Task not found");
+      return workflow;
+    }
+    if (info.task.status === "complete") {
+      console.warn("Task is already completed");
+      return workflow;
     }
 
-    // TODO we might want to update blockingTasks here
-    clone.currentStageIndex += 1;
-    return {
-      hasChanged: true,
-      workflow: clone,
-    };
+    switch (action.type) {
+      case "form": {
+        if (info.task.type !== "form") {
+          throw new Error("task is not a form");
+        }
+
+        wrapper.advance();
+
+        return this.workflowService.update(wrapper.workflow);
+      }
+
+      case "signature": {
+        if (info.task.type !== "signature") {
+          throw new Error("task is not a schedule");
+        }
+        wrapper.advance();
+        return this.workflowService.update(wrapper.workflow);
+      }
+
+      case "schedule": {
+        if (info.task.type !== "schedule") {
+          throw new Error("task is not a schedule");
+        }
+
+        wrapper.advance();
+        return this.workflowService.update(wrapper.workflow);
+      }
+
+      default:
+        assertNever(action);
+    }
   }
 
   async tryAdvance(
     context: Context,
     workflow: WorkflowModel
   ): Promise<WorkflowModel> {
-    const clone = JSON.parse(JSON.stringify(workflow)) as WorkflowModel;
-
-    const result = await this.#tryAdvance(context, new WorkflowWrapper(clone));
+    const wrapper = new WorkflowWrapper(workflow);
+    const result = await this.#tryAdvance(context, wrapper);
 
     if (result.hasChanged) {
       return await this.workflowService.update(result.workflow);
@@ -58,6 +89,10 @@ export class WorkflowActionService {
     context: Context,
     workflow: WorkflowWrapper
   ): Promise<WorkflowWrapper> {
+    if (workflow.isCompleted) {
+      return workflow;
+    }
+
     const currentStage = workflow.currentStage;
 
     switch (currentStage.type) {
@@ -67,19 +102,30 @@ export class WorkflowActionService {
         const exists = await this.calendarSubmissionService.exists({
           email: user.email,
         });
-        console.log("Calendar entry for ${user.email} exists: ${exists}");
+        console.log(`Calendar entry for ${user.email} exists: ${exists}`);
         if (exists) {
           workflow.advance();
         }
         break;
       }
-      case "check_insurance_coverage": {
+      case "check_insurance_coverage":
+      case "submit_records":
+        // TODO right now this check is done manually
+        // when an action is submitted
         break;
-      }
-      case "submit_records": {
-        break;
-      }
       case "commitment_to_care": {
+        // check if signature exists for email
+        const user = await this.userService.getById(context.userId);
+
+        const submission = await this.signatureSubmissionService.get({
+          counterPartyEmail: user.email,
+          emailSubjectStartsWith: EMAIL_STARTS_WITH,
+        });
+
+        if (submission && submission.status !== "sent") {
+          workflow.advance();
+        }
+
         break;
       }
       default:

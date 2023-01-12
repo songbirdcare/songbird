@@ -38,7 +38,7 @@ const DisplayCompletedStage: React.FC<{
     <Box display="flex">
       <Typography variant="subtitle2"></Typography>
       <Box display="flex" gap={3} paddingLeft={1 / 2} alignItems="center">
-        <Box width="300px">
+        <Box width="350px">
           <Typography variant="h6">
             {index + 1}. {title}
           </Typography>

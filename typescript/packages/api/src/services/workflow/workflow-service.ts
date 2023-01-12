@@ -2,6 +2,7 @@ import type { WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 
 export interface WorkflowService {
+  getById(id: string): Promise<WorkflowModel>;
   getOrCreateInitial(
     args: GetOrCreateWorkflowArguments
   ): Promise<WorkflowModel>;
@@ -9,6 +10,7 @@ export interface WorkflowService {
 }
 
 export interface GetOrCreateWorkflowArguments {
+  slug: string;
   userId: string;
   childId: string;
 }

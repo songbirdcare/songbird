@@ -9,8 +9,13 @@ import type { StageWithIndex } from "./stage-display-information";
 export const DisplayStages: React.FC<{
   currentStageIndex: number;
   stages: Stage[];
-}> = ({ stages, currentStageIndex }) => {
-  const { completed, nonCompleted } = processStages(currentStageIndex, stages);
+  isCompleted: boolean;
+}> = ({ stages, currentStageIndex, isCompleted }) => {
+  const { completed, nonCompleted } = processStages(
+    isCompleted,
+    currentStageIndex,
+    stages
+  );
   return (
     <Box>
       <Box
@@ -26,10 +31,12 @@ export const DisplayStages: React.FC<{
           const stageDisplayInformation = STAGE_DISPLAY_INFO_LOOKUP[stage.type];
           return (
             <DisplayStage
+              stage={stage}
               stageDisplayInformation={stageDisplayInformation}
-              isEnabled={index === currentStageIndex}
+              isCurrentStage={index === currentStageIndex}
               index={index}
               key={stage.type}
+              currentStageIndex={currentStageIndex}
             />
           );
         })}
@@ -42,6 +49,7 @@ export const DisplayStages: React.FC<{
 };
 
 function processStages(
+  isCompleted: boolean,
   currentStageIndex: number,
   stages: Stage[]
 ): ProcessedStages {
@@ -54,7 +62,7 @@ function processStages(
       stage,
     };
 
-    if (index < currentStageIndex) {
+    if (isCompleted || index < currentStageIndex) {
       completed.push(item);
     } else {
       nonCompleted.push(item);

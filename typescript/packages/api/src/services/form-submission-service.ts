@@ -47,7 +47,7 @@ interface OptionalArguments {
 }
 
 export interface InsertFormSubmissionArgs {
-  raw: Record<string, any>;
+  raw: Record<string, unknown>;
 }
 
 const ZForm = z.object({

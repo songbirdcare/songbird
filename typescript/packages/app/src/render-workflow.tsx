@@ -1,7 +1,5 @@
-import EmbedFlow from "@formsort/react-embed";
-import { LinearProgress } from "@mui/material";
-import { Box, Typography } from "@mui/material";
-import type { FormTask, WorkflowModel } from "@songbird/precedent-iso";
+import { Box, Button } from "@mui/material";
+import type { WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
@@ -9,35 +7,57 @@ import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
 import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
+import { RenderForm } from "./render-form";
+import { RenderSchedule } from "./render-schedule";
+import { SETTINGS } from "./settings";
 
 export const RenderWorkflow: React.FC<{
   userId: string;
   workflow: WorkflowModel;
-}> = ({ userId, workflow }) => {
+  stageType: Stage["type"] | undefined;
+}> = ({ userId, workflow, stageType }) => {
   const { currentStageIndex, stages } = workflow;
 
-  const currentStage = stages[currentStageIndex];
-  if (currentStage === undefined) {
-    throw new Error("illegal state");
-  }
+  const stage = (() => {
+    if (!stageType) {
+      const currentStage = stages[currentStageIndex];
+      if (currentStage === undefined) {
+        throw new Error("illegal state");
+      }
+      return currentStage;
+    }
 
-  return (
-    <RenderStage
-      userId={userId}
-      stage={currentStage}
-      currentStageIndex={currentStageIndex}
-    />
-  );
+    const stage = stages.find((s) => s.type === stageType);
+    if (stage === undefined) {
+      throw new Error("illegal state");
+    }
+    return stage;
+  })();
+
+  return <RenderStage userId={userId} workflowId={workflow.id} stage={stage} />;
 };
 
 export const RenderStage: React.FC<{
   userId: string;
   stage: Stage;
-  currentStageIndex: number;
-}> = ({ stage, currentStageIndex, userId }) => {
+  workflowId: string;
+}> = ({ stage, userId, workflowId }) => {
   switch (stage.type) {
-    case "create_account":
-      throw Error("not implemented");
+    case "create_account": {
+      const [task] = stage.blockingTasks;
+
+      if (task === undefined) {
+        throw new Error("illegal state");
+      }
+      return (
+        <RenderSchedule
+          stageId={stage.id}
+          taskId={task.id}
+          workflowId={workflowId}
+        />
+      );
+    }
+
     case "submit_records":
     case "check_insurance_coverage": {
       const [task] = stage.blockingTasks;
@@ -50,34 +70,46 @@ export const RenderStage: React.FC<{
         <RenderForm
           task={task}
           userId={userId}
-          currentStageIndex={currentStageIndex}
+          stageId={stage.id}
+          workflowId={workflowId}
         />
       );
     }
-    case "commitment_to_care":
-      return (
-        <Box display="flex" marginTop={3}>
-          <Typography> Please sign the agreement</Typography>
-        </Box>
-      );
+    case "commitment_to_care": {
+      const [task] = stage.blockingTasks;
 
+      if (task === undefined) {
+        throw new Error("illegal state");
+      }
+      return (
+        <RenderSignature
+          workflowId={workflowId}
+          stageId={stage.id}
+          taskId={task.id}
+        />
+      );
+    }
     default:
       assertNever(stage);
   }
 };
 
-const RenderForm: React.FC<{
-  task: FormTask;
-  userId: string;
-  currentStageIndex: number;
-}> = ({ task, userId, currentStageIndex }) => {
+const RenderSignature: React.FC<{
+  workflowId: string;
+  taskId: string;
+  stageId: string;
+}> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
 
-  const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
+  React.useEffect(() => {
+    if (!SETTINGS.enableDebuggingAction) {
+      router.push("/");
+    }
+  }, [router]);
 
-  const { trigger, isMutating, data } = useSWRMutation(
-    "/api/proxy/workflows/submit-form",
+  const { data, trigger, isMutating } = useSWRMutation(
+    `/api/proxy/workflows/action/${workflowId}`,
     async (url) => {
       const res = await fetch(url, {
         method: "PUT",
@@ -85,18 +117,14 @@ const RenderForm: React.FC<{
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          stageIndex: currentStageIndex,
+          type: "signature",
+          taskId,
+          stageId,
         }),
       });
       return res.json();
     }
   );
-
-  React.useEffect(() => {
-    if (hasSubmittedForm) {
-      trigger();
-    }
-  }, [trigger, hasSubmittedForm]);
 
   React.useEffect(() => {
     if (data) {
@@ -105,22 +133,11 @@ const RenderForm: React.FC<{
     }
   }, [router, data, mutate]);
 
-  if (isMutating) {
-    return <LinearProgress />;
-  }
   return (
-    <EmbedFlow
-      clientLabel={task.config.client}
-      flowLabel={task.config.flowLabel}
-      variantLabel={task.config.variantLabel}
-      responderUuid={userId}
-      embedConfig={{
-        style: {
-          width: "100%",
-          height: "100%",
-        },
-      }}
-      onFlowFinalized={() => setHasSubmittedForm(true)}
-    />
+    <Box paddingY={3}>
+      <Button disabled={isMutating} onClick={trigger}>
+        Advance to the next step
+      </Button>
+    </Box>
   );
 };

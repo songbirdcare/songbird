@@ -6,9 +6,10 @@ import type { Stage } from "@songbird/precedent-iso";
 import { DisplayStages } from "./stage/display-stages";
 
 export const OnboardingFlow: React.FC<{
+  isCompleted: boolean;
   currentStageIndex: number;
   stages: Stage[];
-}> = ({ currentStageIndex, stages }) => {
+}> = ({ isCompleted, currentStageIndex, stages }) => {
   return (
     <Box
       display="flex"
@@ -20,12 +21,7 @@ export const OnboardingFlow: React.FC<{
     >
       <Box display="flex" flexDirection="column" width="100%">
         <Box display="flex" width="100%" flexDirection="column" gap={1}>
-          <Typography variant="h5" align="left">
-            We&apos;re looking forward to supporting your family.
-          </Typography>
-          <Typography align="left">
-            Here’s what’s needed to start care.{" "}
-          </Typography>
+          <StatusMessage isCompleted={isCompleted} />
         </Box>
       </Box>
       <Box
@@ -37,15 +33,41 @@ export const OnboardingFlow: React.FC<{
       >
         <LinearProgress
           variant="buffer"
-          value={(currentStageIndex / stages.length) * 100}
+          value={isCompleted ? 100 : (currentStageIndex / stages.length) * 100}
           valueBuffer={100}
         />
         <Typography variant="caption">
-          {currentStageIndex} of {stages.length} complete
+          {isCompleted ? stages.length : currentStageIndex} of {stages.length}{" "}
+          complete
         </Typography>
       </Box>
 
-      <DisplayStages currentStageIndex={currentStageIndex} stages={stages} />
+      <DisplayStages
+        isCompleted={isCompleted}
+        currentStageIndex={currentStageIndex}
+        stages={stages}
+      />
     </Box>
+  );
+};
+
+const StatusMessage: React.FC<{ isCompleted: boolean }> = ({ isCompleted }) => {
+  return isCompleted ? (
+    <>
+      <Typography variant="h5" align="left">
+        We’re on our way to supporting your family!
+      </Typography>
+      <Typography align="left">
+        Our team will be in touch about your assessment, therapist match, and
+        starting ongoing care.
+      </Typography>
+    </>
+  ) : (
+    <>
+      <Typography variant="h5" align="left">
+        We&apos;re looking forward to supporting your family.
+      </Typography>
+      <Typography align="left">Here’s what’s needed to start care. </Typography>
+    </>
   );
 };

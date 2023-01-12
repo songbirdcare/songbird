@@ -10,7 +10,6 @@ export class PsqlCalendarSubmissionsService
     const lowered = email.toLowerCase();
     return this.pool.connect(async (connection) =>
       connection.exists(sql.type(ZExistsPayload)`
-
 SELECT
     1
 FROM
