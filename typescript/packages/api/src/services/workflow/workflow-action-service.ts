@@ -97,10 +97,6 @@ export class WorkflowActionService {
 
     switch (currentStage.type) {
       case "create_account": {
-        //TODO TAKE THIS OUT
-        if (1 + 1 === 2) {
-          return workflow;
-        }
         // check if time exists for email
         const user = await this.userService.getById(context.userId);
         const exists = await this.calendarSubmissionService.exists({
@@ -114,6 +110,8 @@ export class WorkflowActionService {
       }
       case "check_insurance_coverage":
       case "submit_records":
+        // TODO right now this check is done manually
+        // when an action is submitted
         break;
       case "commitment_to_care": {
         // check if signature exists for email

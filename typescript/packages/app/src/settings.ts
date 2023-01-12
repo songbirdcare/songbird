@@ -14,5 +14,3 @@ export const SETTINGS = ZSettings.parse({
     process.env["NEXT_PUBLIC_SCHEDULING_URL"] ??
     "https://calendly.com/welcome-to-songbird/songbird-call",
 });
-
-console.log(SETTINGS);

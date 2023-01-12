@@ -40,11 +40,9 @@ export class WorkflowRouter {
       "/action/:workflowId",
       async (req: express.Request, res: express.Response) => {
         const { workflowId } = req.params;
-        debugger;
         if (workflowId === undefined) {
           throw new Error("undefined workflowId");
         }
-        debugger;
         console.log(`Processing workflow action for ${workflowId}`);
 
         const action = ZAction.parse(req.body);
