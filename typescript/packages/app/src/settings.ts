@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const ZSettings = z.object({
+  logRocketId: z.string().optional(),
   enableDebuggingAction: z.boolean(),
   schedulingUrl: z.string().min(1),
 });
