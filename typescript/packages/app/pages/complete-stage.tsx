@@ -1,6 +1,6 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import LinearProgress from "@mui/material/LinearProgress";
-import { Stage } from "@songbird/precedent-iso";
+import type { Stage } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 

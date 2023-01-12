@@ -12,7 +12,6 @@ export class PsqlSignatureSubmissionService
   }: GetSignatureSubmission): Promise<Signature | undefined> {
     return this.pool.connect(async (connection) => {
       const value = await connection.maybeOne(sql.type(ZSqlSignature)`
-
 SELECT
     raw,
     envelope_id,
