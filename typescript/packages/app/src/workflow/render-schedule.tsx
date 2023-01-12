@@ -57,8 +57,8 @@ export const RenderSchedule: React.FC<{
             <Box display="flex" flexDirection="column">
               <Button
                 onClick={() => {
-                  mutate();
                   router.push("/");
+                  mutate();
                 }}
               >
                 Return to dashboard

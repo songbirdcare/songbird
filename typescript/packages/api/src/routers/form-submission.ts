@@ -77,7 +77,9 @@ export class FormSubmissionRouter {
 
         const signupWhiteList = SETTINGS.formsort.signupWhiteList;
         if (signupWhiteList && signupWhiteList !== parsedForm.variant_label) {
-          console.log("Form submitted for disabled variant. Dropping request");
+          console.log(
+            `Form submitted for disabled variant. Dropping request ${signupWhiteList} !== ${parsedForm.variant_label}`
+          );
           res.send("ok");
           return;
         }

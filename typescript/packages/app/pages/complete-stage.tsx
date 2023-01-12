@@ -18,8 +18,6 @@ const CompleteStage: React.FC = () => {
   const { data: user } = useFetchUser();
   const stageType = useGetStageType();
 
-  const router = useRouter();
-  console.log(router.query);
   const userId = user?.id;
   return (
     <>

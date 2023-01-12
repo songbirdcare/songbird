@@ -111,7 +111,6 @@ RETURNING
 
     { id, stages, currentStageIndex, status }: UpdateWorkflow
   ): Promise<WorkflowFromSql> {
-    console.log({ status });
     return trx.one(
       sql.type(ZWorkflowFromSql)`
 UPDATE
