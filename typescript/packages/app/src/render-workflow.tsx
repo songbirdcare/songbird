@@ -1,5 +1,3 @@
-import EmbedFlow from "@formsort/react-embed";
-import { LinearProgress } from "@mui/material";
 import { Box, Typography, Button } from "@mui/material";
 import type {
   FormTask,
@@ -11,28 +9,37 @@ import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
+import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 
 import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
 import { SETTINGS } from "./settings";
+import { RenderSchedule } from "./render-schedule";
+import { RenderForm } from "./render-form";
 
 export const RenderWorkflow: React.FC<{
   userId: string;
   workflow: WorkflowModel;
-}> = ({ userId, workflow }) => {
+  stageType: Stage["type"] | undefined;
+}> = ({ userId, workflow, stageType }) => {
   const { currentStageIndex, stages } = workflow;
 
-  const currentStage = stages[currentStageIndex];
-  if (currentStage === undefined) {
-    throw new Error("illegal state");
-  }
+  const stage = (() => {
+    if (!stageType) {
+      const currentStage = stages[currentStageIndex];
+      if (currentStage === undefined) {
+        throw new Error("illegal state");
+      }
+      return currentStage;
+    }
 
-  return (
-    <RenderStage
-      userId={userId}
-      workflowId={workflow.id}
-      stage={currentStage}
-    />
-  );
+    const stage = stages.find((s) => s.type === stageType);
+    if (stage === undefined) {
+      throw new Error("illegal state");
+    }
+    return stage;
+  })();
+
+  return <RenderStage userId={userId} workflowId={workflow.id} stage={stage} />;
 };
 
 export const RenderStage: React.FC<{
@@ -73,81 +80,26 @@ export const RenderStage: React.FC<{
         />
       );
     }
-    case "commitment_to_care":
-      return (
-        <Box display="flex" marginTop={3}>
-          <Typography> Please sign the agreement</Typography>
-        </Box>
-      );
+    case "commitment_to_care": {
+      const [task] = stage.blockingTasks;
 
+      if (task === undefined) {
+        throw new Error("illegal state");
+      }
+      return (
+        <RenderSignature
+          workflowId={workflowId}
+          stageId={stage.id}
+          taskId={task.id}
+        />
+      );
+    }
     default:
       assertNever(stage);
   }
 };
 
-const RenderForm: React.FC<{
-  workflowId: string;
-  task: FormTask;
-  stageId: string;
-  userId: string;
-}> = ({ workflowId, task, userId, stageId }) => {
-  const router = useRouter();
-  const { mutate } = useFetchWorkflow();
-
-  const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
-
-  const { trigger, isMutating, data } = useSWRMutation(
-    `/api/proxy/workflows/action/${workflowId}`,
-    async (url) => {
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type: "form",
-          taskId: task.id,
-          stageId,
-        }),
-      });
-      return res.json();
-    }
-  );
-
-  React.useEffect(() => {
-    if (hasSubmittedForm) {
-      trigger();
-    }
-  }, [trigger, hasSubmittedForm]);
-
-  React.useEffect(() => {
-    if (data) {
-      mutate();
-      router.push("/");
-    }
-  }, [router, data, mutate]);
-
-  if (isMutating) {
-    return <LinearProgress />;
-  }
-  return (
-    <EmbedFlow
-      clientLabel={task.config.client}
-      flowLabel={task.config.flowLabel}
-      variantLabel={task.config.variantLabel}
-      responderUuid={userId}
-      embedConfig={{
-        style: {
-          width: "100%",
-          height: "100%",
-        },
-      }}
-      onFlowFinalized={() => setHasSubmittedForm(true)}
-    />
-  );
-};
-
-const RenderSchedule: React.FC<{
+const RenderSignature: React.FC<{
   workflowId: string;
   taskId: string;
   stageId: string;
@@ -155,7 +107,13 @@ const RenderSchedule: React.FC<{
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
 
-  const { trigger, isMutating, data } = useSWRMutation(
+  React.useEffect(() => {
+    if (!SETTINGS.enableDebuggingAction) {
+      router.push("/");
+    }
+  }, [router]);
+
+  const { data, trigger, isMutating } = useSWRMutation(
     `/api/proxy/workflows/action/${workflowId}`,
     async (url) => {
       const res = await fetch(url, {
@@ -164,7 +122,7 @@ const RenderSchedule: React.FC<{
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          type: "schedule",
+          type: "signature",
           taskId,
           stageId,
         }),
@@ -180,16 +138,11 @@ const RenderSchedule: React.FC<{
     }
   }, [router, data, mutate]);
 
-  if (isMutating) {
-    return <LinearProgress />;
-  }
   return (
-    <Box>
-      {SETTINGS.enableDebuggingAction && (
-        <Button onClick={trigger} disabled={isMutating}>
-          Skip to next step
-        </Button>
-      )}
+    <Box paddingY={3}>
+      <Button disabled={isMutating} onClick={trigger}>
+        Advance to the next step
+      </Button>
     </Box>
   );
 };

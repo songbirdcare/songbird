@@ -28,6 +28,7 @@ export class WorkflowActionService {
 
     const wrapper = new WorkflowWrapper(workflow);
 
+    debugger;
     const info = wrapper.fromIds(action.stageId, action.taskId);
     if (info.task === undefined) {
       console.warn("Task not found");
@@ -48,7 +49,8 @@ export class WorkflowActionService {
         if (info.task.type !== "signature") {
           throw new Error("task is not a schedule");
         }
-        throw new Error("not implemented");
+        wrapper.advance();
+        return this.workflowService.update(wrapper.workflow);
       }
 
       case "schedule": {

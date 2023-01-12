@@ -998,6 +998,7 @@ __metadata:
     next: ^13.1.1
     prettier: ^2.8.1
     react: ^18.2.0
+    react-calendly: ^4.1.0
     react-dom: ^18.2.0
     swr: ^2.0.0
     typescript: ^4.9.4
@@ -5051,6 +5052,16 @@ __metadata:
     iconv-lite: 0.4.24
     unpipe: 1.0.0
   checksum: 5362adff1575d691bb3f75998803a0ffed8c64eabeaa06e54b4ada25a0cd1b2ae7f4f5ec46565d1bec337e08b5ac90c76eaa0758de6f72a633f025d754dec29e
+  languageName: node
+  linkType: hard
+
+"react-calendly@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "react-calendly@npm:4.1.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: ac94d406b8d2267f287a0541362c49de548a22ee3a774e7eed4d1934b91769dd45cb90046cc1862115c94381143414319ab68df12c1faa0760af676f4931d027
   languageName: node
   linkType: hard
 

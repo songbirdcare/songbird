@@ -4,6 +4,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { assertNever, Stage } from "@songbird/precedent-iso";
 import Image from "next/image";
+import { SETTINGS } from "../../settings";
 
 import type { StageDisplayInformation } from "./stage-display-information";
 
@@ -95,7 +96,7 @@ const StageButton: React.FC<{ stage: Stage; isCurrentStage: boolean }> = ({
     case "submit_records":
       return (
         <Button
-          href="/complete-stage"
+          href={`/complete-stage?stage=${stage.type}`}
           variant="contained"
           disabled={!isCurrentStage}
         >
@@ -104,10 +105,13 @@ const StageButton: React.FC<{ stage: Stage; isCurrentStage: boolean }> = ({
       );
 
     case "commitment_to_care": {
-      console.log({ isCurrentStage });
       return (
-        <Button href="/complete-stage" variant="contained" disabled={true}>
-          {isCurrentStage ? "Pending" : " Start"}
+        <Button
+          href={`/complete-stage?stage=${stage.type}`}
+          variant="contained"
+          disabled={!isCurrentStage || !SETTINGS.enableDebuggingAction}
+        >
+          {isCurrentStage ? "Pending" : "Start"}
         </Button>
       );
     }

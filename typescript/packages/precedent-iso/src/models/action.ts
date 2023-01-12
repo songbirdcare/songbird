@@ -16,7 +16,6 @@ export const ZSignatureAction = z.object({
   type: z.literal("signature"),
   stageId: z.string(),
   taskId: z.string(),
-  status: z.string(),
 });
 
 export const ZAction = z.discriminatedUnion("type", [

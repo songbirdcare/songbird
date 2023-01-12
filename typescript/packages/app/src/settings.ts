@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const ZSettings = z.object({
   enableDebuggingAction: z.boolean(),
+  schedulingUrl: z.string().min(1),
 });
 
 const enableDebuggingAction =
@@ -9,6 +10,9 @@ const enableDebuggingAction =
 
 export const SETTINGS = ZSettings.parse({
   enableDebuggingAction,
+  schedulingUrl:
+    process.env["NEXT_PUBLIC_SCHEDULING_URL"] ??
+    "https://calendly.com/welcome-to-songbird/songbird-call",
 });
 
 console.log(SETTINGS);
