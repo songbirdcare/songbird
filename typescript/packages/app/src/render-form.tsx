@@ -1,7 +1,5 @@
 import EmbedFlow from "@formsort/react-embed";
-
 import type { FormTask } from "@songbird/precedent-iso";
-
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";

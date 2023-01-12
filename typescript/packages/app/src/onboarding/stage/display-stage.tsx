@@ -4,8 +4,8 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { assertNever, Stage } from "@songbird/precedent-iso";
 import Image from "next/image";
-import { SETTINGS } from "../../settings";
 
+import { SETTINGS } from "../../settings";
 import type { StageDisplayInformation } from "./stage-display-information";
 
 export const DisplayStage: React.FC<{
