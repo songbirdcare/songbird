@@ -1,25 +1,33 @@
 import { DatabasePool, sql } from "slonik";
+import { z } from "zod";
 
 export class PsqlSignatureSubmissionService
   implements SignatureSubmissionService
 {
   constructor(private readonly pool: DatabasePool) {}
 
-  async exists({
+  async get({
     counterPartyEmail,
     emailSubjectStartsWith,
-  }: Exists): Promise<boolean> {
-    return this.pool.connect(async (connection) =>
-      connection.exists(sql.unsafe`
+  }: GetSignatureSubmission): Promise<Signature | undefined> {
+    return this.pool.connect(async (connection) => {
+      const value = await connection.maybeOne(sql.type(ZSqlSignature)`
 SELECT
-    1
+  raw,
+  envelope_id,
+  email_subject,
+  counterparty_email,
+  status,
+  event_created_at
 FROM
     signature_submissions
 WHERE
     LOWER(counterparty_email) = ${counterPartyEmail.toLowerCase()}
     AND email_subject LIKE ${"%" + emailSubjectStartsWith + "%"}
-`)
-    );
+`);
+
+      return value ? fromSQL(value) : undefined;
+    });
   }
 
   async insert({
@@ -44,13 +52,35 @@ INSERT INTO signature_submissions (raw, envelope_id, email_subject, event_create
 }
 
 export interface SignatureSubmissionService {
-  exists: (args: Exists) => Promise<boolean>;
+  get: (args: GetSignatureSubmission) => Promise<Signature | undefined>;
   insert: (form: Signature) => Promise<void>;
 }
 
-interface Exists {
+interface GetSignatureSubmission {
   counterPartyEmail: string;
   emailSubjectStartsWith: string;
+}
+
+const ZSqlSignature = z.object({
+  envelope_id: z.string(),
+  email_subject: z.string(),
+  counterparty_email: z.string(),
+  status: z.string(),
+  event_created_at: z.string(),
+  raw: z.string(),
+});
+
+type SqlSignature = z.infer<typeof ZSqlSignature>;
+
+function fromSQL(args: SqlSignature): Signature {
+  return {
+    raw: JSON.parse(args.raw),
+    envelopeId: args.envelope_id,
+    emailSubject: args.email_subject,
+    eventCreatedAt: args.event_created_at,
+    counterPartyEmail: args.counterparty_email,
+    status: args.status,
+  };
 }
 
 interface Signature {

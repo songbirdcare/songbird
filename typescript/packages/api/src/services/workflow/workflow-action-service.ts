@@ -28,12 +28,16 @@ export class WorkflowActionService {
 
     const wrapper = new WorkflowWrapper(workflow);
 
-    debugger;
     const info = wrapper.fromIds(action.stageId, action.taskId);
     if (info.task === undefined) {
       console.warn("Task not found");
       return workflow;
     }
+    if (info.task.status === "complete") {
+      console.warn("Task is already completed");
+      return workflow;
+    }
+
     switch (action.type) {
       case "form": {
         if (info.task.type !== "form") {
@@ -115,12 +119,12 @@ export class WorkflowActionService {
         // check if signature exists for email
         const user = await this.userService.getById(context.userId);
 
-        const exists = await this.signatureSubmissionService.exists({
+        const submission = await this.signatureSubmissionService.get({
           counterPartyEmail: user.email,
           emailSubjectStartsWith: EMAIL_STARTS_WITH,
         });
-        console.log(`Signature entry for ${user.email} exists: ${exists}`);
-        if (exists) {
+
+        if (submission && submission.status !== "sent") {
           workflow.advance();
         }
 

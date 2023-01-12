@@ -15,6 +15,7 @@ import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 
 import { useFetchWorkflow } from "./hooks/use-fetch-workflow";
 import { SETTINGS } from "./settings";
+import { useFetchUser } from "./hooks/use-fetch-user";
 
 export const RenderSchedule: React.FC<{
   workflowId: string;
@@ -23,8 +24,9 @@ export const RenderSchedule: React.FC<{
 }> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
+  const { data: user, isLoading: userIsLoading } = useFetchUser();
 
-  const { data, trigger } = useSWRMutation(
+  const { data, trigger, isMutating } = useSWRMutation(
     `/api/proxy/workflows/action/${workflowId}`,
     async (url) => {
       const res = await fetch(url, {
@@ -45,6 +47,9 @@ export const RenderSchedule: React.FC<{
   useCalendlyEventListener({
     onEventScheduled: trigger,
   });
+  if (userIsLoading || !user) {
+    return <LinearProgress />;
+  }
 
   return (
     <Box
@@ -70,8 +75,16 @@ export const RenderSchedule: React.FC<{
           </Alert>
         </Box>
       )}
+      {SETTINGS.enableDebuggingAction && (
+        <Box display="flex" paddingY={3} justifyContent="center">
+          <Button disabled={isMutating} onClick={trigger}>
+            Advance to the next step
+          </Button>
+        </Box>
+      )}
       <InlineWidget
         url={SETTINGS.schedulingUrl}
+        prefill={{ email: user.email }}
         styles={{
           width: "100%",
           height: "100%",
