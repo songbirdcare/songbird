@@ -22,6 +22,7 @@
     "@emotion/styled": "^11.10.5",
     "@formsort/react-embed": "^3.1.0",
     "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.115",
     "@mui/material": "^5.11.4",
     "@next/font": "^13.1.1",
     "@songbird/precedent-iso": "workspace:^",

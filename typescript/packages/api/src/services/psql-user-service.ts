@@ -1,13 +1,13 @@
 import {
+  CreateUserResponse,
   isValidEmail,
   PasswordValidationService,
-  CreateUserResponse,
   UserModel,
 } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
-import type { Auth0Service } from "./auth0/auth0-service";
 
+import type { Auth0Service } from "./auth0/auth0-service";
 import type {
   CreateUserArgs,
   UpsertUserArgs,
@@ -106,7 +106,9 @@ ON CONFLICT (sub)
         );
 
         const user = await trx.one(sql.type(ZUserFromSql)`
-SELECT ${FIELDS}
+
+SELECT
+    ${FIELDS}
 FROM
     sb_user
 WHERE

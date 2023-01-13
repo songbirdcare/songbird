@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import type { PasswordValidationError } from "../services/password-validation-service";
 
 export type UserModel = z.infer<typeof ZUserModel>;

@@ -1,7 +1,7 @@
+import { ZEmailWithPassword } from "@songbird/precedent-iso";
 import express from "express";
 
 import type { UserService } from "../services/user-service";
-import { ZEmailWithPassword } from "@songbird/precedent-iso";
 
 export class PublicUserRouter {
   constructor(private readonly userService: UserService) {}

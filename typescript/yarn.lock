@@ -568,6 +568,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mui/lab@npm:^5.0.0-alpha.115":
+  version: 5.0.0-alpha.115
+  resolution: "@mui/lab@npm:5.0.0-alpha.115"
+  dependencies:
+    "@babel/runtime": ^7.20.7
+    "@mui/base": 5.0.0-alpha.113
+    "@mui/system": ^5.11.4
+    "@mui/types": ^7.2.3
+    "@mui/utils": ^5.11.2
+    clsx: ^1.2.1
+    prop-types: ^15.8.1
+    react-is: ^18.2.0
+  peerDependencies:
+    "@emotion/react": ^11.5.0
+    "@emotion/styled": ^11.3.0
+    "@mui/material": ^5.0.0
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@emotion/react":
+      optional: true
+    "@emotion/styled":
+      optional: true
+    "@types/react":
+      optional: true
+  checksum: 042641a756f0085fe143a24d99ad11028eb3c5cf5511dc2ef3f0ee9faf585db3a23a094bfb71d5868fa195a6638f868abbdfc3e74ca479eaca2fab16ca60f9af
+  languageName: node
+  linkType: hard
+
 "@mui/material@npm:^5.11.4":
   version: 5.11.4
   resolution: "@mui/material@npm:5.11.4"
@@ -982,6 +1012,7 @@ __metadata:
     "@emotion/styled": ^11.10.5
     "@formsort/react-embed": ^3.1.0
     "@mui/icons-material": ^5.11.0
+    "@mui/lab": ^5.0.0-alpha.115
     "@mui/material": ^5.11.4
     "@next/font": ^13.1.1
     "@songbird/precedent-iso": "workspace:^"
