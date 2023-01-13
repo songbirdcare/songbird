@@ -9,9 +9,11 @@ export class PsqlSignatureSubmissionService
   async get({
     counterPartyEmail,
     emailSubjectStartsWith,
+    status,
   }: GetSignatureSubmission): Promise<Signature | undefined> {
     return this.pool.connect(async (connection) => {
       const value = await connection.maybeOne(sql.type(ZSqlSignature)`
+
 SELECT
     raw,
     envelope_id,
@@ -22,7 +24,8 @@ SELECT
 FROM
     signature_submissions
 WHERE
-    LOWER(counterparty_email) = ${counterPartyEmail.toLowerCase()}
+    status = ${status}
+    AND LOWER(counterparty_email) = ${counterPartyEmail.toLowerCase()}
     AND email_subject LIKE ${"%" + emailSubjectStartsWith + "%"}
 `);
 
@@ -59,6 +62,7 @@ export interface SignatureSubmissionService {
 interface GetSignatureSubmission {
   counterPartyEmail: string;
   emailSubjectStartsWith: string;
+  status: "sent" | "completed";
 }
 
 const ZSqlSignature = z.object({
@@ -89,5 +93,6 @@ interface Signature {
   emailSubject: string;
   eventCreatedAt: string;
   counterPartyEmail: string;
-  status: string;
+  // what are the other statuses?
+  status: "sent" | "completed" | string;
 }

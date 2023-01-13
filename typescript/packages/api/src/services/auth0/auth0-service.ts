@@ -1,6 +1,5 @@
 import type { EmailVerification } from "@songbird/precedent-iso";
 import { AuthenticationClient, ManagementClient } from "auth0";
-import crypto from "crypto";
 import { z } from "zod";
 
 import { Auth0TokenService } from "./auth0-token-service";
@@ -32,7 +31,10 @@ export class Auth0Service {
     });
   }
 
-  async createUser(email: string): Promise<CreateUserResponse> {
+  async createUser({
+    email,
+    password,
+  }: CreateUserArgs): Promise<CreateUserResponse> {
     const client = await this.#client();
     const users = await client.getUsersByEmail(email);
 
@@ -56,8 +58,7 @@ export class Auth0Service {
     const user = await client.createUser({
       connection: CONNECTION,
       email,
-      password: `${crypto.randomBytes(20).toString("hex")}XYZxyz123!@#`,
-      email_verified: true,
+      password,
     });
 
     const sub = user.user_id;
@@ -126,6 +127,11 @@ export class Auth0Service {
 
     return this.#managementClient;
   }
+}
+
+interface CreateUserArgs {
+  email: string;
+  password: string;
 }
 
 interface UserObject {

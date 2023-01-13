@@ -28,7 +28,7 @@ export class UserInformationMiddleware {
     };
 
   #getUser = async (sub: string) => {
-    const user = await this.userService.get(sub);
+    const user = await this.userService.getByEmail(sub);
     if (user === undefined || !user.emailVerified) {
       console.log(`Attempting to fetch profile from Auth0 sub=${sub}`);
       const fromAuth0 = await this.auth0Service.getUser(sub);

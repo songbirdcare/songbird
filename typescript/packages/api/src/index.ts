@@ -30,6 +30,7 @@ import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-
 
 import { PsqlSignatureSubmissionService } from "./services/signature-submission-service";
 import { WorkflowActionService } from "./services/workflow/workflow-action-service";
+import { PublicUserRouter } from "./routers/public-user";
 
 console.log("Booting application!");
 
@@ -72,7 +73,7 @@ async function start() {
     SETTINGS.auth.domain
   );
 
-  const userService = new PsqlUserService(pool);
+  const userService = new PsqlUserService(pool, auth0Service);
   const calendarService = new PsqlCalendarSubmissionsService(pool);
   const signatureSubmissionService = new PsqlSignatureSubmissionService(pool);
 
@@ -87,9 +88,7 @@ async function start() {
 
   const healthRouter = new HealthRouter(healthService).init();
   const formSubmissionRouter = new FormSubmissionRouter(
-    formSubmissionService,
-    auth0Service,
-    userService
+    formSubmissionService
   ).init();
 
   app.use("/api/v1/health", healthRouter);
@@ -102,6 +101,8 @@ async function start() {
 
   const userIsVerified = userInformationMiddleware.ensureUserVerified();
   const addUser = userInformationMiddleware.addUser();
+
+  app.use("/api/v1/public-users", new PublicUserRouter(userService).init());
 
   app.use(
     "/api/v1/users",
