@@ -1,5 +1,5 @@
 import type { EmailVerification } from "@songbird/precedent-iso";
-import { AuthenticationClient, ManagementClient } from "auth0";
+import { ManagementClient } from "auth0";
 import { z } from "zod";
 
 import { Auth0TokenService } from "./auth0-token-service";
@@ -9,12 +9,11 @@ const CONNECTION = "Username-Password-Authentication";
 export class Auth0Service {
   #tokenService: Auth0TokenService;
   #managementClient: ManagementClient | undefined;
-  #authenticationClient: AuthenticationClient;
 
   constructor(
     baseUrl: string,
     secret: string,
-    private readonly clientId: string,
+    clientId: string,
     audience: string,
     private readonly domain: string
   ) {
@@ -24,11 +23,6 @@ export class Auth0Service {
       clientId,
       audience
     );
-
-    this.#authenticationClient = new AuthenticationClient({
-      domain,
-      clientId,
-    });
   }
 
   async createUser({
@@ -74,14 +68,6 @@ export class Auth0Service {
         connectionType: this.#getConnectionType(sub),
       },
     };
-  }
-
-  async sendPasswordReset(email: string) {
-    return this.#authenticationClient.requestChangePasswordEmail({
-      client_id: this.clientId,
-      email,
-      connection: CONNECTION,
-    });
   }
 
   async sendEmailVerification(id: string): Promise<EmailVerification> {

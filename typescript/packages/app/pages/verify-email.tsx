@@ -1,14 +1,14 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import LinearProgress from "@mui/material/LinearProgress";
+import { Box, LinearProgress } from "@mui/material";
 import { useRouter } from "next/router";
 import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
-import { VerifyEmail } from "../src/verify-email";
+import { VerifyEmail } from "../src/verify-email/verify-email";
 
-const Home: React.FC = () => {
+const VerifyEmailPage: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
 
   const router = useRouter();
@@ -24,10 +24,16 @@ const Home: React.FC = () => {
       <AppBar />
 
       <BodyContainer>
-        {userIsLoading ? <LinearProgress /> : <VerifyEmail />}
+        {userIsLoading || !user ? (
+          <Box display="flex" width="100%" height="100%">
+            <LinearProgress sx={{ width: "100%" }} />
+          </Box>
+        ) : (
+          <VerifyEmail email={user.email} />
+        )}
       </BodyContainer>
     </>
   );
 };
 
-export default withPageAuthRequired(Home);
+export default withPageAuthRequired(VerifyEmailPage);

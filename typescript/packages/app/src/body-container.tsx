@@ -18,6 +18,7 @@ export const BodyContainer: React.FC<{
       justifyContent="center"
       bgcolor={SONG_BIRD_BIEGE}
       height="100%"
+      width="100%"
       sx={BACKGROUND_STYLE}
       overflow="auto"
     >

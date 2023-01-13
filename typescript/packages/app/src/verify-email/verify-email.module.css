@@ -1,0 +1,41 @@
+@media (min-width: 670px) {
+  .content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+
+  .icon {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .not-icon {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+}
+
+@media (max-width: 670px) {
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .icon {
+    display: flex;
+    justify-content: center;
+  }
+
+  .not-icon {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .content-text {
+    text-align: center;
+  }
+  .send-button {
+    justify-content: center;
+  }
+}
