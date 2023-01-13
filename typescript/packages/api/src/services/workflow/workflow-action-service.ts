@@ -120,9 +120,10 @@ export class WorkflowActionService {
         const submission = await this.signatureSubmissionService.get({
           counterPartyEmail: user.email,
           emailSubjectStartsWith: EMAIL_STARTS_WITH,
+          status: "completed",
         });
 
-        if (submission && submission.status !== "sent") {
+        if (submission) {
           workflow.advance();
         }
 

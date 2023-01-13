@@ -1,8 +1,18 @@
-import type { UserModel } from "@songbird/precedent-iso";
+import {
+  CreateUserResponse,
+  isValidEmail,
+  PasswordValidationService,
+  UserModel,
+} from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { UpsertUserArgs, UserService } from "./user-service";
+import type { Auth0Service } from "./auth0/auth0-service";
+import type {
+  CreateUserArgs,
+  UpsertUserArgs,
+  UserService,
+} from "./user-service";
 
 const FIELDS = sql.fragment`
 id,
@@ -13,8 +23,37 @@ name,
 given_name,
 family_name
 `;
+
 export class PsqlUserService implements UserService {
-  constructor(private readonly pool: DatabasePool) {}
+  constructor(
+    private readonly pool: DatabasePool,
+    private readonly auth0: Auth0Service
+  ) {}
+
+  async create({
+    email,
+    password,
+  }: CreateUserArgs): Promise<CreateUserResponse> {
+    if (!isValidEmail(email)) {
+      return { type: "invalid_email" };
+    }
+    const passwordValidation = PasswordValidationService.validate(password);
+    if (passwordValidation.type === "error") {
+      return { type: "password", error: passwordValidation.code };
+    }
+
+    const auth0 = await this.auth0.createUser({ email, password });
+    if (auth0.status === "already_exists") {
+      return { type: "exists_in_auth0" };
+    }
+    await this.upsert({
+      sub: auth0.user.sub,
+      email,
+      emailVerified: false,
+    });
+
+    return { type: "ok" };
+  }
 
   async getById(id: string): Promise<UserModel> {
     const user = await this.pool.connect(async (connection) =>
@@ -25,7 +64,7 @@ export class PsqlUserService implements UserService {
     return fromSQL(user);
   }
 
-  async get(sub: string): Promise<UserModel | undefined> {
+  async getBySub(sub: string): Promise<UserModel | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
         sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE sub = ${sub}`
@@ -64,13 +103,7 @@ ON CONFLICT (sub)
 
         const user = await trx.one(sql.type(ZUserFromSql)`
 SELECT
-    id,
-    sub,
-    email,
-    email_verified,
-    name,
-    given_name,
-    family_name
+    ${FIELDS}
 FROM
     sb_user
 WHERE

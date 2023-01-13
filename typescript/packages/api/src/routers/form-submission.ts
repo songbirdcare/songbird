@@ -1,19 +1,12 @@
 import { assertNever } from "@songbird/precedent-iso";
 import crypto from "crypto";
 import express from "express";
-import { z } from "zod";
 
-import type { Auth0Service } from "../services/auth0/auth0-service";
 import type { FormSubmissionService } from "../services/form-submission-service";
-import type { UserService } from "../services/user-service";
 import { SETTINGS } from "../settings";
 
 export class FormSubmissionRouter {
-  constructor(
-    private readonly formSubmissionService: FormSubmissionService,
-    private readonly auth0Service: Auth0Service,
-    private readonly userService: UserService
-  ) {}
+  constructor(private readonly formSubmissionService: FormSubmissionService) {}
 
   init() {
     const router = express.Router();
@@ -65,40 +58,10 @@ export class FormSubmissionRouter {
       "/onboarding-callback",
       validateSignatureMiddleware,
       async (req: express.Request, res: express.Response) => {
-        console.log("Onboarding callback triggered");
-
-        const parsedForm = this.formSubmissionService.parse(req.body);
-        const withEmail = ZFormWithEmail.parse(parsedForm.answers);
-        const email = withEmail.email_address ?? withEmail.caregiver_2_email;
-
-        if (email === undefined) {
-          throw new Error("could not get email");
-        }
-
-        const signupWhiteList = SETTINGS.formsort.signupWhiteList;
-        if (signupWhiteList && signupWhiteList !== parsedForm.variant_label) {
-          console.log(
-            `Form submitted for disabled variant. Dropping request ${signupWhiteList} !== ${parsedForm.variant_label}`
-          );
-          res.send("ok");
-          return;
-        }
-
-        await this.formSubmissionService.insert(parsedForm, { email });
-        console.log("Creating Auth0 user");
-        const { user } = await this.auth0Service.createUser(email);
-
-        await this.userService.upsert({
-          email,
-          sub: user.sub,
-          emailVerified: true,
-        });
-
-        if (user.connectionType === "auth0") {
-          console.log(`Sending email to ${email}`);
-          await this.auth0Service.sendPasswordReset(email);
-        }
-        res.json({ status: "OK" });
+        await this.formSubmissionService.insert(
+          this.formSubmissionService.parse(req.body)
+        );
+        res.send("ok");
       }
     );
 
@@ -166,7 +129,3 @@ async function validateSignatureMiddleware(
       assertNever(validationResult);
   }
 }
-const ZFormWithEmail = z.object({
-  email_address: z.string().optional(),
-  caregiver_2_email: z.string().optional(),
-});
