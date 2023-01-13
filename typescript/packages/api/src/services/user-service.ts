@@ -3,7 +3,7 @@ import type { CreateUserResponse, UserModel } from "@songbird/precedent-iso";
 export interface UserService {
   create(args: CreateUserArgs): Promise<CreateUserResponse>;
   getById(id: string): Promise<UserModel>;
-  getByEmail(email: string): Promise<UserModel | undefined>;
+  getBySub(email: string): Promise<UserModel | undefined>;
   upsert(args: UpsertUserArgs): Promise<UserModel>;
 }
 

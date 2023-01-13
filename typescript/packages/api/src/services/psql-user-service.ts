@@ -39,13 +39,9 @@ export class PsqlUserService implements UserService {
     }
     const passwordValidation = PasswordValidationService.validate(password);
     if (passwordValidation.type === "error") {
-      passwordValidation;
       return { type: "password", error: passwordValidation.code };
     }
-    const fromEmail = await this.getByEmail(email);
-    if (fromEmail) {
-      return { type: "exists_in_sql" };
-    }
+
     const auth0 = await this.auth0.createUser({ email, password });
     if (auth0.status === "already_exists") {
       return { type: "exists_in_auth0" };
@@ -68,7 +64,7 @@ export class PsqlUserService implements UserService {
     return fromSQL(user);
   }
 
-  async getByEmail(sub: string): Promise<UserModel | undefined> {
+  async getBySub(sub: string): Promise<UserModel | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
         sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE sub = ${sub}`
@@ -106,7 +102,6 @@ ON CONFLICT (sub)
         );
 
         const user = await trx.one(sql.type(ZUserFromSql)`
-
 SELECT
     ${FIELDS}
 FROM
