@@ -3,9 +3,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import type { Stage } from "@songbird/precedent-iso";
 
-import { DisplayStages } from "./stage/display-stages";
-
 import styles from "./onboarding.module.css";
+import { DisplayStages } from "./stage/display-stages";
 
 export const OnboardingFlow: React.FC<{
   isCompleted: boolean;
