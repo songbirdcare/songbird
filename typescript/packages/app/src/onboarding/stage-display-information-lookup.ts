@@ -10,9 +10,9 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
     title: "Create account and book time",
     byline: "Book time with a care consultant.",
     asset: {
-      path: "/onboarding/hands.svg",
-      width: 64,
-      height: 60,
+      path: "/onboarding/calendar.svg",
+      width: 48,
+      height: 42,
       alt: "Create account and book time",
     },
   },
