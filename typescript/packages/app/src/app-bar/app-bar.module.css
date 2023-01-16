@@ -1,0 +1,33 @@
+@media (min-width: 670px) {
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .logo {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+
+  .right-side {
+    grid-area: 1 / 3 / 2 / 4;
+  }
+}
+
+@media (max-width: 670px) {
+  .toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .display-name {
+    display: none;
+  }
+
+  .logo {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .right-side {
+    grid-area: 1 / 3 / 2 / 4;
+  }
+}
