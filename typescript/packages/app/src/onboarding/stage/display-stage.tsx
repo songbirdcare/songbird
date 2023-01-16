@@ -36,12 +36,7 @@ export const DisplayStage: React.FC<{
         padding={3}
       >
         <Box display="flex" gap={3} alignItems="center">
-          <Box
-            width="60px"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
+          <Box display="flex" justifyContent="center" alignItems="center">
             <Image
               src={asset.path}
               width={asset.width}
@@ -49,7 +44,7 @@ export const DisplayStage: React.FC<{
               alt={asset.alt}
             />
           </Box>
-          <Box display="flex" flexDirection="column" width="370px">
+          <Box display="flex" flexDirection="column">
             <Typography variant="h6" component="h6" gutterBottom>
               {index + 1}. {title}
             </Typography>

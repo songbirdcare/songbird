@@ -5,6 +5,8 @@ import type { Stage } from "@songbird/precedent-iso";
 
 import { DisplayStages } from "./stage/display-stages";
 
+import styles from "./onboarding.module.css";
+
 export const OnboardingFlow: React.FC<{
   isCompleted: boolean;
   currentStageIndex: number;
@@ -17,7 +19,6 @@ export const OnboardingFlow: React.FC<{
       height="100%"
       flexDirection="column"
       alignItems="center"
-      width="725px"
     >
       <Box display="flex" flexDirection="column" width="100%">
         <Box display="flex" width="100%" flexDirection="column" gap={1}>
@@ -54,20 +55,30 @@ export const OnboardingFlow: React.FC<{
 const StatusMessage: React.FC<{ isCompleted: boolean }> = ({ isCompleted }) => {
   return isCompleted ? (
     <>
-      <Typography variant="h5" align="left">
+      <Typography
+        variant="h5"
+        color="primary"
+        className={styles["header"] as string}
+      >
         We’re on our way to supporting your family!
       </Typography>
-      <Typography align="left">
+      <Typography className={styles["text"] as string}>
         Our team will be in touch about your assessment, therapist match, and
         starting ongoing care.
       </Typography>
     </>
   ) : (
     <>
-      <Typography variant="h5" align="left">
+      <Typography
+        variant="h5"
+        color="primary"
+        className={styles["header"] as string}
+      >
         We&apos;re looking forward to supporting your family.
       </Typography>
-      <Typography align="left">Here’s what’s needed to start care. </Typography>
+      <Typography className={styles["text"] as string}>
+        Here’s what’s needed to start care.{" "}
+      </Typography>
     </>
   );
 };

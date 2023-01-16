@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 
 import flower from "../public/background-flower.svg";
 import { SONG_BIRD_BIEGE } from "./style/colors";
@@ -21,6 +21,7 @@ export const BodyContainer: React.FC<{
       width="100%"
       sx={BACKGROUND_STYLE}
       overflow="auto"
+      padding={2}
     >
       {children}
     </Box>

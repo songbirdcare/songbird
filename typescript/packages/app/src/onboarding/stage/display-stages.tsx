@@ -24,7 +24,6 @@ export const DisplayStages: React.FC<{
         alignItems="center"
         gap={4}
         justifyContent="center"
-        width="725px"
         paddingY={5}
       >
         {nonCompleted.map(({ stage, index }) => {
