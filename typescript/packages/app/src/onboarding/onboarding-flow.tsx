@@ -18,6 +18,7 @@ export const OnboardingFlow: React.FC<{
       height="100%"
       flexDirection="column"
       alignItems="center"
+      marginX={2}
     >
       <Box display="flex" flexDirection="column" width="100%">
         <Box display="flex" width="100%" flexDirection="column" gap={1}>

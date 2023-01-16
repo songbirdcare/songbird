@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -6,6 +7,7 @@ import { assertNever, Stage } from "@songbird/precedent-iso";
 import Image from "next/image";
 
 import { SETTINGS } from "../../settings";
+import styles from "./display-stage.module.css";
 import type { StageDisplayInformation } from "./stage-display-information";
 
 export const DisplayStage: React.FC<{
@@ -25,33 +27,58 @@ export const DisplayStage: React.FC<{
     byline,
     stage,
   });
+
+  const isSmallScreen = useMediaQuery("(max-width:670px)");
   return (
-    <Paper sx={{ width: "100%" }} variant="outlined">
+    <Paper
+      sx={{
+        width: "100%",
+        padding: 2,
+        display: "flex",
+        gap: isSmallScreen ? 1 : 2,
+        flexDirection: "column",
+        minHeight: "132px",
+      }}
+      variant="outlined"
+      className={styles["paper"] as string}
+    >
       <Box
         display="flex"
-        flexDirection="row"
-        width="100%"
+        justifyContent="center"
         alignItems="center"
-        justifyContent="space-between"
-        padding={3}
+        className={styles["icon-container"] as string}
       >
-        <Box display="flex" gap={3} alignItems="center">
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Image
-              src={asset.path}
-              width={asset.width}
-              height={asset.height}
-              alt={asset.alt}
-            />
-          </Box>
-          <Box display="flex" flexDirection="column">
-            <Typography variant="h6" component="h6" gutterBottom>
-              {index + 1}. {title}
-            </Typography>
-            <Typography>{copy}</Typography>
-          </Box>
-        </Box>
+        <Image
+          src={asset.path}
+          width={asset.width}
+          height={asset.height}
+          alt={asset.alt}
+        />
+      </Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        className={styles["text-container"] as string}
+      >
+        <Typography
+          variant="h6"
+          component="h6"
+          gutterBottom
+          className={styles.header as string}
+        >
+          {index + 1}. {title}
+        </Typography>
+        <Typography className={styles.text as string}>{copy}</Typography>
+      </Box>
 
+      <Box
+        display="flex"
+        justifyContent="center"
+        className={styles["button-container"] as string}
+        height="100%"
+        alignItems="center"
+      >
         <StageButton stage={stage} isCurrentStage={isCurrentStage} />
       </Box>
     </Paper>

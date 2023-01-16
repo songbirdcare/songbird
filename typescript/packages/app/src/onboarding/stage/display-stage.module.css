@@ -1,0 +1,26 @@
+@media (min-width: 670px) {
+  .paper {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+  }
+  .icon-container {
+  }
+  .text-container {
+  }
+  .button-container {
+  }
+}
+
+@media (max-width: 670px) {
+  .icon-container {
+    flex-direction: column;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .text {
+    text-align: center;
+  }
+}

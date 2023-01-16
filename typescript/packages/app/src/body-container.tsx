@@ -21,7 +21,6 @@ export const BodyContainer: React.FC<{
       width="100%"
       sx={BACKGROUND_STYLE}
       overflow="auto"
-      padding={2}
     >
       {children}
     </Box>
