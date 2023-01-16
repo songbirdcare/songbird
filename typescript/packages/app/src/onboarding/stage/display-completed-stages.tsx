@@ -10,7 +10,7 @@ export const DisplayCompletedStages: React.FC<{
   stagesWithIndexes: StageWithIndex[];
 }> = ({ stagesWithIndexes }) => {
   return (
-    <Box display="flex" flexDirection="column" marginBottom={5}>
+    <Box display="flex" flexDirection="column" marginBottom={5} width="100%">
       <Box marginBottom={1}>
         <Typography variant="subtitle2">Completed</Typography>
       </Box>

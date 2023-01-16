@@ -17,7 +17,7 @@ export const DisplayStages: React.FC<{
     stages
   );
   return (
-    <Box>
+    <Box width="100%">
       <Box
         display="flex"
         flexDirection="column"
@@ -25,6 +25,7 @@ export const DisplayStages: React.FC<{
         gap={4}
         justifyContent="center"
         paddingY={5}
+        width="100%"
       >
         {nonCompleted.map(({ stage, index }) => {
           const stageDisplayInformation = STAGE_DISPLAY_INFO_LOOKUP[stage.type];

@@ -16,7 +16,7 @@
 @media (max-width: 670px) {
   .toolbar {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: auto 1fr auto;
   }
 
   .display-name {
@@ -24,6 +24,7 @@
   }
 
   .logo {
+    margin-left: 8px;
     grid-area: 1 / 1 / 2 / 2;
   }
 
