@@ -1,6 +1,7 @@
 import { assertNever } from "@songbird/precedent-iso";
 import crypto from "crypto";
 import express from "express";
+import { z } from "zod";
 
 import type { FormSubmissionService } from "../services/form-submission-service";
 import { SETTINGS } from "../settings";
@@ -59,6 +60,8 @@ export class FormSubmissionRouter {
       validateSignatureMiddleware,
       async (req: express.Request, res: express.Response) => {
         const parsedForm = this.formSubmissionService.parse(req.body);
+        const parsedAnswers = ZSignupAnswers.parse(parsedForm.answers);
+        console.log({ parsedAnswers });
         await this.formSubmissionService.insert(parsedForm);
         res.send("ok");
       }
@@ -67,6 +70,13 @@ export class FormSubmissionRouter {
     return router;
   }
 }
+
+const ZSignupAnswers = z.object({
+  parent_last_name: z.string().optional(),
+  email_address: z.string().optional(),
+  phone_number: z.string().optional(),
+  parent_first_name: z.string().optional(),
+});
 
 type SignatureValidResult = "valid" | "invalid" | "pass";
 interface SignatureValidArguments {

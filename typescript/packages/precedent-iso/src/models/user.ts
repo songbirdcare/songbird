@@ -11,6 +11,7 @@ export const ZUserModel = z.object({
   name: z.optional(z.string()),
   familyName: z.optional(z.string()),
   givenName: z.optional(z.string()),
+  phone: z.optional(z.string()),
 });
 
 export type CreateUserResponse =

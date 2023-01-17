@@ -19,4 +19,5 @@ export interface UpsertUserArgs {
   name?: string | undefined;
   familyName?: string | undefined;
   givenName?: string | undefined;
+  phone?: string | undefined;
 }
