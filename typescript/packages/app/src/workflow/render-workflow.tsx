@@ -9,6 +9,7 @@ import useSWRMutation from "swr/mutation";
 import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
+import { CompletedStage } from "./completed-stage";
 import { RenderForm } from "./render-form";
 import { RenderSchedule } from "./render-schedule";
 
@@ -43,6 +44,17 @@ export const RenderStage: React.FC<{
   stage: Stage;
   workflowId: string;
 }> = ({ stage, userId, workflowId }) => {
+  const [task] = stage.blockingTasks;
+  if (task === undefined) {
+    throw new Error("illegal state");
+  }
+
+  const isCompleted = React.useRef(task.status === "complete").current;
+
+  if (isCompleted) {
+    return <CompletedStage />;
+  }
+
   switch (stage.type) {
     case "create_account": {
       const [task] = stage.blockingTasks;
