@@ -18,6 +18,7 @@ export const RenderSchedule: React.FC<{
 }> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
   const { data: user, isLoading: userIsLoading } = useFetchUser();
+  const [eventScheduled, setEventScheduled] = React.useState(false);
 
   const { data, trigger, isMutating } = useSWRMutation(
     `/api/proxy/workflows/action/${workflowId}`,
@@ -37,10 +38,18 @@ export const RenderSchedule: React.FC<{
     }
   );
 
+  React.useEffect(() => {
+    if (!eventScheduled) {
+      return;
+    }
+
+    setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
+  }, [router, eventScheduled]);
+
   useCalendlyEventListener({
     onEventScheduled: () => {
       trigger();
-      setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
+      setEventScheduled(true);
     },
   });
   if (userIsLoading || !user) {
@@ -64,14 +73,15 @@ export const RenderSchedule: React.FC<{
         }}
       />
 
-      {data && (
+      {eventScheduled && (
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           open={true}
           message="Redirecting to dashboard"
         />
       )}
-      {SETTINGS.enableDebuggingAction && !data && (
+
+      {SETTINGS.enableDebuggingAction && !data && !eventScheduled && (
         <Box display="flex" paddingBottom={2} justifyContent="center">
           <AdvanceToNextStep disabled={isMutating} onClick={trigger} />
         </Box>

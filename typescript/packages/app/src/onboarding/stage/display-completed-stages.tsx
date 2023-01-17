@@ -1,4 +1,5 @@
 import CheckIcon from "@mui/icons-material/Check";
+import { useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
@@ -34,19 +35,22 @@ const DisplayCompletedStage: React.FC<{
   index: number;
   title: string;
 }> = ({ title, index }) => {
+  const isSmallScreen = useMediaQuery("(max-width:670px)");
   return (
     <>
       <Typography variant="h6">{index + 1}.</Typography>
       <Typography variant="h6">{title}</Typography>
-      <Box display="flex" gap={1 / 2} alignItems="center">
-        <CheckIcon fontSize="small" />
-        <Typography
-          color={SONG_BIRD_GREEN}
-          textTransform="uppercase"
-          variant="body1"
-        >
-          Completed
-        </Typography>
+      <Box display="flex" gap={1 / 2} alignItems="center" paddingBottom={1}>
+        <CheckIcon fontSize="medium" />
+        {!isSmallScreen && (
+          <Typography
+            color={SONG_BIRD_GREEN}
+            textTransform="uppercase"
+            variant="body1"
+          >
+            Completed
+          </Typography>
+        )}
       </Box>
     </>
   );
