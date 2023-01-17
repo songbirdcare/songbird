@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import type { WorkflowModel } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
+import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
 import { RenderForm } from "./render-form";
@@ -135,9 +136,7 @@ const RenderSignature: React.FC<{
 
   return (
     <Box paddingY={3}>
-      <Button disabled={isMutating} onClick={trigger}>
-        Advance to the next step
-      </Button>
+      <AdvanceToNextStep disabled={isMutating} onClick={trigger} />
     </Box>
   );
 };

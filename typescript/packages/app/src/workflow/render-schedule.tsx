@@ -1,13 +1,15 @@
 import { LinearProgress } from "@mui/material";
-import { Alert, Box, Button } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 import useSWRMutation from "swr/mutation";
 
+import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchUser } from "../hooks/use-fetch-user";
-import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
+
+const REDIRECT_WAIT_TIME = 5_000;
 
 export const RenderSchedule: React.FC<{
   workflowId: string;
@@ -15,7 +17,6 @@ export const RenderSchedule: React.FC<{
   stageId: string;
 }> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
-  const { mutate } = useFetchWorkflow();
   const { data: user, isLoading: userIsLoading } = useFetchUser();
 
   const { data, trigger, isMutating } = useSWRMutation(
@@ -37,7 +38,10 @@ export const RenderSchedule: React.FC<{
   );
 
   useCalendlyEventListener({
-    onEventScheduled: trigger,
+    onEventScheduled: () => {
+      trigger();
+      setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
+    },
   });
   if (userIsLoading || !user) {
     return <LinearProgress />;
@@ -51,23 +55,6 @@ export const RenderSchedule: React.FC<{
       justifyContent="center"
       width="100%"
     >
-      {data && (
-        <Box paddingTop={2}>
-          <Alert severity="success">
-            <Box display="flex" flexDirection="column">
-              <Button
-                onClick={() => {
-                  router.push("/");
-                  mutate();
-                }}
-              >
-                Return to dashboard
-              </Button>
-            </Box>
-          </Alert>
-        </Box>
-      )}
-
       <InlineWidget
         url={SETTINGS.schedulingUrl}
         prefill={{ email: user.email }}
@@ -76,11 +63,17 @@ export const RenderSchedule: React.FC<{
           height: "100%",
         }}
       />
+
+      {data && (
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          open={true}
+          message="Redirecting to dashboard"
+        />
+      )}
       {SETTINGS.enableDebuggingAction && !data && (
-        <Box display="flex" paddingY={3} justifyContent="center">
-          <Button disabled={isMutating} onClick={trigger}>
-            Advance to the next step
-          </Button>
+        <Box display="flex" paddingBottom={2} justifyContent="center">
+          <AdvanceToNextStep disabled={isMutating} onClick={trigger} />
         </Box>
       )}
     </Box>

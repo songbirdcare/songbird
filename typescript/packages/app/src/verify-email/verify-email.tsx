@@ -1,8 +1,8 @@
-import EmailIcon from "@mui/icons-material/Email";
 import { Button, Paper, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { EmailVerification } from "@songbird/precedent-iso";
+import Image from "next/image";
 import React from "react";
 import useSWR from "swr";
 
@@ -33,56 +33,56 @@ export const VerifyEmail: React.FC<{ email: string }> = ({ email }) => {
       flexDirection="column"
       height="100%"
     >
-      <Box width="100%">
-        <Paper sx={{ height: "100%" }}>
+      <Paper
+        width="100%"
+        component={Box}
+        display="flex"
+        className={styles.content as string}
+        padding={2}
+      >
+        <Box
+          display="flex"
+          fontSize="64px"
+          alignItems="center"
+          className={styles.icon as string}
+          paddingRight={isSmallScreen ? 0 : 2}
+        >
+          <Image
+            src="/onboarding/hands.svg"
+            width={64}
+            height={60}
+            alt="Verify your email"
+          />
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          className={styles["not-icon"] as string}
+        >
+          <Typography variant="h6" className={styles["header"] as string}>
+            Verify your email
+          </Typography>
+          <Typography className={styles["content-text"] as string}>
+            A verification email has been sent to {email}
+          </Typography>
+
           <Box
             display="flex"
-            width="100%"
-            height="100%"
-            className={styles.content as string}
-            padding={2}
+            marginTop={2}
+            className={styles["send-button"] as string}
           >
-            <Box
-              display="flex"
-              fontSize="64px"
-              alignItems="center"
-              className={styles.icon as string}
-              padding={isSmallScreen ? 0 : 2}
+            <Button
+              size="small"
+              onClick={makeRequest}
+              disabled={isLoading || data !== undefined}
+              variant="outlined"
             >
-              <EmailIcon fontSize="inherit" color="primary" />
-            </Box>
-            <Box
-              display="flex"
-              flexDirection="column"
-              justifyContent="center"
-              className={styles["not-icon"] as string}
-            >
-              <Typography variant="h6" className={styles["header"] as string}>
-                Verify your email
-              </Typography>
-              <Typography className={styles["content-text"] as string}>
-                A verification email has been sent to {email}
-              </Typography>
-
-              <Box
-                display="flex"
-                marginTop={2}
-                className={styles["send-button"] as string}
-              >
-                <Button
-                  onClick={makeRequest}
-                  disabled={isLoading || data !== undefined}
-                  variant="contained"
-                >
-                  {data?.data !== "sent"
-                    ? "Resend verification email"
-                    : "Email sent"}
-                </Button>
-              </Box>
-            </Box>
+              {data?.data !== "sent" ? "Resend email" : "Email sent"}
+            </Button>
           </Box>
-        </Paper>
-      </Box>
+        </Box>
+      </Paper>
     </Box>
   );
 };
