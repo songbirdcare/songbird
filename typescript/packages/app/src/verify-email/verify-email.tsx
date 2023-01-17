@@ -32,6 +32,7 @@ export const VerifyEmail: React.FC<{ email: string }> = ({ email }) => {
       justifyContent="center"
       flexDirection="column"
       height="100%"
+      paddingX={2}
     >
       <Paper
         width="100%"
