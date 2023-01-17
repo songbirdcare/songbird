@@ -58,9 +58,10 @@ export class FormSubmissionRouter {
       "/onboarding-callback",
       validateSignatureMiddleware,
       async (req: express.Request, res: express.Response) => {
-        await this.formSubmissionService.insert(
-          this.formSubmissionService.parse(req.body)
-        );
+        const parsedForm = this.formSubmissionService.parse(req.body);
+        await this.formSubmissionService.insert(parsedForm);
+        const parsedSignupAnswers = ZSignupAnswers.parse(parsedForm.answers);
+
         res.send("ok");
       }
     );
@@ -68,6 +69,14 @@ export class FormSubmissionRouter {
     return router;
   }
 }
+import { z } from "zod";
+
+const ZSignupAnswers = z.object({
+  email_address: z.string().optional(),
+  parent_first_name: z.string().optional(),
+  parent_last_name: z.string().optional(),
+  phone_number: z.string().optional(),
+});
 
 type SignatureValidResult = "valid" | "invalid" | "pass";
 interface SignatureValidArguments {
