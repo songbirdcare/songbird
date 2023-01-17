@@ -52,7 +52,7 @@ function useGetStageType(): Stage["type"] | undefined {
   const router = useRouter();
 
   try {
-    return ZStageType.parse(router.query.stageType);
+    return ZStageType.parse(router.query.stage);
   } catch (_) {
     return undefined;
   }

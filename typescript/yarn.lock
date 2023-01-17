@@ -1017,7 +1017,6 @@ __metadata:
     "@next/font": ^13.1.2
     "@songbird/precedent-iso": "workspace:^"
     "@types/eslint": ^8.4.10
-    "@types/lodash": ^4.14.191
     "@types/prettier": ^2.7.2
     "@types/react": ^18.0.26
     "@types/react-dom": ^18.0.10
@@ -1027,7 +1026,6 @@ __metadata:
     eslint-plugin-react: ^7.32.0
     eslint-plugin-react-hooks: ^4.6.0
     eslint-plugin-simple-import-sort: ^8.0.0
-    lodash: ^4.17.21
     logrocket: ^3.0.1
     next: ^13.1.2
     prettier: ^2.8.3
@@ -1187,13 +1185,6 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: a7f0925e9a42ad3ae970364c63c5986d40da5c83d51d3f4e624eb0f064a380376f9e3fb3f2f837390a9ab80143f5d75fd51866da30e110f6b486a3379e1c768f
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:^4.14.191":
-  version: 4.14.191
-  resolution: "@types/lodash@npm:4.14.191"
-  checksum: ba0d5434e10690869f32d5ea49095250157cae502f10d57de0a723fd72229ce6c6a4979576f0f13e0aa9fbe3ce2457bfb9fa7d4ec3d6daba56730a51906d1491
   languageName: node
   linkType: hard
 

@@ -7,6 +7,7 @@ import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchUser } from "../hooks/use-fetch-user";
+import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
 
 const REDIRECT_WAIT_TIME = 5_000;
@@ -19,6 +20,7 @@ export const RenderSchedule: React.FC<{
   const router = useRouter();
   const { data: user, isLoading: userIsLoading } = useFetchUser();
   const [eventScheduled, setEventScheduled] = React.useState(false);
+  const { mutate } = useFetchWorkflow();
 
   const { data, trigger, isMutating } = useSWRMutation(
     `/api/proxy/workflows/action/${workflowId}`,
@@ -35,6 +37,12 @@ export const RenderSchedule: React.FC<{
         }),
       });
       return res.json();
+    },
+
+    {
+      onSuccess: () => {
+        mutate();
+      },
     }
   );
 
@@ -42,16 +50,16 @@ export const RenderSchedule: React.FC<{
     if (!eventScheduled) {
       return;
     }
-
+    trigger();
     setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
-  }, [router, eventScheduled]);
+  }, [router, eventScheduled, trigger]);
 
   useCalendlyEventListener({
     onEventScheduled: () => {
-      trigger();
       setEventScheduled(true);
     },
   });
+
   if (userIsLoading || !user) {
     return <LinearProgress />;
   }
@@ -86,8 +94,7 @@ export const RenderSchedule: React.FC<{
           <AdvanceToNextStep
             disabled={isMutating}
             onClick={() => {
-              trigger();
-              router.push("/");
+              setEventScheduled(true);
             }}
           />
         </Box>
