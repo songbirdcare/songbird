@@ -1,5 +1,5 @@
 import EmbedFlow from "@formsort/react-embed";
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress, Snackbar } from "@mui/material";
 import type { FormTask } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -8,6 +8,8 @@ import useSWRMutation from "swr/mutation";
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
+
+const REDIRECT_WAIT_TIME = 5_000;
 
 export const RenderForm: React.FC<{
   workflowId: string;
@@ -48,7 +50,7 @@ export const RenderForm: React.FC<{
   React.useEffect(() => {
     if (data) {
       mutate();
-      router.push("/");
+      setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
     }
   }, [router, data, mutate]);
 
@@ -62,27 +64,32 @@ export const RenderForm: React.FC<{
 
   return (
     <Box display="flex" flexDirection={"column"} width="100%">
-      {!hasSubmittedForm && (
-        <EmbedFlow
-          clientLabel={formData.client}
-          flowLabel={formData.flowLabel}
-          variantLabel={formData.variantLabel}
-          responderUuid={userId}
-          embedConfig={{
-            style: {
-              width: "100%",
-              height: "100%",
-            },
-          }}
-          onFlowFinalized={() => setHasSubmittedForm(true)}
-        />
-      )}
-      {SETTINGS.enableDebuggingAction && (
+      <EmbedFlow
+        clientLabel={formData.client}
+        flowLabel={formData.flowLabel}
+        variantLabel={formData.variantLabel}
+        responderUuid={userId}
+        embedConfig={{
+          style: {
+            width: "100%",
+            height: "100%",
+          },
+        }}
+        onFlowFinalized={() => setHasSubmittedForm(true)}
+      />
+      {SETTINGS.enableDebuggingAction && !data && (
         <Box display="flex" width="100%" paddingY={3} justifyContent="center">
           <Button disabled={isMutating} onClick={trigger}>
             Advance to the next step
           </Button>
         </Box>
+      )}
+      {data && (
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          open={true}
+          message="Your form has been submitted! Redirecting to the dashboard"
+        />
       )}
     </Box>
   );

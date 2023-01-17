@@ -19,7 +19,7 @@ export const RenderSchedule: React.FC<{
 }> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
   const { data: user, isLoading: userIsLoading } = useFetchUser();
-  const [eventScheduled, setEventScheduled] = React.useState(false);
+
   const { mutate } = useFetchWorkflow();
 
   const { data, trigger, isMutating } = useSWRMutation(
@@ -37,27 +37,19 @@ export const RenderSchedule: React.FC<{
         }),
       });
       return res.json();
-    },
-
-    {
-      onSuccess: () => {
-        mutate();
-      },
     }
   );
 
   React.useEffect(() => {
-    if (!eventScheduled) {
+    if (!data) {
       return;
     }
-    trigger();
+    mutate();
     setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
-  }, [router, eventScheduled, trigger]);
+  }, [data, router, trigger, mutate]);
 
   useCalendlyEventListener({
-    onEventScheduled: () => {
-      setEventScheduled(true);
-    },
+    onEventScheduled: trigger,
   });
 
   if (userIsLoading || !user) {
@@ -81,22 +73,17 @@ export const RenderSchedule: React.FC<{
         }}
       />
 
-      {eventScheduled && (
+      {data && (
         <Snackbar
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           open={true}
-          message="Redirecting to dashboard"
+          message="Your consultation has been scheduled! Redirecting to the dashboard"
         />
       )}
 
-      {SETTINGS.enableDebuggingAction && !data && !eventScheduled && (
+      {SETTINGS.enableDebuggingAction && !data && (
         <Box display="flex" paddingBottom={2} justifyContent="center">
-          <AdvanceToNextStep
-            disabled={isMutating}
-            onClick={() => {
-              setEventScheduled(true);
-            }}
-          />
+          <AdvanceToNextStep disabled={isMutating} onClick={trigger} />
         </Box>
       )}
     </Box>
