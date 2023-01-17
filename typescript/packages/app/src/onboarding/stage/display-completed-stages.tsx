@@ -41,7 +41,7 @@ const DisplayCompletedStage: React.FC<{
       <Typography variant="h6">{index + 1}.</Typography>
       <Typography variant="h6">{title}</Typography>
       <Box display="flex" gap={1 / 2} alignItems="center" paddingBottom={1}>
-        <CheckIcon fontSize="medium" />
+        <CheckIcon fontSize="medium" color="primary" />
         {!isSmallScreen && (
           <Typography
             color={SONG_BIRD_GREEN}

@@ -38,31 +38,41 @@ export const AppBarBody: React.FC<{
         zIndex: 100,
       }}
     >
-      <Toolbar disableGutters className={styles["toolbar"] as string}>
+      <Toolbar disableGutters>
         <Box
-          className={styles["logo"] as string}
-          display="flex"
-          justifyContent="center"
+          width="100%"
+          display="grid"
+          className={styles["toolbar"] as string}
         >
-          <Link href="/" underline="none">
-            <Image src="/songbird-logo.svg" alt="me" width="128" height="64" />
-          </Link>
-        </Box>
-
-        <Box
-          className={styles["right-side"] as string}
-          display="flex"
-          justifyContent="flex-end"
-          marginRight={2}
-          alignItems="center"
-        >
-          <Box className={styles["display-name"] as string}>
-            {displayName && (
-              <Typography color={"black"}>{displayName}</Typography>
-            )}
+          <Box
+            className={styles["logo"] as string}
+            display="flex"
+            justifyContent="center"
+          >
+            <Link href="/" underline="none">
+              <Image
+                src="/songbird-logo.svg"
+                alt="me"
+                width="128"
+                height="64"
+              />
+            </Link>
           </Box>
 
-          <FadeMenu />
+          <Box
+            className={styles["right-side"] as string}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Box className={styles["display-name"] as string}>
+              {displayName && (
+                <Typography color={"black"}>{displayName}</Typography>
+              )}
+            </Box>
+
+            <FadeMenu />
+          </Box>
         </Box>
       </Toolbar>
     </MuiAppBar>
