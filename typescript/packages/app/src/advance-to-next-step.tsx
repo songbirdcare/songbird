@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 
 export const AdvanceToNextStep: React.FC<{
-  onClick: () => Promise<void>;
+  onClick: () => void;
   disabled: boolean;
 }> = ({ onClick, disabled }) => {
   return (

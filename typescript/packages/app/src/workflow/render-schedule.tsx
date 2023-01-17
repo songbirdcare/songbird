@@ -83,7 +83,13 @@ export const RenderSchedule: React.FC<{
 
       {SETTINGS.enableDebuggingAction && !data && !eventScheduled && (
         <Box display="flex" paddingBottom={2} justifyContent="center">
-          <AdvanceToNextStep disabled={isMutating} onClick={trigger} />
+          <AdvanceToNextStep
+            disabled={isMutating}
+            onClick={() => {
+              trigger();
+              router.push("/");
+            }}
+          />
         </Box>
       )}
     </Box>

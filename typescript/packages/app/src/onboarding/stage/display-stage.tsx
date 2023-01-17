@@ -34,7 +34,7 @@ export const DisplayStage: React.FC<{
       sx={{
         width: "100%",
         padding: 2,
-        display: "flex",
+        display: "grid",
         gap: isSmallScreen ? 1 : 2,
         flexDirection: "column",
         minHeight: "132px",
