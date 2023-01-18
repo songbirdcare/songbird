@@ -7,10 +7,11 @@ import styles from "./onboarding.module.css";
 import { DisplayStages } from "./stage/display-stages";
 
 export const OnboardingFlow: React.FC<{
+  firstName: string | undefined;
   isCompleted: boolean;
   currentStageIndex: number;
   stages: Stage[];
-}> = ({ isCompleted, currentStageIndex, stages }) => {
+}> = ({ isCompleted, currentStageIndex, stages, firstName }) => {
   return (
     <Box
       display="flex"
@@ -22,7 +23,7 @@ export const OnboardingFlow: React.FC<{
     >
       <Box display="flex" flexDirection="column" width="100%">
         <Box display="flex" width="100%" flexDirection="column" gap={1}>
-          <StatusMessage isCompleted={isCompleted} />
+          <StatusMessage isCompleted={isCompleted} firstName={firstName} />
         </Box>
       </Box>
       <Box
@@ -52,7 +53,10 @@ export const OnboardingFlow: React.FC<{
   );
 };
 
-const StatusMessage: React.FC<{ isCompleted: boolean }> = ({ isCompleted }) => {
+const StatusMessage: React.FC<{
+  isCompleted: boolean;
+  firstName: string | undefined;
+}> = ({ isCompleted, firstName }) => {
   return isCompleted ? (
     <>
       <Typography
@@ -74,7 +78,8 @@ const StatusMessage: React.FC<{ isCompleted: boolean }> = ({ isCompleted }) => {
         color="primary"
         className={styles["header"] as string}
       >
-        We&apos;re looking forward to supporting your family.
+        {firstName ? `${firstName}, we're ` : "We're "}
+        looking forward to supporting your family.
       </Typography>
       <Typography className={styles["text"] as string}>
         Here’s what’s needed to start care.{" "}

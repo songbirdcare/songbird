@@ -21,7 +21,8 @@ email,
 email_verified,
 name,
 given_name,
-family_name
+family_name,
+phone
 `;
 
 export class PsqlUserService implements UserService {
@@ -80,24 +81,29 @@ export class PsqlUserService implements UserService {
     name,
     familyName,
     givenName,
+    phone,
   }: UpsertUserArgs): Promise<UserModel> {
     return this.pool.connect((connection) =>
       connection.transaction(async (trx) => {
         await trx.query(
           sql.unsafe`
-INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name)
-    VALUES (${sub}, ${email}, ${emailVerified}, ${name ?? null}, ${
+INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name, phone)
+    VALUES (${sub}, ${email}, ${emailVerified ?? null}, ${name ?? null}, ${
             familyName ?? null
-          }, ${givenName ?? null})
+          }, ${givenName ?? null}, ${phone ?? null})
 ON CONFLICT (sub)
     DO UPDATE SET
-        email_verified = ${emailVerified}, name = COALESCE(${
+        email_verified = COALESCE(${
+          emailVerified ?? null
+        }, sb_user.email_verified), name = COALESCE(${
             name ?? null
           }, sb_user.name), family_name = COALESCE(${
             familyName ?? null
           }, sb_user.family_name), given_name = COALESCE(${
             givenName ?? null
-          }, sb_user.given_name)
+          }, sb_user.given_name), phone = COALESCE(${
+            phone ?? null
+          }, sb_user.phone)
 `
         );
 
@@ -141,4 +147,5 @@ const ZUserFromSql = z.object({
   name: z.optional(z.string()),
   family_name: z.optional(z.string()),
   given_name: z.optional(z.string()),
+  phone: z.optional(z.string()),
 });

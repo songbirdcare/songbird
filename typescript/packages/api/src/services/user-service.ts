@@ -15,8 +15,9 @@ export interface CreateUserArgs {
 export interface UpsertUserArgs {
   sub: string;
   email: string;
-  emailVerified: boolean;
+  emailVerified?: boolean;
   name?: string | undefined;
   familyName?: string | undefined;
   givenName?: string | undefined;
+  phone?: string | undefined;
 }
