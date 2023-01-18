@@ -96,7 +96,8 @@ async function start() {
 
   const userInformationMiddleware = new UserInformationMiddleware(
     userService,
-    auth0Service
+    auth0Service,
+    formSubmissionService
   );
 
   const userIsVerified = userInformationMiddleware.ensureUserVerified();

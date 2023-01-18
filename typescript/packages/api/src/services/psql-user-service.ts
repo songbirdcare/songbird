@@ -88,12 +88,14 @@ export class PsqlUserService implements UserService {
         await trx.query(
           sql.unsafe`
 INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name, phone)
-    VALUES (${sub}, ${email}, ${emailVerified}, ${name ?? null}, ${
+    VALUES (${sub}, ${email}, ${emailVerified ?? null}, ${name ?? null}, ${
             familyName ?? null
-          }, ${givenName ?? null})
+          }, ${givenName ?? null}, ${phone ?? null})
 ON CONFLICT (sub)
     DO UPDATE SET
-        email_verified = ${emailVerified}, name = COALESCE(${
+        email_verified = COALESCE(${
+          emailVerified ?? null
+        }, sb_user.email_verified), name = COALESCE(${
             name ?? null
           }, sb_user.name), family_name = COALESCE(${
             familyName ?? null

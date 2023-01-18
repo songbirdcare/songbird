@@ -2,12 +2,14 @@ import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
 import type { Auth0Service } from "../services/auth0/auth0-service";
+import type { FormSubmissionService } from "../services/form-submission-service";
 import type { UserService } from "../services/user-service";
 
 export class UserInformationMiddleware {
   constructor(
     private readonly userService: UserService,
-    private readonly auth0Service: Auth0Service
+    private readonly auth0Service: Auth0Service,
+    private readonly formSubmissionService: FormSubmissionService
   ) {}
 
   addUser =
@@ -30,10 +32,31 @@ export class UserInformationMiddleware {
   #getUser = async (sub: string) => {
     const user = await this.userService.getBySub(sub);
     if (user === undefined || !user.emailVerified) {
-      console.log(`Attempting to fetch profile from Auth0 sub=${sub}`);
-      const fromAuth0 = await this.auth0Service.getUser(sub);
-      console.log(`Fetched profile from Auth0 sub=${sub}`);
-      return this.userService.upsert(fromAuth0);
+      return this.#createUserLazily(sub);
+    }
+    return user;
+  };
+
+  #createUserLazily = async (sub: string) => {
+    console.log(`Attempting to fetch profile from Auth0 sub=${sub}`);
+    const fromAuth0 = await this.auth0Service.getUser(sub);
+
+    console.log(`Fetched profile from Auth0 sub=${sub}`);
+    const user = await this.userService.upsert(fromAuth0);
+
+    const submissionForm = await this.formSubmissionService.getSignupForm(
+      fromAuth0.email
+    );
+
+    if (submissionForm) {
+      console.log(`Found submission form for ${fromAuth0.email}`);
+      return await this.userService.upsert({
+        sub,
+        email: fromAuth0.email,
+        givenName: submissionForm.firstName,
+        familyName: submissionForm.lastName,
+        phone: submissionForm.phone,
+      });
     }
     return user;
   };

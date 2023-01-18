@@ -4,7 +4,7 @@ import { z } from "zod";
 export class PsqlFormSubmissionService implements FormSubmissionService {
   constructor(private readonly pool: DatabasePool) {}
 
-  getSignupForm = (email: string): Promise<SignupForm | undefined> => {
+  getSignupForm = async (email: string): Promise<SignupForm | undefined> => {
     const form = await this.pool.connect(async (connection) => {
       const form = await connection.maybeOne(
         sql.type(
@@ -18,6 +18,12 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
       try {
         const { parent_last_name, parent_first_name, phone_number } =
           ZSignupAnswers.parse(form.submission["answers"]);
+
+        return {
+          firstName: parent_first_name,
+          lastName: parent_last_name,
+          phone: phone_number,
+        };
       } catch (e) {
         if (e instanceof z.ZodError) {
           console.warn("Could not parse onboarding form");
@@ -61,16 +67,10 @@ INSERT INTO form_submissions (email, submission, flow_label, variant_label, vari
   parse = (raw: Record<string, unknown>): ParsedForm => ZParsedForm.parse(raw);
 }
 
-interface Form {
-  email: string | undefined;
-  applicationSlug: string | undefined;
-  answers: Record<string, any>;
-}
-
 interface SignupForm {
-  phone: string;
-  firstName: string;
-  lastName: string;
+  phone: string | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
 }
 
 const ZSignupAnswers = z.object({
@@ -100,7 +100,6 @@ const ZSqlForm = z.object({
   submission: z.record(z.string(), z.any()),
 });
 
-type SqlForm = z.infer<typeof ZSqlForm>;
 export type ParsedForm = z.infer<typeof ZParsedForm>;
 
 const ZParsedForm = z.object({
