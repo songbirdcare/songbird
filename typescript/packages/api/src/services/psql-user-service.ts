@@ -68,7 +68,9 @@ export class PsqlUserService implements UserService {
   async getBySub(sub: string): Promise<UserModel | undefined> {
     const user = await this.pool.connect(async (connection) =>
       connection.maybeOne(
-        sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE sub = ${sub}`
+        sql.type(
+          ZUserFromSql
+        )`SELECT ${FIELDS} FROM sb_user WHERE sub = ${sub} LIMIT 1`
       )
     );
     return user ? fromSQL(user) : undefined;

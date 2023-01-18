@@ -9,7 +9,7 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
       const form = await connection.maybeOne(
         sql.type(
           ZSqlForm
-        )`SELECT submission FROM form_submissions WHERE email = ${email} AND app_slug = 'signup'`
+        )`SELECT submission FROM form_submissions WHERE email = ${email} AND app_slug = 'signup' LIMIT 1`
       );
 
       if (!form) {
