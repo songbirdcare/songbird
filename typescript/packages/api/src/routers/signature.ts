@@ -29,9 +29,6 @@ export class SignatureRouter {
         const counterPartyEmail = parsedSigners
           .map((row) => row.email)
           .find((row) => !row.endsWith("@songbirdcare.com"));
-        if (counterPartyEmail === undefined) {
-          throw new Error("could not get counterparty email");
-        }
 
         await this.svc.insert({
           raw: req.body,

@@ -46,7 +46,9 @@ WHERE
 INSERT INTO signature_submissions (raw, envelope_id, email_subject, event_created_at, counterparty_email, status)
     VALUES (${JSON.stringify(
       raw
-    )}, ${envelopeId}, ${emailSubject}, ${eventCreatedAt}, ${counterPartyEmail}, ${status})
+    )}, ${envelopeId}, ${emailSubject}, ${eventCreatedAt}, ${
+          counterPartyEmail ?? null
+        }, ${status})
 `
       )
     );
@@ -67,7 +69,7 @@ interface GetSignatureSubmission {
 const ZSqlSignature = z.object({
   envelope_id: z.string(),
   email_subject: z.string(),
-  counterparty_email: z.string(),
+  counterparty_email: z.string().optional(),
   status: z.string(),
   event_created_at: z.string(),
   raw: z.string(),
@@ -91,7 +93,7 @@ interface Signature {
   envelopeId: string;
   emailSubject: string;
   eventCreatedAt: string;
-  counterPartyEmail: string;
+  counterPartyEmail: string | undefined;
   // what are the other statuses?
   status: "sent" | "completed" | string;
 }
