@@ -56,6 +56,8 @@ export const RenderSchedule: React.FC<{
     return <LinearProgress />;
   }
 
+  const phoneForCalendly = getPhoneForCalendly(user.phone);
+
   return (
     <Box
       display="flex"
@@ -66,7 +68,16 @@ export const RenderSchedule: React.FC<{
     >
       <InlineWidget
         url={SETTINGS.schedulingUrl}
-        prefill={{ email: user.email }}
+        prefill={{
+          email: user.email,
+          firstName: user.givenName ?? "",
+          lastName: user.familyName ?? "",
+          name:
+            user.givenName && user.familyName
+              ? `${user.givenName} ${user.familyName}`
+              : "",
+          location: phoneForCalendly,
+        }}
         styles={{
           width: "100%",
           height: "100%",
@@ -89,3 +100,13 @@ export const RenderSchedule: React.FC<{
     </Box>
   );
 };
+
+function getPhoneForCalendly(phone: string | undefined) {
+  if (!phone) {
+    return "+1";
+  } else if (!phone.startsWith("+1")) {
+    return `+1-${phone}`;
+  } else {
+    return phone;
+  }
+}
