@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Songbird Therapy</title>
+        <title>Songbird Therapy | Parent Dashboard</title>
         <meta name="description" content="Innovative care" />
         <link rel="icon" href="/favicon.svg" />
       </Head>

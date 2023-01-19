@@ -1,6 +1,6 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
-import type { Stage } from "@songbird/precedent-iso";
+import { assertNever, Stage } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { z } from "zod";
@@ -16,12 +16,29 @@ const CompleteStage: React.FC = () => {
   useRedirectIfNotVerified();
   const { data: workflow } = useFetchWorkflow();
   const { data: user } = useFetchUser();
-  const stageType = useGetStageType();
+  const stageTypeFromUrl = useGetStageType();
+
+  const [stageType, setStageType] = React.useState<Stage["type"] | undefined>(
+    stageTypeFromUrl
+  );
+
+  React.useEffect(() => {
+    if (stageType || !workflow) {
+      return;
+    }
+
+    const stage = workflow.stages[workflow.currentStageIndex];
+    if (stage === undefined) {
+      throw new Error("undefined");
+    }
+
+    setStageType(stage["type"]);
+  }, [stageType, workflow]);
 
   const userId = user?.id;
   return (
     <>
-      <AppBar />
+      {shouldRenderAppBar(stageType) && <AppBar />}
 
       <BodyContainer>
         {(!workflow || !userId) && (
@@ -29,7 +46,7 @@ const CompleteStage: React.FC = () => {
             <LinearProgress />
           </Box>
         )}
-        {workflow && userId && (
+        {workflow && userId && stageType && (
           <RenderWorkflow
             userId={userId}
             workflow={workflow}
@@ -53,8 +70,26 @@ function useGetStageType(): Stage["type"] | undefined {
 
   try {
     return ZStageType.parse(router.query.stage);
-  } catch (_) {
-    return undefined;
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      return undefined;
+    }
+    throw e;
+  }
+}
+
+function shouldRenderAppBar(stageType: Stage["type"] | undefined): boolean {
+  switch (stageType) {
+    case undefined:
+      return true;
+    case "create_account":
+    case "commitment_to_care":
+      return true;
+    case "check_insurance_coverage":
+    case "submit_records":
+      return false;
+    default:
+      assertNever(stageType);
   }
 }
 
