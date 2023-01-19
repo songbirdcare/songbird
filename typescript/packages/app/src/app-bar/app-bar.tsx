@@ -38,7 +38,10 @@ export const AppBarBody: React.FC<{
         paddingRight: "0",
         top: 0,
         zIndex: 100,
+        boxShadow:
+          "rgb(0 0 0 / 20%) 0px 0 0 0, inset rgb(0 0 0 / 14%) 0px 0px 0px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px",
       }}
+      elevation={0}
     >
       <Toolbar disableGutters>
         <Box
