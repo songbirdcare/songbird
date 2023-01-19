@@ -4,7 +4,7 @@ import { Castoro, IBM_Plex_Sans } from "@next/font/google";
 import {
   SONG_BIRD_DISABLED_GREY,
   SONG_BIRD_GREEN,
-  SONGBIRD_GREY,
+  SONG_BIRD_GREY,
 } from "./colors";
 
 const castoro = Castoro({
@@ -32,21 +32,21 @@ export const THEME = createTheme({
     h6: { fontFamily: HEADER_FONT },
     subtitle1: {
       fontFamily: NON_HEADER_FONT,
-      color: SONGBIRD_GREY,
+      color: SONG_BIRD_GREY,
     },
     body1: {
       fontFamily: NON_HEADER_FONT,
 
-      color: SONGBIRD_GREY,
+      color: SONG_BIRD_GREY,
     },
     body2: {
       fontFamily: NON_HEADER_FONT,
 
-      color: SONGBIRD_GREY,
+      color: SONG_BIRD_GREY,
     },
-    button: { fontFamily: NON_HEADER_FONT, color: SONGBIRD_GREY },
-    caption: { fontFamily: NON_HEADER_FONT, color: SONGBIRD_GREY },
-    overline: { fontFamily: NON_HEADER_FONT, color: SONGBIRD_GREY },
+    button: { fontFamily: NON_HEADER_FONT, color: SONG_BIRD_GREY },
+    caption: { fontFamily: NON_HEADER_FONT, color: SONG_BIRD_GREY },
+    overline: { fontFamily: NON_HEADER_FONT, color: SONG_BIRD_GREY },
   },
   palette: {
     primary: {

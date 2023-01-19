@@ -7,8 +7,9 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
   StageDisplayInformation
 > = {
   create_account: {
-    title: "Create account and book time",
-    byline: "Book time with a care consultant.",
+    title: "Book free consultation",
+    byline:
+      "Consult call with our Care Team to help your family start insurance-covered therapy as quickly as possible.",
     asset: {
       path: "/onboarding/calendar.svg",
       width: 48,
