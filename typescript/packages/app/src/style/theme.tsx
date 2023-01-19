@@ -1,7 +1,11 @@
 import { createTheme } from "@mui/material/styles";
 import { Castoro, IBM_Plex_Sans } from "@next/font/google";
 
-import { SONG_BIRD_GREEN } from "./colors";
+import {
+  SONG_BIRD_DISABLED_GREY,
+  SONG_BIRD_GREEN,
+  SONGBIRD_GREY,
+} from "./colors";
 
 const castoro = Castoro({
   subsets: ["latin"],
@@ -26,16 +30,31 @@ export const THEME = createTheme({
     h4: { fontFamily: HEADER_FONT },
     h5: { fontFamily: HEADER_FONT },
     h6: { fontFamily: HEADER_FONT },
-    subtitle1: { fontFamily: NON_HEADER_FONT },
-    body1: { fontFamily: NON_HEADER_FONT },
-    body2: { fontFamily: NON_HEADER_FONT },
-    button: { fontFamily: NON_HEADER_FONT },
-    caption: { fontFamily: NON_HEADER_FONT },
-    overline: { fontFamily: NON_HEADER_FONT },
+    subtitle1: {
+      fontFamily: NON_HEADER_FONT,
+      color: SONGBIRD_GREY,
+    },
+    body1: {
+      fontFamily: NON_HEADER_FONT,
+
+      color: SONGBIRD_GREY,
+    },
+    body2: {
+      fontFamily: NON_HEADER_FONT,
+
+      color: SONGBIRD_GREY,
+    },
+    button: { fontFamily: NON_HEADER_FONT, color: SONGBIRD_GREY },
+    caption: { fontFamily: NON_HEADER_FONT, color: SONGBIRD_GREY },
+    overline: { fontFamily: NON_HEADER_FONT, color: SONGBIRD_GREY },
   },
   palette: {
     primary: {
       main: SONG_BIRD_GREEN,
+    },
+    action: {
+      disabledBackground: SONG_BIRD_DISABLED_GREY,
+      disabled: "white",
     },
   },
 });

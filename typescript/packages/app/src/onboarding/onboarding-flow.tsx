@@ -63,6 +63,7 @@ const StatusMessage: React.FC<{
         variant="h5"
         color="primary"
         className={styles["header"] as string}
+        fontSize="1.75rem"
       >
         We’re on our way to supporting your family!
       </Typography>
@@ -77,6 +78,7 @@ const StatusMessage: React.FC<{
         variant="h5"
         color="primary"
         className={styles["header"] as string}
+        fontSize="1.75rem"
       >
         {firstName ? `${firstName}, we're ` : "We're "}
         looking forward to supporting your family.

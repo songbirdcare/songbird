@@ -1,7 +1,7 @@
 import { ArrowRight } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { Avatar,IconButton } from "@mui/material";
+import { Avatar, IconButton } from "@mui/material";
 import { default as MuiAppBar } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
@@ -18,7 +18,7 @@ import { useDeleteWorkflows } from "../hooks/use-delete-workflows";
 import { useFetchUser } from "../hooks/use-fetch-user";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
-import { SONG_BIRD_GREEN } from "../style/colors";
+import { SONG_BIRD_GREEN_LIGHT } from "../style/colors";
 import styles from "./app-bar.module.css";
 
 export const AppBar: React.FC = () => {
@@ -27,7 +27,6 @@ export const AppBar: React.FC = () => {
   return <AppBarBody displayName={avatarDisplayName} />;
 };
 
-const SONG_BIRD_GREEN_LIGHT = "#e5eceb";
 export const AppBarBody: React.FC<{
   displayName: string | undefined;
 }> = ({ displayName }) => {
