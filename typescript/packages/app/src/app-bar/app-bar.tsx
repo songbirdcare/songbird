@@ -1,6 +1,7 @@
 import { ArrowRight } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { IconButton } from "@mui/material";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import { Avatar,IconButton } from "@mui/material";
 import { default as MuiAppBar } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
@@ -8,6 +9,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import type { UserModel } from "@songbird/precedent-iso";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -21,9 +23,11 @@ import styles from "./app-bar.module.css";
 
 export const AppBar: React.FC = () => {
   const { data: user } = useFetchUser();
-  return <AppBarBody displayName={user?.name ?? user?.email} />;
+  const avatarDisplayName = getAvatarDisplayName(user);
+  return <AppBarBody displayName={avatarDisplayName} />;
 };
 
+const SONG_BIRD_GREEN_LIGHT = "#e5eceb";
 export const AppBarBody: React.FC<{
   displayName: string | undefined;
 }> = ({ displayName }) => {
@@ -67,7 +71,14 @@ export const AppBarBody: React.FC<{
           >
             <Box className={styles["display-name"] as string}>
               {displayName && (
-                <Typography color={"black"}>{displayName}</Typography>
+                <Avatar
+                  sx={{
+                    bgcolor: SONG_BIRD_GREEN_LIGHT,
+                    color: "black",
+                  }}
+                >
+                  <Typography>{displayName}</Typography>
+                </Avatar>
               )}
             </Box>
 
@@ -102,11 +113,13 @@ const FadeMenu: React.FC = () => {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
+        color="primary"
+        className={styles["arrow-button"] as string}
       >
         {open ? (
-          <ArrowRight sx={{ color: SONG_BIRD_GREEN }} />
+          <ArrowDropUpIcon color="inherit" />
         ) : (
-          <ArrowDropDownIcon sx={{ color: SONG_BIRD_GREEN }} />
+          <ArrowDropDownIcon color="inherit" />
         )}
       </IconButton>
       <Menu
@@ -125,7 +138,11 @@ const FadeMenu: React.FC = () => {
             handleClose();
           }}
         >
-          Logout
+          <Box display="flex" justifyContent="center" width="100%">
+            <Typography color="primary" variant="body2">
+              Logout
+            </Typography>
+          </Box>
         </MenuItem>
         {SETTINGS.enableDebuggingAction && (
           <MenuItem
@@ -136,11 +153,27 @@ const FadeMenu: React.FC = () => {
               handleClose();
             }}
             disabled={isMutating}
+            color="primary"
           >
-            Reset workflow
+            <Box display="flex" justifyContent="center" width="100%">
+              <Typography color="primary" variant="body2">
+                Reset workflow
+              </Typography>
+            </Box>
           </MenuItem>
         )}
       </Menu>
     </div>
   );
 };
+function getAvatarDisplayName(user: UserModel | undefined) {
+  if (!user) {
+    return undefined;
+  }
+  if (user.givenName && user.familyName) {
+    return `${user.givenName.at(0)?.toUpperCase()}${user.familyName
+      .at(0)
+      ?.toUpperCase()}`;
+  }
+  return user.email.at(0)?.toUpperCase();
+}

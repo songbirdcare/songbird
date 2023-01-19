@@ -17,10 +17,6 @@
     grid-template-columns: auto 1fr auto;
   }
 
-  .display-name {
-    display: none;
-  }
-
   .logo {
     margin-left: 8px;
     grid-area: 1 / 1 / 2 / 2;
