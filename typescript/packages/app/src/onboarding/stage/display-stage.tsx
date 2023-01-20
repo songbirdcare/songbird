@@ -7,6 +7,7 @@ import { assertNever, Stage } from "@songbird/precedent-iso";
 import Image from "next/image";
 
 import { SETTINGS } from "../../settings";
+import { SONG_BIRD_BIEGE2 } from "../../style/colors";
 import styles from "./display-stage.module.css";
 import type { StageDisplayInformation } from "./stage-display-information";
 
@@ -38,6 +39,7 @@ export const DisplayStage: React.FC<{
         gap: isSmallScreen ? 1 : 2,
         flexDirection: "column",
         minHeight: "132px",
+        backgroundColor: isCurrentStage ? undefined : SONG_BIRD_BIEGE2,
       }}
       variant="outlined"
       className={styles["paper"] as string}
@@ -53,6 +55,7 @@ export const DisplayStage: React.FC<{
           width={asset.width}
           height={asset.height}
           alt={asset.alt}
+          className={isCurrentStage ? undefined : (styles["image"] as string)}
         />
       </Box>
       <Box
