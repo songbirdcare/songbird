@@ -12,6 +12,7 @@ import type { UserModel } from "@songbird/precedent-iso";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as React from "react";
+import { useIntercom } from "react-use-intercom";
 
 import { useDeleteWorkflows } from "../hooks/use-delete-workflows";
 import { useFetchUser } from "../hooks/use-fetch-user";
@@ -22,13 +23,29 @@ import styles from "./app-bar.module.css";
 
 export const AppBar: React.FC = () => {
   const { data: user } = useFetchUser();
+
   const avatarDisplayName = getAvatarDisplayName(user);
-  return <AppBarBody displayName={avatarDisplayName} />;
+  const { boot } = useIntercom();
+
+  React.useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    boot({
+      email: user.email,
+      userId: user.id,
+      name: user.givenName ?? user.email,
+    });
+  }, [boot, user]);
+
+  return <AppBarBody userId={user?.id} displayName={avatarDisplayName} />;
 };
 
 export const AppBarBody: React.FC<{
+  userId: string | undefined;
   displayName: string | undefined;
-}> = ({ displayName }) => {
+}> = ({ displayName, userId }) => {
   return (
     <MuiAppBar
       position="sticky"
@@ -83,7 +100,7 @@ export const AppBarBody: React.FC<{
               )}
             </Box>
 
-            <FadeMenu />
+            <FadeMenu userId={userId} />
           </Box>
         </Box>
       </Toolbar>
@@ -91,9 +108,10 @@ export const AppBarBody: React.FC<{
   );
 };
 
-const FadeMenu: React.FC = () => {
+const FadeMenu: React.FC<{ userId: string | undefined }> = ({ userId }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
+  const { show, shutdown } = useIntercom();
   const { trigger, isMutating } = useDeleteWorkflows();
   const { mutate } = useFetchWorkflow();
 
@@ -105,6 +123,17 @@ const FadeMenu: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const surveyUrl = (() => {
+    if (!userId) {
+      return undefined;
+    }
+
+    const url = new URL(SETTINGS.feedbackSurveyUrl);
+    url.searchParams.append("responderUuid", userId);
+
+    return url.toString();
+  })();
 
   return (
     <div>
@@ -136,6 +165,7 @@ const FadeMenu: React.FC = () => {
           dense
           onClick={() => {
             router.push("/api/auth/logout");
+            shutdown();
             handleClose();
           }}
         >
@@ -145,6 +175,35 @@ const FadeMenu: React.FC = () => {
             </Typography>
           </Box>
         </MenuItem>
+
+        <MenuItem
+          dense
+          onClick={() => {
+            show();
+            handleClose();
+          }}
+        >
+          <Box display="flex" justifyContent="center" width="100%">
+            <Typography color="primary" variant="body2">
+              Live chat
+            </Typography>
+          </Box>
+        </MenuItem>
+        {surveyUrl && (
+          <MenuItem>
+            <Link
+              href={surveyUrl}
+              sx={{
+                textDecoration: "none",
+              }}
+            >
+              <Typography color="primary" variant="body2">
+                Offer feedback
+              </Typography>
+            </Link>
+          </MenuItem>
+        )}
+
         {SETTINGS.enableDebuggingAction && (
           <MenuItem
             dense

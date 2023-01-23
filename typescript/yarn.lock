@@ -1032,6 +1032,7 @@ __metadata:
     react: ^18.2.0
     react-calendly: ^4.1.1
     react-dom: ^18.2.0
+    react-use-intercom: ^2.1.0
     swr: ^2.0.0
     typescript: ^4.9.4
     vitest: ^0.27.2
@@ -5169,6 +5170,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 75602840106aa9c6545149d6d7ae1502fb7b7abadcce70a6954c4b64a438ff1cd16fc77a0a1e5197cdd72da398f39eb929ea06f9005c45b132ed34e056ebdeb1
+  languageName: node
+  linkType: hard
+
+"react-use-intercom@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "react-use-intercom@npm:2.1.0"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 14984d7835cf72f923907faaff7d70a5206b96f9297707b127feb84279faf3a406429e94e1ffb69df65da788c0fac413e51faf7712fb0e7dad5b2ccac555ffda
   languageName: node
   linkType: hard
 
