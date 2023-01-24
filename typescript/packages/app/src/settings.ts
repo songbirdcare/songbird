@@ -1,3 +1,4 @@
+import { ZFormSortConfig } from "@songbird/precedent-iso";
 import { z } from "zod";
 
 export const ZSettings = z.object({
@@ -5,7 +6,7 @@ export const ZSettings = z.object({
   enableDebuggingAction: z.boolean(),
   schedulingUrl: z.string().min(1),
   intercomId: z.string().min(1),
-  feedbackSurveyUrl: z.string().min(1),
+  feedback: ZFormSortConfig,
 });
 
 const enableDebuggingAction =
@@ -18,5 +19,11 @@ export const SETTINGS = ZSettings.parse({
     process.env["NEXT_PUBLIC_SCHEDULING_URL"] ??
     "https://calendly.com/welcome-to-songbird/songbird-call",
   intercomId: process.env["NEXT_PUBLIC_INTERCOM_ID"],
-  feedbackSurveyUrl: process.env["NEXT_PUBLIC_FEEDBACK_SURVEY_URL"],
+  feedback: {
+    client: process.env["NEXT_PUBLIC_FEEDBACK_CLIENT"],
+
+    flowLabel: process.env["NEXT_PUBLIC_FEEDBACK_FLOW_LABEL"],
+
+    variantLabel: process.env["NEXT_PUBLIC_FEEDBACK_VARIANT_LABEL"],
+  },
 });

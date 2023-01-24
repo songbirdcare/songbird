@@ -39,13 +39,12 @@ export const AppBar: React.FC = () => {
     });
   }, [boot, user]);
 
-  return <AppBarBody userId={user?.id} displayName={avatarDisplayName} />;
+  return <AppBarBody displayName={avatarDisplayName} />;
 };
 
 export const AppBarBody: React.FC<{
-  userId: string | undefined;
   displayName: string | undefined;
-}> = ({ displayName, userId }) => {
+}> = ({ displayName }) => {
   return (
     <MuiAppBar
       position="sticky"
@@ -100,7 +99,7 @@ export const AppBarBody: React.FC<{
               )}
             </Box>
 
-            <FadeMenu userId={userId} />
+            <FadeMenu />
           </Box>
         </Box>
       </Toolbar>
@@ -108,7 +107,7 @@ export const AppBarBody: React.FC<{
   );
 };
 
-const FadeMenu: React.FC<{ userId: string | undefined }> = ({ userId }) => {
+const FadeMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { show, shutdown } = useIntercom();
@@ -123,17 +122,6 @@ const FadeMenu: React.FC<{ userId: string | undefined }> = ({ userId }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const surveyUrl = (() => {
-    if (!userId) {
-      return undefined;
-    }
-
-    const url = new URL(SETTINGS.feedbackSurveyUrl);
-    url.searchParams.append("responderUuid", userId);
-
-    return url.toString();
-  })();
 
   return (
     <div>
@@ -189,20 +177,18 @@ const FadeMenu: React.FC<{ userId: string | undefined }> = ({ userId }) => {
             </Typography>
           </Box>
         </MenuItem>
-        {surveyUrl && (
-          <MenuItem>
-            <Link
-              href={surveyUrl}
-              sx={{
-                textDecoration: "none",
-              }}
-            >
-              <Typography color="primary" variant="body2">
-                Offer feedback
-              </Typography>
-            </Link>
-          </MenuItem>
-        )}
+        <MenuItem>
+          <Link
+            href="/feedback"
+            sx={{
+              textDecoration: "none",
+            }}
+          >
+            <Typography color="primary" variant="body2">
+              Offer feedback
+            </Typography>
+          </Link>
+        </MenuItem>
 
         {SETTINGS.enableDebuggingAction && (
           <MenuItem
