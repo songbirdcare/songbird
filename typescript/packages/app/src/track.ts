@@ -4,7 +4,7 @@ import { SETTINGS } from "./settings";
 
 export class Tracker {
   #client: AmplitudeClient | undefined;
-  constructor(private readonly key: string | undefined) {
+  constructor(key: string | undefined) {
     if (!key) {
       this.#client = undefined;
       return;
