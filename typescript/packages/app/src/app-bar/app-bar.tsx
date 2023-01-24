@@ -19,6 +19,7 @@ import { useFetchUser } from "../hooks/use-fetch-user";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { SETTINGS } from "../settings";
 import { SONG_BIRD_GREEN_LIGHT } from "../style/colors";
+import { TRACKER } from "../track";
 import styles from "./app-bar.module.css";
 
 export const AppBar: React.FC = () => {
@@ -31,6 +32,7 @@ export const AppBar: React.FC = () => {
     if (!user) {
       return;
     }
+    TRACKER.setUserId(user.id);
 
     boot({
       email: user.email,

@@ -7,6 +7,7 @@ export const ZSettings = z.object({
   schedulingUrl: z.string().min(1),
   intercomId: z.string().min(1),
   feedback: ZFormSortConfig,
+  amplitudeKey: z.string().optional(),
 });
 
 const enableDebuggingAction =
@@ -26,4 +27,5 @@ export const SETTINGS = ZSettings.parse({
 
     variantLabel: process.env["NEXT_PUBLIC_FEEDBACK_VARIANT_LABEL"],
   },
+  amplitudeKey: process.env["NEXT_PUBLIC_AMPLITUDE_KEY"],
 });

@@ -57,7 +57,11 @@ async function start() {
 
   const pool = await POOL;
 
-  app.use(pino());
+  app.use(
+    pino({
+      redact: ["req.headers.authorization"],
+    })
+  );
 
   app.use(
     express.json({
