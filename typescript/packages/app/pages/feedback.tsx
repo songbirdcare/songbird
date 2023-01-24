@@ -24,7 +24,6 @@ const Feedback: React.FC = () => {
   if (!user) {
     return <LinearProgress />;
   }
-  console.log(SETTINGS.feedback);
 
   return (
     <>

@@ -27,6 +27,10 @@ const ZSettings = z.object({
       submitRecords: ZFormSortConfig,
     }),
   }),
+  dd: z.object({
+    apiKey: z.string().optional(),
+    env: z.string(),
+  }),
 });
 
 const domain = process.env["AUTH0_DOMAIN"];
@@ -67,5 +71,9 @@ export const SETTINGS = ZSettings.parse({
         variantLabel: process.env["FORM_RECORDS_VARIANT_LABEL"],
       },
     },
+  },
+  dd: {
+    env: process.env["DD_ENV"],
+    apiKey: process.env["DD_API_KEY"],
   },
 });

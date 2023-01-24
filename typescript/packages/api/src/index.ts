@@ -1,5 +1,9 @@
 import * as dotenv from "dotenv";
+
 dotenv.config();
+import "./tracer"; // eslint-disable-line
+import { SETTINGS } from "./settings";
+
 import express from "express"; // eslint-disable-line
 import "express-async-errors"; // eslint-disable-line
 
@@ -16,7 +20,6 @@ import { Auth0Service } from "./services/auth0/auth0-service";
 import { PsqlFormSubmissionService } from "./services/form-submission-service";
 import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
-import { SETTINGS } from "./settings";
 import { POOL } from "./sql";
 import { errorLogger } from "./middleware/error-logger";
 import { errorResponder } from "./middleware/error-responder";
