@@ -34,8 +34,10 @@ import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-
 import { PsqlSignatureSubmissionService } from "./services/signature-submission-service";
 import { WorkflowActionService } from "./services/workflow/workflow-action-service";
 import { PublicUserRouter } from "./routers/public-user";
+import pino from "pino-http";
+import { logger } from "./logger";
 
-console.log("Booting application!");
+logger.info("Booting application!");
 
 const jwtCheck = expressjwt({
   secret: expressJwtSecret({
@@ -54,6 +56,8 @@ async function start() {
   const app = express();
 
   const pool = await POOL;
+
+  app.use(pino());
 
   app.use(
     express.json({

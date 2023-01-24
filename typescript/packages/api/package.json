@@ -14,6 +14,8 @@
     "express-async-errors": "^3.1.1",
     "express-jwt": "^8.3.0",
     "jwks-rsa": "^3.0.1",
+    "pino": "^8.8.0",
+    "pino-http": "^8.3.1",
     "redis": "^4.5.1",
     "slonik": "^33.0.6",
     "typescript": "^4.9.4",
@@ -24,7 +26,7 @@
     "watch": "tsc -b -w",
     "dev": "concurrently --restart-tries -1  --names \"HTTP,WATCH\" -c \"bgBlue.bold,bgMagenta.bold\" --restart-tries 100 \"yarn run-server::develop\" \"yarn watch\"",
     "run-server::prod": "node dist/index.js",
-    "run-server::develop": "node --inspect=9331 --watch dist/index.js",
+    "run-server::develop": "node --inspect=9331 --watch dist/index.js | pino-pretty",
     "test": "yarn vitest src/tests",
     "lint": "eslint . --ext .ts",
     "fix": "yarn fix::lint; yarn fix::format",
@@ -48,6 +50,7 @@
     "eslint": "^8.32.0",
     "eslint-plugin-simple-import-sort": "^9.0.0",
     "eslint-plugin-sql": "^2.3.2",
+    "pino-pretty": "^9.1.1",
     "prettier": "^2.8.3",
     "vitest": "^0.28.1"
   }
