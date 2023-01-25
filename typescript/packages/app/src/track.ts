@@ -15,7 +15,7 @@ export class Tracker {
 
   track(event: string, data?: Record<string, unknown>) {
     if (!this.#client) {
-      console.log(`Amplitude not initialized: ${event}`);
+      console.log(`Amplitude not initialized: ${event}`, data);
 
       return;
     }
