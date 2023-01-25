@@ -1,5 +1,4 @@
-import { z } from "zod";
-import { ZUserRole } from "@songbird/precedent-iso";
+import { ZChangeRoleRequest } from "@songbird/precedent-iso";
 import express from "express";
 
 import type { UserService } from "../services/user-service";
@@ -19,12 +18,27 @@ export class AdminUserRouter {
     );
 
     router.put(
-      "/change-role/:userId",
+      "/change-role",
       async (req: express.Request, res: express.Response) => {
-        const userId = z.string().parse(req.params.userId);
+        const body = ZChangeRoleRequest.parse(req.body);
+        if (body.userId === req.user.id) {
+          throw new Error("cannot change your own role");
+        }
+        const user = await this.userService.changeRole(body.userId, body.role);
+        res.json({ data: user });
+      }
+    );
 
-        const body = ZChangeRole.parse(req.body);
-        const user = await this.userService.changeRole(userId, body.role);
+    router.put(
+      "/impersonate",
+      async (req: express.Request, res: express.Response) => {
+        req.cookies.set("X-Impersonate", req.body.userId, { httpOnly: true });
+
+        const body = ZChangeRoleRequest.parse(req.body);
+        if (body.userId === req.user.id) {
+          throw new Error("cannot change your own role");
+        }
+        const user = await this.userService.changeRole(body.userId, body.role);
         res.json({ data: user });
       }
     );
@@ -32,7 +46,3 @@ export class AdminUserRouter {
     return router;
   }
 }
-
-const ZChangeRole = z.object({
-  role: ZUserRole,
-});

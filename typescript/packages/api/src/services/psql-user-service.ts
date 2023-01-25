@@ -37,8 +37,16 @@ export class PsqlUserService implements UserService {
     const user = await this.pool.connect(async (connection) =>
       connection.one(
         sql.type(ZUserFromSql)`
-UPDATE sb_user SET role = ${role}  WHERE id = ${userId} RETURNING ${FIELDS}
-        `
+
+UPDATE
+    sb_user
+SET
+    role = ${role}
+WHERE
+    id = ${userId}
+RETURNING
+    ${FIELDS}
+`
       )
     );
     return fromSQL(user);

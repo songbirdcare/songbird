@@ -1,6 +1,7 @@
 export * from "./assert-never";
 export { isValidEmail } from "./is-valid-email";
 export * from "./models/action";
+export * from "./models/admin";
 export { EmailVerification } from "./models/auth0/email-verification";
 export * from "./models/email-with-password";
 export { FormSortConfig, ZFormSortConfig } from "./models/form-sort-config";

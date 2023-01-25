@@ -144,6 +144,7 @@ async function start() {
   app.use(
     "/api/v1/admin",
     jwtCheck,
+    addUser,
     userIsVerified,
     ensureIsAdmin,
     new AdminUserRouter(userService).init()
