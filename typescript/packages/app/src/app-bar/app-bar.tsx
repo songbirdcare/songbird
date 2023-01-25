@@ -185,7 +185,7 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             </Typography>
           </Box>
         </MenuItem>
-        <MenuItem>
+        <MenuItem sx={{ justifyContent: "center" }}>
           <Link
             href="/feedback"
             sx={{
@@ -199,14 +199,14 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         </MenuItem>
 
         {isAdmin && (
-          <MenuItem>
+          <MenuItem sx={{ justifyContent: "center" }}>
             <Link
               href="/admin"
               sx={{
                 textDecoration: "none",
               }}
             >
-              <Typography color="primary" variant="body2">
+              <Typography color="primary" variant="body2" alignContent="center">
                 Admin
               </Typography>
             </Link>
