@@ -8,6 +8,7 @@ export default withApiAuthRequired(async function proxy(
   res: NextApiResponse
 ) {
   const { accessToken } = await getAccessToken(req, res, {});
+  const impersonateHeader = req.cookies["X-Impersonate"];
 
   const proxy = (() => {
     const path = req.query.proxy ?? [];
@@ -20,6 +21,7 @@ export default withApiAuthRequired(async function proxy(
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
+      ...(impersonateHeader && { "X-Impersonate": impersonateHeader }),
     },
     ...(req.body ? { body: JSON.stringify(req.body) } : {}),
   });

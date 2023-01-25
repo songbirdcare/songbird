@@ -29,20 +29,6 @@ export class AdminUserRouter {
       }
     );
 
-    router.put(
-      "/impersonate",
-      async (req: express.Request, res: express.Response) => {
-        req.cookies.set("X-Impersonate", req.body.userId, { httpOnly: true });
-
-        const body = ZChangeRoleRequest.parse(req.body);
-        if (body.userId === req.user.id) {
-          throw new Error("cannot change your own role");
-        }
-        const user = await this.userService.changeRole(body.userId, body.role);
-        res.json({ data: user });
-      }
-    );
-
     return router;
   }
 }

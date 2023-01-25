@@ -25,7 +25,18 @@ export class UserInformationMiddleware {
         return;
       }
 
-      req.user = await this.#getUser(sub);
+      const user = await this.#getUser(sub);
+      const impersonate = req.headers["x-impersonate"];
+      if (typeof impersonate === "string") {
+        debugger;
+        if (user.role !== "admin") {
+          throw new Error("Only admins can impersonate");
+        }
+        req.impersonatingUser = user;
+        req.user = await this.userService.getById(impersonate);
+      } else {
+        req.user = user;
+      }
       next();
     };
 

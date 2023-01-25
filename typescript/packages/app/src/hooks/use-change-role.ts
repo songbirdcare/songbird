@@ -17,7 +17,6 @@ export const useChangeRole = () => {
       body: JSON.stringify({
         role: args.arg.role,
         userId: args.arg.userId,
-        fuck: "you",
       }),
     });
     const data = await res.json();

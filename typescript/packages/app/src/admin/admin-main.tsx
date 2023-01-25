@@ -2,7 +2,10 @@ import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import type { UserModel, UserRole } from "@songbird/precedent-iso";
 import * as React from "react";
 
+import { Button } from "@mui/material";
+
 import { ChangeRole } from "./change-role";
+import { ImpersonateService } from "../impersonate/impersonate-service";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "Id", width: 150 },
@@ -32,11 +35,17 @@ const columns: GridColDef[] = [
     flex: 1,
     renderCell: (params) => {
       return params.row.selfId === params.row.id ? null : (
-        <ChangeRole id={params.row.id} role={params.row.role} />
+        <Impersonate id={params.row.id} />
       );
     },
   },
 ];
+
+const Impersonate: React.FC<{ id: string }> = ({ id }) => {
+  return (
+    <Button onClick={() => ImpersonateService.set(id)}>Impersonate</Button>
+  );
+};
 
 export const AdminMain: React.FC<{ selfId: string; users: UserModel[] }> = ({
   selfId,

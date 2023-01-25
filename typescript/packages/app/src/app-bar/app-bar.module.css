@@ -1,6 +1,7 @@
 @media (min-width: 670px) {
   .toolbar {
     grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
   }
 
   .logo {
@@ -15,6 +16,7 @@
 @media (max-width: 670px) {
   .toolbar {
     grid-template-columns: auto 1fr auto;
+    grid-template-rows: 1fr;
   }
 
   .logo {

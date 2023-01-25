@@ -8,9 +8,3 @@ export const ZChangeRoleRequest = z.object({
 });
 
 export type ChangeRoleRequest = z.infer<typeof ZChangeRoleRequest>;
-
-export const ZImpersonateRequest = z.object({
-  userId: z.string(),
-});
-
-export type ZImpersonateRequest = z.infer<typeof ZChangeRoleRequest>;

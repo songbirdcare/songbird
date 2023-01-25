@@ -2,10 +2,14 @@
   .paper {
     display: grid;
     grid-template-columns: 64px 1fr auto;
+    grid-template-rows: 1fr;
   }
 }
 
 @media (max-width: 670px) {
+  .paper {
+    display: flex;
+  }
   .icon-container {
     flex-direction: column;
   }
