@@ -9,14 +9,14 @@ import Head from "next/head";
 import React from "react";
 import { IntercomProvider } from "react-use-intercom";
 
+import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
 import { SETTINGS } from "../src/settings";
+import { THEME } from "../src/style/theme";
 
 // only initialize when in the browser
 if (typeof window !== "undefined" && SETTINGS.logRocketId) {
   LogRocket.init(SETTINGS.logRocketId);
 }
-
-import { THEME } from "../src/style/theme";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -27,13 +27,20 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.svg" />
       </Head>
       <ThemeProvider theme={THEME}>
-        <UserProvider>
-          <IntercomProvider appId={SETTINGS.intercomId}>
-            <Box display="flex" flexDirection="column" height="100%">
-              <Component {...pageProps} />
-            </Box>
-          </IntercomProvider>
-        </UserProvider>
+        <ImpersonateProvider>
+          <UserProvider>
+            <IntercomProvider appId={SETTINGS.intercomId}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                height="100%"
+                position="relative"
+              >
+                <Component {...pageProps} />
+              </Box>
+            </IntercomProvider>
+          </UserProvider>
+        </ImpersonateProvider>
       </ThemeProvider>
     </>
   );

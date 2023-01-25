@@ -7,14 +7,17 @@ import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
+import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 
 const Home: React.FC = () => {
   const { data: user } = useFetchUser();
   const { data: workflow } = useFetchWorkflow();
   useRedirectIfNotVerified();
+
   return (
     <>
+      <ImpersonateBanner />
       <AppBar />
 
       <BodyContainer>

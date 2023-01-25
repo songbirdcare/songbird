@@ -25,7 +25,17 @@ export class UserInformationMiddleware {
         return;
       }
 
-      req.user = await this.#getUser(sub);
+      const user = await this.#getUser(sub);
+      const impersonate = req.headers["x-impersonate"];
+      if (typeof impersonate === "string") {
+        if (user.role !== "admin") {
+          throw new Error("Only admins can impersonate");
+        }
+        req.impersonatingUser = user;
+        req.user = await this.userService.getById(impersonate);
+      } else {
+        req.user = user;
+      }
       next();
     };
 
@@ -73,6 +83,26 @@ export class UserInformationMiddleware {
         res.json({
           status: "failed",
           message: "Please verify your email address",
+        });
+        res.end();
+        return;
+      }
+
+      next();
+    };
+
+  ensureAdmin =
+    () =>
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      const user = req.user;
+      if (user === undefined) {
+        throw new Error("User is not defined on request");
+      }
+
+      if (user.role !== "admin") {
+        res.json({
+          status: "failed",
+          message: "This is a protected route",
         });
         res.end();
         return;

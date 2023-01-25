@@ -41,12 +41,18 @@ export const AppBar: React.FC = () => {
     });
   }, [boot, user]);
 
-  return <AppBarBody displayName={avatarDisplayName} />;
+  return (
+    <AppBarBody
+      displayName={avatarDisplayName}
+      isAdmin={user?.role === "admin"}
+    />
+  );
 };
 
 export const AppBarBody: React.FC<{
   displayName: string | undefined;
-}> = ({ displayName }) => {
+  isAdmin: boolean;
+}> = ({ displayName, isAdmin }) => {
   return (
     <MuiAppBar
       position="sticky"
@@ -101,7 +107,7 @@ export const AppBarBody: React.FC<{
               )}
             </Box>
 
-            <FadeMenu />
+            <FadeMenu isAdmin={isAdmin} />
           </Box>
         </Box>
       </Toolbar>
@@ -109,7 +115,7 @@ export const AppBarBody: React.FC<{
   );
 };
 
-const FadeMenu: React.FC = () => {
+const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { show, shutdown } = useIntercom();
@@ -179,7 +185,7 @@ const FadeMenu: React.FC = () => {
             </Typography>
           </Box>
         </MenuItem>
-        <MenuItem>
+        <MenuItem sx={{ justifyContent: "center" }}>
           <Link
             href="/feedback"
             sx={{
@@ -191,6 +197,21 @@ const FadeMenu: React.FC = () => {
             </Typography>
           </Link>
         </MenuItem>
+
+        {isAdmin && (
+          <MenuItem sx={{ justifyContent: "center" }}>
+            <Link
+              href="/admin"
+              sx={{
+                textDecoration: "none",
+              }}
+            >
+              <Typography color="primary" variant="body2" alignContent="center">
+                Admin
+              </Typography>
+            </Link>
+          </MenuItem>
+        )}
 
         {SETTINGS.enableDebuggingAction && (
           <MenuItem

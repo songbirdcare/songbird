@@ -24,6 +24,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.117",
     "@mui/material": "^5.11.6",
+    "@mui/x-data-grid": "^5.17.20",
     "@next/font": "^13.1.5",
     "@songbird/precedent-iso": "workspace:^",
     "amplitude-js": "^8.21.4",
@@ -34,6 +35,7 @@
     "react-dom": "^18.2.0",
     "react-use-intercom": "^2.1.0",
     "swr": "^2.0.1",
+    "typescript-cookie": "^1.0.4",
     "zod": "^3.20.2"
   },
   "devDependencies": {
