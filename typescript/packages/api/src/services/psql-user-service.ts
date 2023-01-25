@@ -3,6 +3,7 @@ import {
   isValidEmail,
   PasswordValidationService,
   UserModel,
+  ZUserRole,
 } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
@@ -22,7 +23,8 @@ email_verified,
 name,
 given_name,
 family_name,
-phone
+phone,
+role
 `;
 
 export class PsqlUserService implements UserService {
@@ -30,6 +32,31 @@ export class PsqlUserService implements UserService {
     private readonly pool: DatabasePool,
     private readonly auth0: Auth0Service
   ) {}
+
+  async changeRole(userId: string, role: "user" | "admin"): Promise<UserModel> {
+    const user = await this.pool.connect(async (connection) =>
+      connection.one(
+        sql.type(ZUserFromSql)`
+UPDATE sb_user SET role = ${role}  WHERE id = ${userId} RETURNING ${FIELDS}
+        `
+      )
+    );
+    return fromSQL(user);
+  }
+
+  async list(): Promise<UserModel[]> {
+    const users = await this.pool.connect(async (connection) =>
+      connection.many(
+        sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user LIMIT 10001`
+      )
+    );
+
+    if (users.length > 10_000) {
+      throw new Error("too many users being pulled. time to paginate");
+    }
+
+    return users.map(fromSQL);
+  }
 
   async create({
     email,
@@ -150,4 +177,5 @@ const ZUserFromSql = z.object({
   family_name: z.optional(z.string()),
   given_name: z.optional(z.string()),
   phone: z.optional(z.string()),
+  role: ZUserRole,
 });

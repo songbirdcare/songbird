@@ -3,6 +3,10 @@ import { z } from "zod";
 import type { PasswordValidationError } from "../services/password-validation-service";
 
 export type UserModel = z.infer<typeof ZUserModel>;
+
+export const ZUserRole = z.enum(["user", "admin"]);
+export type UserRole = z.infer<typeof ZUserRole>;
+
 export const ZUserModel = z.object({
   id: z.string(),
   sub: z.string(),
@@ -12,6 +16,7 @@ export const ZUserModel = z.object({
   familyName: z.optional(z.string()),
   givenName: z.optional(z.string()),
   phone: z.optional(z.string()),
+  role: ZUserRole,
 });
 
 export type CreateUserResponse =

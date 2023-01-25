@@ -80,4 +80,24 @@ export class UserInformationMiddleware {
 
       next();
     };
+
+  ensureAdmin =
+    () =>
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      const user = req.user;
+      if (user === undefined) {
+        throw new Error("User is not defined on request");
+      }
+
+      if (user.role !== "admin") {
+        res.json({
+          status: "failed",
+          message: "This is a protected route",
+        });
+        res.end();
+        return;
+      }
+
+      next();
+    };
 }

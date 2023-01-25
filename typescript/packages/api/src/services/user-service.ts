@@ -1,10 +1,16 @@
-import type { CreateUserResponse, UserModel } from "@songbird/precedent-iso";
+import type {
+  CreateUserResponse,
+  UserModel,
+  UserRole,
+} from "@songbird/precedent-iso";
 
 export interface UserService {
   create(args: CreateUserArgs): Promise<CreateUserResponse>;
   getById(id: string): Promise<UserModel>;
   getBySub(email: string): Promise<UserModel | undefined>;
   upsert(args: UpsertUserArgs): Promise<UserModel>;
+  list(): Promise<UserModel[]>;
+  changeRole(userId: string, role: UserRole): Promise<UserModel>;
 }
 
 export interface CreateUserArgs {

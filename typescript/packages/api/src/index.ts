@@ -33,7 +33,7 @@ import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-
 
 import { PsqlSignatureSubmissionService } from "./services/signature-submission-service";
 import { WorkflowActionService } from "./services/workflow/workflow-action-service";
-import { PublicUserRouter } from "./routers/public-user";
+import { AdminUserRouter } from "./routers/admin-user";
 import pino from "pino-http";
 import { logger } from "./logger";
 
@@ -112,9 +112,8 @@ async function start() {
   );
 
   const userIsVerified = userInformationMiddleware.ensureUserVerified();
+  const ensureIsAdmin = userInformationMiddleware.ensureAdmin();
   const addUser = userInformationMiddleware.addUser();
-
-  app.use("/api/v1/public-users", new PublicUserRouter(userService).init());
 
   app.use(
     "/api/v1/users",
@@ -140,6 +139,14 @@ async function start() {
       workflowService,
       workflowActionService
     ).init()
+  );
+
+  app.use(
+    "/api/v1/admin",
+    jwtCheck,
+    userIsVerified,
+    ensureIsAdmin,
+    new AdminUserRouter(userService).init()
   );
 
   app.use("/api/v1/calendar", new CalendarRouter(calendarService).init());
