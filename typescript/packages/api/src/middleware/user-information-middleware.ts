@@ -28,7 +28,6 @@ export class UserInformationMiddleware {
       const user = await this.#getUser(sub);
       const impersonate = req.headers["x-impersonate"];
       if (typeof impersonate === "string") {
-        debugger;
         if (user.role !== "admin") {
           throw new Error("Only admins can impersonate");
         }

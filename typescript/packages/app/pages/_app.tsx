@@ -9,7 +9,6 @@ import Head from "next/head";
 import React from "react";
 import { IntercomProvider } from "react-use-intercom";
 
-import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
 import { SETTINGS } from "../src/settings";
 import { THEME } from "../src/style/theme";

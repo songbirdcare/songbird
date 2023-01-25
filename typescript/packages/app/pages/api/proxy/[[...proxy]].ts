@@ -7,9 +7,7 @@ export default withApiAuthRequired(async function proxy(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { accessToken } = await getAccessToken(req, res, {
-    useRefreshTokens: true,
-  });
+  const { accessToken } = await getAccessToken(req, res);
   const impersonateHeader = req.cookies["X-Impersonate"];
 
   const proxy = (() => {

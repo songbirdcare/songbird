@@ -1,5 +1,4 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import { Alert, Box, Button,LinearProgress } from "@mui/material";
+import { Alert, Box, Button } from "@mui/material";
 import * as React from "react";
 
 import { useImpersonateContext } from "./impersonate-context";

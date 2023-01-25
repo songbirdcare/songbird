@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import type { UserModel, UserRole } from "@songbird/precedent-iso";
+import type { UserModel } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 

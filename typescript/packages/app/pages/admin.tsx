@@ -6,7 +6,6 @@ import * as React from "react";
 import { AdminMain } from "../src/admin/admin-main";
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
-import { useChangeRole } from "../src/hooks/use-change-role";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchUsers } from "../src/hooks/use-fetch-users";
 import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";

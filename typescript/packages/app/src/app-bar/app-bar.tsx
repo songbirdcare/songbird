@@ -107,7 +107,7 @@ export const AppBarBody: React.FC<{
               )}
             </Box>
 
-            <FadeMenu />
+            <FadeMenu isAdmin={isAdmin} />
           </Box>
         </Box>
       </Toolbar>
@@ -198,18 +198,20 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
           </Link>
         </MenuItem>
 
-        <MenuItem>
-          <Link
-            href="/admin"
-            sx={{
-              textDecoration: "none",
-            }}
-          >
-            <Typography color="primary" variant="body2">
-              Admin
-            </Typography>
-          </Link>
-        </MenuItem>
+        {isAdmin && (
+          <MenuItem>
+            <Link
+              href="/admin"
+              sx={{
+                textDecoration: "none",
+              }}
+            >
+              <Typography color="primary" variant="body2">
+                Admin
+              </Typography>
+            </Link>
+          </MenuItem>
+        )}
 
         {SETTINGS.enableDebuggingAction && (
           <MenuItem

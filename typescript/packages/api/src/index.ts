@@ -7,8 +7,6 @@ import { SETTINGS } from "./settings";
 import express from "express"; // eslint-disable-line
 import "express-async-errors"; // eslint-disable-line
 
-import cookieParser from "cookie-parser";
-
 import cors from "cors";
 import { expressjwt } from "express-jwt";
 import { expressJwtSecret } from "jwks-rsa";
@@ -64,7 +62,6 @@ async function start() {
       redact: ["req.headers.authorization"],
     })
   );
-  app.use(cookieParser());
 
   app.use(
     express.json({
