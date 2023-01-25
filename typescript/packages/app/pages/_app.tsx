@@ -9,15 +9,15 @@ import Head from "next/head";
 import React from "react";
 import { IntercomProvider } from "react-use-intercom";
 
+import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
+import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
 import { SETTINGS } from "../src/settings";
+import { THEME } from "../src/style/theme";
 
 // only initialize when in the browser
 if (typeof window !== "undefined" && SETTINGS.logRocketId) {
   LogRocket.init(SETTINGS.logRocketId);
 }
-
-import { THEME } from "../src/style/theme";
-import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -31,7 +31,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <ImpersonateProvider>
           <UserProvider>
             <IntercomProvider appId={SETTINGS.intercomId}>
-              <Box display="flex" flexDirection="column" height="100%">
+              <Box
+                display="flex"
+                flexDirection="column"
+                height="100%"
+                position="relative"
+              >
                 <Component {...pageProps} />
               </Box>
             </IntercomProvider>

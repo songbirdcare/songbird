@@ -1,11 +1,12 @@
+import { Button } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import type { UserModel, UserRole } from "@songbird/precedent-iso";
+import { useRouter } from "next/router";
 import * as React from "react";
 
-import { Button } from "@mui/material";
-
-import { ChangeRole } from "./change-role";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
+import { ChangeRole } from "./change-role";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "Id", width: 150 },
@@ -42,8 +43,18 @@ const columns: GridColDef[] = [
 ];
 
 const Impersonate: React.FC<{ id: string }> = ({ id }) => {
+  const router = useRouter();
+  const { setId } = useImpersonateContext();
   return (
-    <Button onClick={() => ImpersonateService.set(id)}>Impersonate</Button>
+    <Button
+      onClick={() => {
+        ImpersonateService.set(id);
+        setId(id);
+        router.push("/");
+      }}
+    >
+      Impersonate
+    </Button>
   );
 };
 

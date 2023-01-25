@@ -9,6 +9,7 @@ import { BodyContainer } from "../src/body-container";
 import { useChangeRole } from "../src/hooks/use-change-role";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchUsers } from "../src/hooks/use-fetch-users";
+import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 
 const Admin: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
@@ -26,6 +27,7 @@ const Admin: React.FC = () => {
 
   return (
     <>
+      <ImpersonateBanner />
       <AppBar />
 
       <BodyContainer>

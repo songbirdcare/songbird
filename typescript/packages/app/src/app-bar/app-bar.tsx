@@ -41,12 +41,18 @@ export const AppBar: React.FC = () => {
     });
   }, [boot, user]);
 
-  return <AppBarBody displayName={avatarDisplayName} />;
+  return (
+    <AppBarBody
+      displayName={avatarDisplayName}
+      isAdmin={user?.role === "admin"}
+    />
+  );
 };
 
 export const AppBarBody: React.FC<{
   displayName: string | undefined;
-}> = ({ displayName }) => {
+  isAdmin: boolean;
+}> = ({ displayName, isAdmin }) => {
   return (
     <MuiAppBar
       position="sticky"
@@ -109,7 +115,7 @@ export const AppBarBody: React.FC<{
   );
 };
 
-const FadeMenu: React.FC = () => {
+const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { show, shutdown } = useIntercom();
@@ -188,6 +194,19 @@ const FadeMenu: React.FC = () => {
           >
             <Typography color="primary" variant="body2">
               Offer feedback
+            </Typography>
+          </Link>
+        </MenuItem>
+
+        <MenuItem>
+          <Link
+            href="/admin"
+            sx={{
+              textDecoration: "none",
+            }}
+          >
+            <Typography color="primary" variant="body2">
+              Admin
             </Typography>
           </Link>
         </MenuItem>
