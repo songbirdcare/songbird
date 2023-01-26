@@ -61,8 +61,7 @@ async function start() {
 
   app.use(
     pino({
-      redact: ["req.headers", "res.headers"],
-      //redact: ["req.headers.authorization"],
+      redact: ["req.headers.authorization"],
     })
   );
 

@@ -16,9 +16,6 @@ export class DeviceTrackingMiddleware {
       id,
     });
     req.trackDevice = analytics.track;
-
-    req.trackDevice("Device Tracking Test");
-
     next();
   }
 }
