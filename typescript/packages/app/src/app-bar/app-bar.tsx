@@ -17,7 +17,7 @@ import { useIntercom } from "react-use-intercom";
 import { useDeleteWorkflows } from "../hooks/use-delete-workflows";
 import { useFetchUser } from "../hooks/use-fetch-user";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
-import { SETTINGS } from "../settings";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { SONG_BIRD_GREEN_LIGHT } from "../style/colors";
 import { TRACKER } from "../track";
 import styles from "./app-bar.module.css";
@@ -130,6 +130,7 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const { enableAdminDebugging } = useImpersonateContext();
 
   return (
     <div>
@@ -202,6 +203,9 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
           <MenuItem sx={{ justifyContent: "center" }}>
             <Link
               href="/admin"
+              onClick={() => {
+                handleClose();
+              }}
               sx={{
                 textDecoration: "none",
               }}
@@ -213,7 +217,7 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
           </MenuItem>
         )}
 
-        {SETTINGS.enableDebuggingAction && (
+        {enableAdminDebugging && (
           <MenuItem
             dense
             onClick={() => {

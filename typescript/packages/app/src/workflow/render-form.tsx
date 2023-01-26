@@ -7,7 +7,7 @@ import useSWRMutation from "swr/mutation";
 
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
-import { SETTINGS } from "../settings";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 
 const REDIRECT_WAIT_TIME = 5_000;
 
@@ -46,6 +46,7 @@ export const RenderForm: React.FC<{
       trigger();
     }
   }, [trigger, hasSubmittedForm]);
+  const { enableAdminDebugging } = useImpersonateContext();
 
   React.useEffect(() => {
     if (data) {
@@ -77,7 +78,7 @@ export const RenderForm: React.FC<{
         }}
         onFlowFinalized={() => setHasSubmittedForm(true)}
       />
-      {SETTINGS.enableDebuggingAction && !data && (
+      {enableAdminDebugging && !data && (
         <Box display="flex" width="100%" paddingY={3} justifyContent="center">
           <Button disabled={isMutating} onClick={trigger}>
             Advance to the next step

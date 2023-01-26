@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import { assertNever, Stage } from "@songbird/precedent-iso";
 import Image from "next/image";
 
-import { SETTINGS } from "../../settings";
+import { useImpersonateContext } from "../../impersonate/impersonate-context";
 import { SONG_BIRD_BIEGE2 } from "../../style/colors";
 import { TRACKER } from "../../track";
 import styles from "./display-stage.module.css";
@@ -118,6 +118,8 @@ const StageButton: React.FC<{ stage: Stage; isCurrentStage: boolean }> = ({
   const onClick = () =>
     TRACKER.track("Clicked stage button", { type: stage.type });
 
+  const { enableAdminDebugging } = useImpersonateContext();
+
   switch (stage.type) {
     case "create_account":
     case "check_insurance_coverage":
@@ -139,7 +141,7 @@ const StageButton: React.FC<{ stage: Stage; isCurrentStage: boolean }> = ({
           href={`/complete-stage?stage=${stage.type}`}
           variant="contained"
           onClick={onClick}
-          disabled={!isCurrentStage || !SETTINGS.enableDebuggingAction}
+          disabled={!isCurrentStage || !enableAdminDebugging}
         >
           {isCurrentStage ? "Pending" : "Start"}
         </Button>
