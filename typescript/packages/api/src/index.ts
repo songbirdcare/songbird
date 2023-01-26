@@ -84,7 +84,7 @@ async function start() {
     SETTINGS.auth.domain
   );
 
-  const userService = new PsqlUserService(pool, auth0Service);
+  const userService = new PsqlUserService(pool);
   const calendarService = new PsqlCalendarSubmissionsService(pool);
   const signatureSubmissionService = new PsqlSignatureSubmissionService(pool);
 

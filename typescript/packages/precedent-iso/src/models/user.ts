@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import type { PasswordValidationError } from "../services/password-validation-service";
-
 export type UserModel = z.infer<typeof ZUserModel>;
 
 export const ZUserRole = z.enum(["user", "admin"]);
@@ -18,8 +16,3 @@ export const ZUserModel = z.object({
   phone: z.optional(z.string()),
   role: ZUserRole,
 });
-
-export type CreateUserResponse =
-  | { type: "ok" }
-  | { type: "exists_in_auth0" | "exists_in_sql" | "invalid_email" }
-  | { type: "password"; error: PasswordValidationError };

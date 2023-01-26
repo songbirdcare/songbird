@@ -1,19 +1,8 @@
-import {
-  CreateUserResponse,
-  isValidEmail,
-  PasswordValidationService,
-  UserModel,
-  ZUserRole,
-} from "@songbird/precedent-iso";
+import { UserModel, ZUserRole } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { Auth0Service } from "./auth0/auth0-service";
-import type {
-  CreateUserArgs,
-  UpsertUserArgs,
-  UserService,
-} from "./user-service";
+import type { UpsertUserArgs, UserService } from "./user-service";
 
 const FIELDS = sql.fragment`
 id,
@@ -28,16 +17,12 @@ role
 `;
 
 export class PsqlUserService implements UserService {
-  constructor(
-    private readonly pool: DatabasePool,
-    private readonly auth0: Auth0Service
-  ) {}
+  constructor(private readonly pool: DatabasePool) {}
 
   async changeRole(userId: string, role: "user" | "admin"): Promise<UserModel> {
     const user = await this.pool.connect(async (connection) =>
       connection.one(
         sql.type(ZUserFromSql)`
-
 UPDATE
     sb_user
 SET
@@ -64,31 +49,6 @@ RETURNING
     }
 
     return users.map(fromSQL);
-  }
-
-  async create({
-    email,
-    password,
-  }: CreateUserArgs): Promise<CreateUserResponse> {
-    if (!isValidEmail(email)) {
-      return { type: "invalid_email" };
-    }
-    const passwordValidation = PasswordValidationService.validate(password);
-    if (passwordValidation.type === "error") {
-      return { type: "password", error: passwordValidation.code };
-    }
-
-    const auth0 = await this.auth0.createUser({ email, password });
-    if (auth0.status === "already_exists") {
-      return { type: "exists_in_auth0" };
-    }
-    await this.upsert({
-      sub: auth0.user.sub,
-      email,
-      emailVerified: false,
-    });
-
-    return { type: "ok" };
   }
 
   async getById(id: string): Promise<UserModel> {
