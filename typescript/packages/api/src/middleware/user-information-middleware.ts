@@ -1,11 +1,12 @@
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
-import { ANALYTICS } from "../analytics";
 
+import { AmplitudeAnalyticsService } from "../analytics";
 import { LOGGER } from "../logger";
 import type { Auth0Service } from "../services/auth0/auth0-service";
 import type { FormSubmissionService } from "../services/form-submission-service";
 import type { UserService } from "../services/user-service";
+import { SETTINGS } from "../settings";
 
 export class UserInformationMiddleware {
   constructor(
@@ -27,7 +28,19 @@ export class UserInformationMiddleware {
         return;
       }
 
-      const user = await this.#getUser(sub);
+      const { user, created } = await this.#getUser(sub);
+
+      const analytics = new AmplitudeAnalyticsService(SETTINGS.amplitudeKey, {
+        type: "user",
+        id: user.id,
+      });
+      req.trackUser = analytics.track;
+
+      req.trackUser("User signed in");
+      if (created) {
+        req.trackUser("User created");
+      }
+
       const impersonate = req.headers["x-impersonate"];
       if (typeof impersonate === "string") {
         if (user.role !== "admin") {
@@ -39,16 +52,15 @@ export class UserInformationMiddleware {
         req.user = user;
       }
 
-      ANALYTICS.identify(req.user.id, req.user.email);
       next();
     };
 
   #getUser = async (sub: string) => {
     const user = await this.userService.getBySub(sub);
     if (user === undefined || !user.emailVerified) {
-      return this.#createUserLazily(sub);
+      return { user: await this.#createUserLazily(sub), created: true };
     }
-    return user;
+    return { user, created: false };
   };
 
   #createUserLazily = async (sub: string) => {

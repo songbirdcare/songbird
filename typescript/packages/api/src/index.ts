@@ -36,6 +36,7 @@ import { WorkflowActionService } from "./services/workflow/workflow-action-servi
 import { AdminUserRouter } from "./routers/admin-user";
 import pino from "pino-http";
 import { LOGGER } from "./logger";
+import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
 
 LOGGER.info("Booting application!");
 
@@ -54,6 +55,7 @@ const jwtCheck = expressjwt({
 
 async function start() {
   const app = express();
+  app.enable("trust proxy");
 
   const pool = await POOL;
 
@@ -62,6 +64,8 @@ async function start() {
       redact: ["req.headers.authorization"],
     })
   );
+
+  app.use(DeviceTrackingMiddleware.setMiddleware);
 
   app.use(
     express.json({
