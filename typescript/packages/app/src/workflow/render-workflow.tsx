@@ -4,6 +4,7 @@ import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
@@ -115,11 +116,13 @@ const RenderSignature: React.FC<{
   const router = useRouter();
   const { mutate } = useFetchWorkflow();
 
+  const { enableAdminDebugging } = useImpersonateContext();
+
   React.useEffect(() => {
-    if (!SETTINGS.enableDebuggingAction) {
+    if (!enableAdminDebugging) {
       router.push("/");
     }
-  }, [router]);
+  }, [router, enableAdminDebugging]);
 
   const { data, trigger, isMutating } = useSWRMutation(
     `/api/proxy/workflows/action/${workflowId}`,

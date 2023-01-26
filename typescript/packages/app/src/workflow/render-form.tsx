@@ -4,6 +4,7 @@ import type { FormTask } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
@@ -46,6 +47,7 @@ export const RenderForm: React.FC<{
       trigger();
     }
   }, [trigger, hasSubmittedForm]);
+  const { enableAdminDebugging } = useImpersonateContext();
 
   React.useEffect(() => {
     if (data) {
@@ -77,7 +79,7 @@ export const RenderForm: React.FC<{
         }}
         onFlowFinalized={() => setHasSubmittedForm(true)}
       />
-      {SETTINGS.enableDebuggingAction && !data && (
+      {enableAdminDebugging && !data && (
         <Box display="flex" width="100%" paddingY={3} justifyContent="center">
           <Button disabled={isMutating} onClick={trigger}>
             Advance to the next step

@@ -17,6 +17,16 @@ export class AdminUserRouter {
       }
     );
 
+    router.get(
+      "/impersonate",
+      async (req: express.Request, res: express.Response) => {
+        if (!req.impersonatingUser) {
+          throw new Error("user is not impersonating anyone");
+        }
+        res.json({ user: req.user, impersonatingUser: req.impersonatingUser });
+      }
+    );
+
     router.put(
       "/change-role",
       async (req: express.Request, res: express.Response) => {

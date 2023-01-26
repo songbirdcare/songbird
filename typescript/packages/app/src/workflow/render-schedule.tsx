@@ -8,6 +8,7 @@ import useSWRMutation from "swr/mutation";
 import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchUser } from "../hooks/use-fetch-user";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { SETTINGS } from "../settings";
 
 const REDIRECT_WAIT_TIME = 5_000;
@@ -21,6 +22,8 @@ export const RenderSchedule: React.FC<{
   const { data: user, isLoading: userIsLoading } = useFetchUser();
 
   const { mutate } = useFetchWorkflow();
+
+  const { enableAdminDebugging } = useImpersonateContext();
 
   const { data, trigger, isMutating } = useSWRMutation(
     `/api/proxy/workflows/action/${workflowId}`,
@@ -92,7 +95,7 @@ export const RenderSchedule: React.FC<{
         />
       )}
 
-      {SETTINGS.enableDebuggingAction && !data && (
+      {enableAdminDebugging && !data && (
         <Box display="flex" paddingBottom={2} justifyContent="center">
           <AdvanceToNextStep disabled={isMutating} onClick={trigger} />
         </Box>
