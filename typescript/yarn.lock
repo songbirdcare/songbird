@@ -14,6 +14,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@amplitude/analytics-core@npm:^0.11.2":
+  version: 0.11.2
+  resolution: "@amplitude/analytics-core@npm:0.11.2"
+  dependencies:
+    "@amplitude/analytics-types": ^0.14.0
+    tslib: ^2.4.1
+  checksum: 27e349f5e26f2e1675f3ceb94679a7fb68bc798c901afed6e4544a88bc2e582373a615429fc73d56800960a9325fad05bd130bb360e82f6b5ffef208d9abb830
+  languageName: node
+  linkType: hard
+
+"@amplitude/analytics-node@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@amplitude/analytics-node@npm:1.0.2"
+  dependencies:
+    "@amplitude/analytics-core": ^0.11.2
+    "@amplitude/analytics-types": ^0.14.0
+    tslib: ^2.4.1
+  checksum: c9da3e7612183deb4161076176aba7a202af7f3f5e94791303b066992fd0ec25aee1d7c499bcb4b623b4c7a018affb3f52e5d94c3177c8596c92c47673eeefb4
+  languageName: node
+  linkType: hard
+
+"@amplitude/analytics-types@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@amplitude/analytics-types@npm:0.14.0"
+  checksum: 23972f7869b1020d86a6b1d427b003e6bfed6ffae37dd755a86b7d78310568b381b0b7d8970ba468894efb6d775e3b885ed8ac4548d6c15413ed02548dfa9d00
+  languageName: node
+  linkType: hard
+
 "@amplitude/types@npm:^1.10.2":
   version: 1.10.2
   resolution: "@amplitude/types@npm:1.10.2"
@@ -1169,6 +1197,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@songbird/api@workspace:packages/api"
   dependencies:
+    "@amplitude/analytics-node": ^1.0.2
     "@songbird/precedent-iso": "workspace:^"
     "@types/auth0": ^2.35.9
     "@types/cors": ^2.8.13
@@ -7051,7 +7080,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.4.1":
   version: 2.4.1
   resolution: "tslib@npm:2.4.1"
   checksum: 19480d6e0313292bd6505d4efe096a6b31c70e21cf08b5febf4da62e95c265c8f571f7b36fcc3d1a17e068032f59c269fab3459d6cd3ed6949eafecf64315fca

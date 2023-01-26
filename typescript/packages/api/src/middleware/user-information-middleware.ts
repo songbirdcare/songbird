@@ -1,5 +1,6 @@
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
+import { ANALYTICS } from "../analytics";
 
 import { LOGGER } from "../logger";
 import type { Auth0Service } from "../services/auth0/auth0-service";
@@ -37,6 +38,8 @@ export class UserInformationMiddleware {
       } else {
         req.user = user;
       }
+
+      ANALYTICS.identify(req.user.id, req.user.email);
       next();
     };
 
