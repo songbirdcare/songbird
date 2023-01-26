@@ -1,6 +1,7 @@
 import { ZAction } from "@songbird/precedent-iso";
 import express from "express";
 
+import { LOGGER } from "../logger";
 import type { ChildService } from "../services/child/child-service";
 import { INITIAL_SLUG } from "../services/workflow/create-initial-workflow";
 import type { WorkflowActionService } from "../services/workflow/workflow-action-service";
@@ -53,7 +54,7 @@ export class WorkflowRouter {
         if (workflowId === undefined) {
           throw new Error("undefined workflowId");
         }
-        console.log(`Processing workflow action for ${workflowId}`);
+        LOGGER.info(`Processing workflow action for ${workflowId}`);
 
         const action = ZAction.parse(req.body);
 

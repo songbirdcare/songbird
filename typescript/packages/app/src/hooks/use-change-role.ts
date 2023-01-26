@@ -8,7 +8,6 @@ export const useChangeRole = () => {
     "/api/proxy/admin/change-role",
     ChangeRoleRequest
   >("/api/proxy/admin/change-role", async (url: string, args) => {
-    console.log(args);
     const res = await fetch(url, {
       method: "PUT",
       headers: {

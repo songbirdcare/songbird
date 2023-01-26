@@ -3,6 +3,7 @@ import crypto from "crypto";
 import express from "express";
 import { z } from "zod";
 
+import { LOGGER } from "../logger";
 import type { FormSubmissionService } from "../services/form-submission-service";
 import { SETTINGS } from "../settings";
 
@@ -105,7 +106,7 @@ function validateSignature({
   if (hash === signature) {
     return "valid";
   }
-  console.log(`The difference is ${hash} vs ${signature}`);
+  LOGGER.warn(`The difference is ${hash} vs ${signature}`);
   return "invalid";
 }
 

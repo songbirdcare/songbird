@@ -2,6 +2,7 @@ import type { EmailVerification } from "@songbird/precedent-iso";
 import { ManagementClient } from "auth0";
 import { z } from "zod";
 
+import { LOGGER } from "../../logger";
 import { Auth0TokenService } from "./auth0-token-service";
 
 const CONNECTION = "Username-Password-Authentication";
@@ -34,7 +35,7 @@ export class Auth0Service {
 
     // do we have to check for multiple connections here?
     if (users.length > 0) {
-      console.log(`Not creating email=${email} as they already exist`);
+      LOGGER.info(`Not creating email=${email} as they already exist`);
       const id = users[0]?.user_id;
       if (id === undefined) {
         throw new Error("User ID is undefined");

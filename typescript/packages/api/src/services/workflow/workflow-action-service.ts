@@ -5,6 +5,7 @@ import {
   WorkflowWrapper,
 } from "@songbird/precedent-iso";
 
+import { LOGGER } from "../../logger";
 import type { CalendarSubmissionService } from "../calendar-submissions-service";
 import type { SignatureSubmissionService } from "../signature-submission-service";
 import type { UserService } from "../user-service";
@@ -30,11 +31,11 @@ export class WorkflowActionService {
 
     const info = wrapper.fromIds(action.stageId, action.taskId);
     if (info.task === undefined) {
-      console.warn("Task not found");
+      LOGGER.warn("Task not found");
       return workflow;
     }
     if (info.task.status === "complete") {
-      console.warn("Task is already completed");
+      LOGGER.warn("Task is already completed");
       return workflow;
     }
 
@@ -102,7 +103,7 @@ export class WorkflowActionService {
         const exists = await this.calendarSubmissionService.exists({
           email: user.email,
         });
-        console.log(`Calendar entry for ${user.email} exists: ${exists}`);
+        LOGGER.info(`Calendar entry for ${user.email} exists: ${exists}`);
         if (exists) {
           workflow.advance();
         }

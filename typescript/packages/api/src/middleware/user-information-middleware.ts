@@ -1,6 +1,7 @@
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
+import { LOGGER } from "../logger";
 import type { Auth0Service } from "../services/auth0/auth0-service";
 import type { FormSubmissionService } from "../services/form-submission-service";
 import type { UserService } from "../services/user-service";
@@ -48,10 +49,10 @@ export class UserInformationMiddleware {
   };
 
   #createUserLazily = async (sub: string) => {
-    console.log(`Attempting to fetch profile from Auth0 sub=${sub}`);
+    LOGGER.info(`Attempting to fetch profile from Auth0 sub=${sub}`);
     const fromAuth0 = await this.auth0Service.getUser(sub);
 
-    console.log(`Fetched profile from Auth0 sub=${sub}`);
+    LOGGER.info(`Fetched profile from Auth0 sub=${sub}`);
     const user = await this.userService.upsert(fromAuth0);
 
     const submissionForm = await this.formSubmissionService.getSignupForm(
@@ -59,7 +60,7 @@ export class UserInformationMiddleware {
     );
 
     if (submissionForm) {
-      console.log(`Found submission form for ${fromAuth0.email}`);
+      LOGGER.info(`Found submission form for ${fromAuth0.email}`);
       return await this.userService.upsert({
         sub,
         email: fromAuth0.email,

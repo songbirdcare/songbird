@@ -35,9 +35,9 @@ import { PsqlSignatureSubmissionService } from "./services/signature-submission-
 import { WorkflowActionService } from "./services/workflow/workflow-action-service";
 import { AdminUserRouter } from "./routers/admin-user";
 import pino from "pino-http";
-import { logger } from "./logger";
+import { LOGGER } from "./logger";
 
-logger.info("Booting application!");
+LOGGER.info("Booting application!");
 
 const jwtCheck = expressjwt({
   secret: expressJwtSecret({

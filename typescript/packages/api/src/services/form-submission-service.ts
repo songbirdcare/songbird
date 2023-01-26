@@ -1,6 +1,8 @@
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
+import { LOGGER } from "../logger";
+
 export class PsqlFormSubmissionService implements FormSubmissionService {
   constructor(private readonly pool: DatabasePool) {}
 
@@ -26,7 +28,7 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
         };
       } catch (e) {
         if (e instanceof z.ZodError) {
-          console.warn("Could not parse onboarding form");
+          LOGGER.warn("Could not parse onboarding form");
           return undefined;
         }
         throw e;

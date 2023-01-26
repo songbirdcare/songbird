@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod";
 
+import { LOGGER } from "../logger";
 import type { SignatureSubmissionService } from "../services/signature-submission-service";
 
 // I have no idea why but,
@@ -18,7 +19,7 @@ export class SignatureRouter {
     router.post(
       "/event",
       async (req: express.Request, res: express.Response) => {
-        console.log("Signature event");
+        LOGGER.info("Signature event");
         const parsed = ZSignaturePayload.parse(req.body);
         const signers = parsed.recipients.signers;
         const withoutDoubleQuotes = signers.replace(
