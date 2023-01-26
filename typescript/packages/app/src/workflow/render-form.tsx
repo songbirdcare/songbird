@@ -4,11 +4,10 @@ import type { FormTask } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
-import { useImpersonateContext } from "../impersonate/impersonate-context";
 
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
-import { SETTINGS } from "../settings";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 
 const REDIRECT_WAIT_TIME = 5_000;
 

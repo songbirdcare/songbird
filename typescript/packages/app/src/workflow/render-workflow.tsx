@@ -4,12 +4,11 @@ import type { Stage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { useImpersonateContext } from "../impersonate/impersonate-context";
 import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
-import { SETTINGS } from "../settings";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { CompletedStage } from "./completed-stage";
 import { RenderForm } from "./render-form";
 import { RenderSchedule } from "./render-schedule";

@@ -5,9 +5,8 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { assertNever, Stage } from "@songbird/precedent-iso";
 import Image from "next/image";
-import { useImpersonateContext } from "../../impersonate/impersonate-context";
 
-import { SETTINGS } from "../../settings";
+import { useImpersonateContext } from "../../impersonate/impersonate-context";
 import { SONG_BIRD_BIEGE2 } from "../../style/colors";
 import { TRACKER } from "../../track";
 import styles from "./display-stage.module.css";

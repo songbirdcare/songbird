@@ -1,10 +1,9 @@
-import React from "react";
-
-import { ImpersonateService } from "./impersonate-service";
-import { SETTINGS } from "../settings";
-
-import useSWR from "swr";
 import type { UserModel } from "@songbird/precedent-iso";
+import React from "react";
+import useSWR from "swr";
+
+import { SETTINGS } from "../settings";
+import { ImpersonateService } from "./impersonate-service";
 
 interface Context {
   id: string | undefined;
