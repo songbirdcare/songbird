@@ -1,10 +1,13 @@
-import { init, track, Identify, identify } from "@amplitude/analytics-node";
-import { SETTINGS } from "./settings";
+import { init, track } from "@amplitude/analytics-node";
+import { assertNever } from "@songbird/precedent-iso";
 
 import { LOGGER } from "./logger";
 
-class Analytics {
-  constructor(private readonly apiKey: string | undefined) {
+export class AmplitudeAnalyticsService implements AnalyticsService {
+  constructor(
+    private readonly apiKey: string | undefined,
+    private readonly mode: AnalyticsMode
+  ) {
     if (!apiKey) {
       LOGGER.warn("Amplitude API key not present");
       return;
@@ -13,29 +16,33 @@ class Analytics {
     init(apiKey);
   }
 
-  track(event: string, properties: Record<string, unknown>) {
+  track = (event: string, properties?: Record<string, unknown>) => {
     if (!this.apiKey) {
-      LOGGER.info(`Analytics: ${event}`, properties);
+      LOGGER.debug(`Analytics: ${event}`, properties);
       return;
     }
 
-    track(event, properties);
-  }
-
-  identify(id: string, email: string) {
-    if (!this.apiKey) {
-      return;
+    switch (this.mode.type) {
+      case "device":
+        track(event, properties, {
+          device_id: this.mode.id,
+        });
+        break;
+      case "user":
+        track(event, properties, {
+          user_id: this.mode.id,
+        });
+        break;
+      default:
+        assertNever(this.mode);
     }
-
-    const identifyObj = new Identify();
-
-    identify(identifyObj, {
-      user_id: id,
-      extra: {
-        email: email,
-      },
-    });
-  }
+  };
 }
 
-export const ANALYTICS = new Analytics(SETTINGS.amplitudeKey);
+export type AnalyticsMode =
+  | { type: "device"; id: string }
+  | { type: "user"; id: string };
+
+export interface AnalyticsService {
+  track: (event: string, properties?: Record<string, unknown>) => void;
+}
