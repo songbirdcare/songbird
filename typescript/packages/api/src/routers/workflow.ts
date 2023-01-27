@@ -54,7 +54,7 @@ export class WorkflowRouter {
         if (workflowId === undefined) {
           throw new Error("undefined workflowId");
         }
-        LOGGER.info(`Processing workflow action for ${workflowId}`);
+        LOGGER.info("Processing workflow action", { workflowId });
 
         const action = ZAction.parse(req.body);
 
@@ -62,6 +62,12 @@ export class WorkflowRouter {
           workflowId,
           action
         );
+
+        if (workflow.status === "completed") {
+          req.trackUser!("completed_workflow"); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        } else {
+          req.trackUser!("process_workflow_action"); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        }
 
         res.json({
           data: {
