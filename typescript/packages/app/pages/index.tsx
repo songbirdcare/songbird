@@ -16,7 +16,7 @@ const Home: React.FC = () => {
   const { data: workflow } = useFetchWorkflow();
   useRedirectIfNotVerified();
 
-  useTrackOnce("page accessed", { page: "home" });
+  useTrackOnce("page_accessed", { page: "home" });
   return (
     <>
       <ImpersonateBanner />
