@@ -27,9 +27,6 @@ export class SignatureRouter {
           '"'
         );
         const parsedSigners = ZSigners.parse(JSON.parse(withoutDoubleQuotes));
-        const counterPartyEmail = parsedSigners
-          .map((row) => row.email)
-          .find((row) => !row.endsWith("@songbirdcare.com"));
 
         await this.svc.insert({
           raw: req.body,
@@ -37,7 +34,7 @@ export class SignatureRouter {
           emailSubject: parsed.info.emailSubject,
           eventCreatedAt: parsed.info.createdDateTime,
           status: parsed.status,
-          counterPartyEmail,
+          counterPartyEmail: tryGetCounterpartyEmail(parsedSigners),
         });
 
         res.send("ok");
@@ -46,6 +43,31 @@ export class SignatureRouter {
 
     return router;
   }
+}
+
+// it does not seem like Docusign returns a good counterparty field
+// here we do our best to guess a counterparty email
+function tryGetCounterpartyEmail(signers: ZSigners): string | undefined {
+  const nonSongbirdEmail = signers
+    .map((row) => row.email)
+    .find((row) => !row.endsWith("@songbirdcare.com"));
+
+  if (nonSongbirdEmail) {
+    return nonSongbirdEmail;
+  }
+
+  const nonTeamMember = signers.find((row) => {
+    return (
+      row.roleName === undefined || !row.roleName.startsWith("Family Team")
+    );
+  })?.email;
+
+  if (nonTeamMember) {
+    return nonTeamMember;
+  }
+
+  const lastSigner = signers.at(-1);
+  return lastSigner?.email;
 }
 
 export const ZSignaturePayload = z.object({
@@ -65,5 +87,8 @@ export const ZSignaturePayload = z.object({
 export const ZSigners = z.array(
   z.object({
     email: z.string(),
+    roleName: z.string().optional(),
   })
 );
+
+type ZSigners = z.infer<typeof ZSigners>;
