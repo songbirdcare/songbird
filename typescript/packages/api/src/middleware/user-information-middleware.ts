@@ -36,9 +36,9 @@ export class UserInformationMiddleware {
       });
       req.trackUser = analytics.track;
 
-      req.trackUser("User signed in");
+      req.trackUser("user_signed_in");
       if (created) {
-        req.trackUser("User created");
+        req.trackUser("user_created");
       }
 
       const impersonate = req.headers["x-impersonate"];

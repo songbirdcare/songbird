@@ -23,7 +23,7 @@ const CompleteStage: React.FC = () => {
     stageTypeFromUrl
   );
 
-  useTrackOnce("complete-stage page accessed");
+  useTrackOnce("page_accessed", { page: "complete-stage" });
   React.useEffect(() => {
     if (stageType || !workflow) {
       return;

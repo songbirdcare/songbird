@@ -116,7 +116,7 @@ const StageButton: React.FC<{ stage: Stage; isCurrentStage: boolean }> = ({
   isCurrentStage,
 }) => {
   const onClick = () =>
-    TRACKER.track("Clicked stage button", { type: stage.type });
+    TRACKER.track("clicked_stage_button", { type: stage.type });
 
   const { enableAdminDebugging } = useImpersonateContext();
 

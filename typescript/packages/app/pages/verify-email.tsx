@@ -20,7 +20,7 @@ const VerifyEmailPage: React.FC = () => {
     }
   }, [router, isEmailVerified]);
 
-  useTrackOnce("verify-email page accessed");
+  useTrackOnce("page_accessed", { page: "verify-email" });
 
   return (
     <>

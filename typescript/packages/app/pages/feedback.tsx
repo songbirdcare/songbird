@@ -22,7 +22,7 @@ const Feedback: React.FC = () => {
     }
   }, [router, hasSubmittedForm]);
 
-  useTrackOnce("offer feedback page accessed");
+  useTrackOnce("page_accessed", { page: "feedback" });
 
   if (!user) {
     return <LinearProgress />;
