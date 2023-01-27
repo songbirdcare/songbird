@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import * as React from "react";
 
 import { useFetchUser } from "../src/hooks/use-fetch-user";
+import { useTrackOnce } from "../src/hooks/use-track-once";
 import { SETTINGS } from "../src/settings";
 
 const REDIRECT_WAIT_TIME = 5_000;
@@ -20,6 +21,8 @@ const Feedback: React.FC = () => {
       setTimeout(() => router.push("/"), REDIRECT_WAIT_TIME);
     }
   }, [router, hasSubmittedForm]);
+
+  useTrackOnce("offer feedback page accessed");
 
   if (!user) {
     return <LinearProgress />;

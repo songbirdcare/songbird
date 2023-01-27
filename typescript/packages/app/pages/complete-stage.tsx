@@ -10,6 +10,7 @@ import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
+import { useTrackOnce } from "../src/hooks/use-track-once";
 import { RenderWorkflow } from "../src/workflow/render-workflow";
 
 const CompleteStage: React.FC = () => {
@@ -22,6 +23,7 @@ const CompleteStage: React.FC = () => {
     stageTypeFromUrl
   );
 
+  useTrackOnce("complete-stage page accessed");
   React.useEffect(() => {
     if (stageType || !workflow) {
       return;
