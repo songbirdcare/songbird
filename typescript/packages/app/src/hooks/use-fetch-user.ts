@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
 
+import { SETTINGS } from "../settings";
+
 export const useFetchUser = () => {
   const router = useRouter();
   const { data, isLoading, error } = useSWR<UserModel>(
@@ -22,11 +24,27 @@ export const useFetchUser = () => {
   }, [router, error]);
 
   React.useEffect(() => {
-    if (data) {
-      LogRocket.identify(data.id, {
-        email: data.email,
-      });
+    if (!data || !SETTINGS.logRocketId) {
+      return;
     }
+
+    LogRocket.identify(data.id, {
+      email: data.email,
+    });
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const intercom = window.Intercom;
+
+    if (typeof intercom === "undefined") {
+      return;
+    }
+
+    intercom("update", {
+      logrocketURL: `https://app.logrocket.com/${SETTINGS.logRocketId}/sessions?u=${data.id}`,
+    });
   }, [data]);
 
   return { data, isLoading };
