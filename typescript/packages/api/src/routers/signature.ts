@@ -3,6 +3,10 @@ import { z } from "zod";
 
 import { LOGGER } from "../logger";
 import type { SignatureSubmissionService } from "../services/signature-submission-service";
+import {
+  tryGetCounterpartyEmail,
+  ZDocusignSigners,
+} from "../services/process-signatures/process-signatures";
 
 // I have no idea why but,
 // docusign returns us signers object
@@ -26,7 +30,9 @@ export class SignatureRouter {
           REPLACE_SINGLE_QUOTES_REGEX,
           '"'
         );
-        const parsedSigners = ZSigners.parse(JSON.parse(withoutDoubleQuotes));
+        const parsedSigners = ZDocusignSigners.parse(
+          JSON.parse(withoutDoubleQuotes)
+        );
 
         await this.svc.insert({
           raw: req.body,
@@ -45,31 +51,6 @@ export class SignatureRouter {
   }
 }
 
-// it does not seem like Docusign returns a good counterparty field
-// here we do our best to guess a counterparty email
-function tryGetCounterpartyEmail(signers: ZSigners): string | undefined {
-  const nonSongbirdEmail = signers
-    .map((row) => row.email)
-    .find((row) => !row.endsWith("@songbirdcare.com"));
-
-  if (nonSongbirdEmail) {
-    return nonSongbirdEmail;
-  }
-
-  const nonTeamMember = signers.find((row) => {
-    return (
-      row.roleName === undefined || !row.roleName.startsWith("Family Team")
-    );
-  })?.email;
-
-  if (nonTeamMember) {
-    return nonTeamMember;
-  }
-
-  const lastSigner = signers.at(-1);
-  return lastSigner?.email;
-}
-
 export const ZSignaturePayload = z.object({
   documentsFileUrl: z.string(),
   envelopeId: z.string(),
@@ -83,12 +64,3 @@ export const ZSignaturePayload = z.object({
   }),
   status: z.string(),
 });
-
-export const ZSigners = z.array(
-  z.object({
-    email: z.string(),
-    roleName: z.string().optional(),
-  })
-);
-
-type ZSigners = z.infer<typeof ZSigners>;
