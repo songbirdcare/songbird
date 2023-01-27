@@ -184,6 +184,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@datadog/browser-core@npm:4.31.0":
+  version: 4.31.0
+  resolution: "@datadog/browser-core@npm:4.31.0"
+  checksum: b3cb6241c96c397082db9067cf6aa9c97cc05d6aeace7f72192c12b58189d00a252a4696a7878206a6812652981ab650976a4eb1895d7c08b526c37f8c2155ad
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-rum-core@npm:4.31.0":
+  version: 4.31.0
+  resolution: "@datadog/browser-rum-core@npm:4.31.0"
+  dependencies:
+    "@datadog/browser-core": 4.31.0
+  checksum: 0b25f989fad25517e59631fe6fd8207d61687ae6994d97c130a4bd8d2291e7f2dd860bbf67cb976894a09e414d582343640f9454a9f4507cb050d23be4261c56
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-rum@npm:^4.31.0":
+  version: 4.31.0
+  resolution: "@datadog/browser-rum@npm:4.31.0"
+  dependencies:
+    "@datadog/browser-core": 4.31.0
+    "@datadog/browser-rum-core": 4.31.0
+  peerDependencies:
+    "@datadog/browser-logs": 4.31.0
+  peerDependenciesMeta:
+    "@datadog/browser-logs":
+      optional: true
+  checksum: 9409f22594e6498fd469ba3ef332174fc851a965fc4b0170f0b658fe416fec18416262b1a632bcea6eb7389fcf9bd6c1c1a67acf700ea5a4a3cb0430b6fa9ff8
+  languageName: node
+  linkType: hard
+
 "@datadog/native-appsec@npm:2.0.0":
   version: 2.0.0
   resolution: "@datadog/native-appsec@npm:2.0.0"
@@ -1237,6 +1268,7 @@ __metadata:
   resolution: "@songbird/app@workspace:packages/app"
   dependencies:
     "@auth0/nextjs-auth0": ^2.2.0
+    "@datadog/browser-rum": ^4.31.0
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@formsort/react-embed": ^3.1.1

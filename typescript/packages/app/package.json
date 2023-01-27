@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^2.2.0",
+    "@datadog/browser-rum": "^4.31.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@formsort/react-embed": "^3.1.1",

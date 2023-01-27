@@ -12,18 +12,28 @@ import { IntercomProvider } from "react-use-intercom";
 
 import { ErrorBoundary } from "../src/error-boundary";
 import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
+import { initForRum } from "../src/monitoring/datadog-rum";
 import { SETTINGS } from "../src/settings";
 import { THEME } from "../src/style/theme";
 
 // only initialize when in the browser
-if (typeof window !== "undefined" && SETTINGS.logRocketId) {
-  LogRocket.init(SETTINGS.logRocketId);
-  LogRocket.getSessionURL((sessionURL) => {
-    amplitude.getInstance().logEvent("LogRocket", { sessionURL: sessionURL });
-  });
-}
 
 export default function App({ Component, pageProps }: AppProps) {
+  React.useEffect(() => {
+    if (SETTINGS.logRocketId) {
+      LogRocket.init(SETTINGS.logRocketId);
+      LogRocket.getSessionURL((sessionURL) => {
+        amplitude
+          .getInstance()
+          .logEvent("LogRocket", { sessionURL: sessionURL });
+      });
+    }
+  }, []);
+
+  React.useEffect(() => {
+    initForRum();
+  }, []);
+
   return (
     <>
       <Head>
