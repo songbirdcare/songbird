@@ -7,6 +7,7 @@ import { useChangeRole } from "../hooks/use-change-role";
 export const ChangeRole: React.FC<{
   id: string;
   role: UserRole;
+  isEligibleForAdmin: boolean;
 }> = (params) => {
   const [role, setRole] = React.useState<UserRole>(params.role);
   const { trigger, isMutating } = useChangeRole();
@@ -20,7 +21,9 @@ export const ChangeRole: React.FC<{
         }}
         disabled={isMutating}
       >
-        <MenuItem value={"admin"}>Admin</MenuItem>
+        {params.isEligibleForAdmin && (
+          <MenuItem value={"admin"}>Admin</MenuItem>
+        )}
         <MenuItem value={"user"}>User</MenuItem>
       </Select>
 

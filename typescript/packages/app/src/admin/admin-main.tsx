@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import type { UserModel } from "@songbird/precedent-iso";
+import { isEligibleForAdmin, UserModel } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 
@@ -26,7 +26,11 @@ const columns: GridColDef[] = [
     flex: 1,
     renderCell: (params) => {
       return params.row.selfId === params.row.id ? null : (
-        <ChangeRole id={params.row.id} role={params.row.role} />
+        <ChangeRole
+          id={params.row.id}
+          role={params.row.role}
+          isEligibleForAdmin={isEligibleForAdmin(params.row)}
+        />
       );
     },
   },
@@ -62,12 +66,13 @@ export const AdminMain: React.FC<{ selfId: string; users: UserModel[] }> = ({
   selfId,
   users,
 }) => {
-  const rows: GridRowsProp = users.map((user) => {
+  const rows: GridRowsProp = users.map(({ id, email, role, emailVerified }) => {
     return {
-      id: user.id,
+      id,
       selfId,
-      email: user.email,
-      role: user.role,
+      email,
+      role,
+      emailVerified,
     };
   });
 

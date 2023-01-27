@@ -1,4 +1,5 @@
 export * from "./assert-never";
+export { isEligibleForAdmin } from "./is-eligible-for-admin";
 export * from "./models/action";
 export * from "./models/admin";
 export { EmailVerification } from "./models/auth0/email-verification";

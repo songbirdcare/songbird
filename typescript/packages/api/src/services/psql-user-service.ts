@@ -1,4 +1,8 @@
-import { UserModel, ZUserRole } from "@songbird/precedent-iso";
+import {
+  isEligibleForAdmin,
+  UserModel,
+  ZUserRole,
+} from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
@@ -20,6 +24,13 @@ export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}
 
   async changeRole(userId: string, role: "user" | "admin"): Promise<UserModel> {
+    if (role === "admin") {
+      const { email, emailVerified } = await this.getById(userId);
+      if (!isEligibleForAdmin({ email, emailVerified })) {
+        throw new Error(`${email} cannot be made into an admin`);
+      }
+    }
+
     const user = await this.pool.connect(async (connection) =>
       connection.one(
         sql.type(ZUserFromSql)`
