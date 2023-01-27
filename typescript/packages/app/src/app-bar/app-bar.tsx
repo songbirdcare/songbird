@@ -118,7 +118,7 @@ export const AppBarBody: React.FC<{
 const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const { show, shutdown } = useIntercom();
+  const { isOpen, hide, show, shutdown } = useIntercom();
   const { trigger, isMutating } = useDeleteWorkflows();
   const { mutate } = useFetchWorkflow();
 
@@ -176,7 +176,11 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         <MenuItem
           dense
           onClick={() => {
-            show();
+            if (isOpen) {
+              hide();
+            } else {
+              show();
+            }
             handleClose();
           }}
         >
@@ -239,6 +243,7 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
     </div>
   );
 };
+
 function getAvatarDisplayName(user: UserModel | undefined) {
   if (!user) {
     return undefined;
