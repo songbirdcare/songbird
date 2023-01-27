@@ -1,6 +1,8 @@
 import { handleAuth, handleLogin } from "@auth0/nextjs-auth0";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { TRACKER } from "../../../src/track";
+
 export default handleAuth({
   async signup(req: NextApiRequest, res: NextApiResponse) {
     const email = getEmail(req.query);
@@ -10,6 +12,10 @@ export default handleAuth({
         login_hint: email,
       },
     });
+  },
+  async login(req, res) {
+    TRACKER.track("user_signin");
+    await handleLogin(req, res);
   },
 });
 

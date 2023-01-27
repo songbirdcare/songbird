@@ -35,8 +35,6 @@ export class UserInformationMiddleware {
         id: user.id,
       });
       req.trackUser = analytics.track;
-
-      req.trackUser("user_signed_in");
       if (created) {
         req.trackUser("user_created");
       }
