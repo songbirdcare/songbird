@@ -9,7 +9,7 @@ export class AmplitudeAnalyticsService implements AnalyticsService {
     private readonly mode: AnalyticsMode
   ) {
     if (!apiKey) {
-      LOGGER.warn("Amplitude API key not present");
+      LOGGER.debug("Amplitude API key not present");
       return;
     }
 
