@@ -77,6 +77,7 @@ export const RenderForm: React.FC<{
           },
         }}
         onFlowFinalized={() => setHasSubmittedForm(true)}
+        queryParams={[["is_app_embedded", "true"]]}
       />
       {enableAdminDebugging && !data && (
         <Box display="flex" width="100%" paddingY={3} justifyContent="center">
