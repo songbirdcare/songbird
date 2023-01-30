@@ -2,11 +2,11 @@ import express from "express";
 import { z } from "zod";
 
 import { LOGGER } from "../logger";
-import type { SignatureSubmissionService } from "../services/signature-submission-service";
 import {
   tryGetCounterpartyEmail,
   ZDocusignSigners,
 } from "../services/process-signatures/process-signatures";
+import type { SignatureSubmissionService } from "../services/signature-submission-service";
 
 // I have no idea why but,
 // docusign returns us signers object

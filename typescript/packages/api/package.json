@@ -3,20 +3,20 @@
   "packageManager": "yarn@3.3.0",
   "private": true,
   "dependencies": {
-    "@amplitude/analytics-node": "^1.0.2",
+    "@amplitude/analytics-node": "^1.0.3-beta.0",
     "@songbird/precedent-iso": "workspace:^",
-    "auth0": "^3.1.1",
-    "axios": "^1.2.3",
+    "auth0": "^3.1.2",
+    "axios": "^1.2.6",
     "cors": "^2.8.5",
-    "dd-trace": "^3.12.0",
+    "dd-trace": "^3.12.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
-    "express-jwt": "^8.3.0",
+    "express-jwt": "^8.4.0",
     "jwks-rsa": "^3.0.1",
     "pino": "^8.8.0",
-    "pino-http": "^8.3.1",
-    "redis": "^4.5.1",
+    "pino-http": "^8.3.2",
+    "redis": "^4.6.3",
     "slonik": "^33.0.6",
     "typescript": "^4.9.4",
     "zod": "^3.20.2"
@@ -48,11 +48,11 @@
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
     "concurrently": "^7.6.0",
-    "eslint": "^8.32.0",
-    "eslint-plugin-simple-import-sort": "^9.0.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-sql": "^2.3.2",
     "pino-pretty": "^9.1.1",
     "prettier": "^2.8.3",
-    "vitest": "^0.28.1"
+    "vitest": "^0.28.3"
   }
 }
