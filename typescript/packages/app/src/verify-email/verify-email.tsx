@@ -1,3 +1,4 @@
+import { LoadingButton } from "@mui/lab";
 import { Button, Paper, useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -73,14 +74,18 @@ export const VerifyEmail: React.FC<{ email: string }> = ({ email }) => {
             marginTop={2}
             className={styles["send-button"] as string}
           >
-            <Button
+            <LoadingButton
               size="small"
               onClick={makeRequest}
-              disabled={isLoading || data !== undefined}
-              variant="outlined"
+              loading={isLoading}
+              disabled={data !== undefined}
+              variant="contained"
+              sx={{
+                minWidth: "116px",
+              }}
             >
               {data?.data !== "sent" ? "Resend email" : "Email sent"}
-            </Button>
+            </LoadingButton>
           </Box>
         </Box>
       </Paper>
