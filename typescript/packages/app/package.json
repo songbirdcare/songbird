@@ -17,7 +17,7 @@
     "clean::dist": "rm -rf tsconfig.tsbuildinfo dist"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^2.2.0",
+    "@auth0/nextjs-auth0": "^2.2.1",
     "@datadog/browser-rum": "^4.31.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -25,17 +25,18 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.117",
     "@mui/material": "^5.11.6",
-    "@mui/x-data-grid": "^5.17.20",
-    "@next/font": "^13.1.5",
+    "@mui/x-data-grid": "^5.17.21",
+    "@next/font": "^13.1.6",
     "@songbird/precedent-iso": "workspace:^",
+    "@vercel/analytics": "^0.1.8",
     "amplitude-js": "^8.21.4",
     "logrocket": "^3.0.1",
-    "next": "^13.1.5",
+    "next": "^13.1.6",
     "react": "^18.2.0",
     "react-calendly": "^4.1.1",
     "react-dom": "^18.2.0",
     "react-use-intercom": "^2.1.0",
-    "swr": "^2.0.1",
+    "swr": "^2.0.3",
     "typescript-cookie": "^1.0.4",
     "zod": "^3.20.2"
   },
@@ -47,12 +48,12 @@
     "@types/react-dom": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
-    "eslint": "^8.32.0",
-    "eslint-plugin-react": "^7.32.1",
+    "eslint": "^8.33.0",
+    "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-simple-import-sort": "^9.0.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
     "prettier": "^2.8.3",
     "typescript": "^4.9.4",
-    "vitest": "^0.28.1"
+    "vitest": "^0.28.3"
   }
 }
