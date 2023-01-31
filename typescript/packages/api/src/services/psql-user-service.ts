@@ -23,6 +23,20 @@ role
 export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}
 
+  async delete(id: string): Promise<void> {
+    this.pool.connect((connection) =>
+      connection.transaction(async (trx) => {
+        await trx.query(
+          sql.unsafe` DELETE FROM workflow WHERE sb_user_id = ${id}; `
+        );
+        await trx.query(
+          sql.unsafe` DELETE FROM child WHERE sb_user_id = ${id}; `
+        );
+        await trx.query(sql.unsafe` DELETE FROM user WHERE id = ${id}; `);
+      })
+    );
+  }
+
   async changeRole(userId: string, role: "user" | "admin"): Promise<UserModel> {
     if (role === "admin") {
       const { email, emailVerified } = await this.getById(userId);

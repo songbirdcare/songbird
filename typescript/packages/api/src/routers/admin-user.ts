@@ -39,6 +39,22 @@ export class AdminUserRouter {
       }
     );
 
+    router.delete(
+      "/user/:userId",
+      async (req: express.Request, res: express.Response) => {
+        const userId = req.params.userId;
+        if (typeof userId !== "string") {
+          throw new Error("invalid userId");
+        }
+        if (userId === req.user.id || userId === req.impersonatingUser?.id) {
+          throw new Error("cannot delete your own user");
+        }
+
+        await this.userService.delete(userId);
+        res.json({ data: "ok" });
+      }
+    );
+
     return router;
   }
 }

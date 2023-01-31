@@ -1,6 +1,7 @@
 import type { UserModel, UserRole } from "@songbird/precedent-iso";
 
 export interface UserService {
+  delete(id: string): Promise<void>;
   getById(id: string): Promise<UserModel>;
   getBySub(email: string): Promise<UserModel | undefined>;
   upsert(args: UpsertUserArgs): Promise<UserModel>;
