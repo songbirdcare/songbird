@@ -2,6 +2,7 @@ import { init, track } from "@amplitude/analytics-node";
 import { assertNever } from "@songbird/precedent-iso";
 
 import { LOGGER } from "./logger";
+import { SETTINGS } from "./settings";
 
 export class AmplitudeAnalyticsService implements AnalyticsService {
   constructor(
@@ -18,7 +19,11 @@ export class AmplitudeAnalyticsService implements AnalyticsService {
 
   track = (event: string, properties?: Record<string, unknown>) => {
     if (!this.apiKey) {
-      LOGGER.debug(`Analytics: ${event}`, properties);
+      if (SETTINGS.forceAmplitudeLogs) {
+        LOGGER.info(`Analytics: ${event}`, properties);
+      } else {
+        LOGGER.debug(`Analytics: ${event}`, properties);
+      }
       return;
     }
 
