@@ -1,6 +1,7 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { Avatar, IconButton } from "@mui/material";
+import { Button,Dialog } from "@mui/material";
 import { default as MuiAppBar } from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
@@ -120,8 +121,10 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { isOpen, hide, show, shutdown } = useIntercom();
-  const { trigger, isMutating } = useDeleteWorkflows();
+  const deleteWorkflows = useDeleteWorkflows();
   const { mutate } = useFetchWorkflow();
+
+  const [resetWorkflowIsOpen, setResetWorkflowIsOpen] = React.useState(false);
 
   const router = useRouter();
   const open = Boolean(anchorEl);
@@ -227,17 +230,59 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
           <MenuItem
             dense
             onClick={() => {
-              trigger();
-              mutate();
-              handleClose();
+              setResetWorkflowIsOpen(true);
             }}
-            disabled={isMutating}
+            disabled={deleteWorkflows.isMutating}
             color="primary"
           >
             <Box display="flex" justifyContent="center" width="100%">
               <Typography color="primary" variant="body2">
                 Reset workflow
               </Typography>
+              {resetWorkflowIsOpen && (
+                <Dialog
+                  onClose={() => setResetWorkflowIsOpen(false)}
+                  open={true}
+                >
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    padding={3}
+                    gap={2}
+                  >
+                    <Typography>
+                      Are you sure you want to reset the workflow for this user?
+                      All progress will be reset.
+                    </Typography>
+
+                    <Box display="flex" gap={2} justifyContent="center">
+                      <Button
+                        color="warning"
+                        variant="contained"
+                        disabled={deleteWorkflows.isMutating}
+                        onClick={async () => {
+                          await deleteWorkflows.trigger();
+                          mutate();
+                          setResetWorkflowIsOpen(false);
+                          handleClose();
+                        }}
+                      >
+                        Yes, reset the workflow
+                      </Button>
+                      <Button
+                        variant="contained"
+                        disabled={deleteWorkflows.isMutating}
+                        onClick={async () => {
+                          setResetWorkflowIsOpen(false);
+                          handleClose();
+                        }}
+                      >
+                        Close modal
+                      </Button>
+                    </Box>
+                  </Box>
+                </Dialog>
+              )}
             </Box>
           </MenuItem>
         )}
