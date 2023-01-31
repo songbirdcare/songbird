@@ -58,3 +58,16 @@ jobs:
         continue-on-error: true
         run: |
           make delete-old-revisions
+
+      - name: "Merge production into fetch"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions
+          - name: Merge staging -> uat
+
+      - uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: production
+          target_branch: develop
+          github_token: ${{ github.token }}
