@@ -34,16 +34,18 @@ const columns: GridColDef[] = [
         />
       );
     },
+    sortable: false,
   },
   {
     field: "impersonate",
     headerName: "Impersonate",
-    flex: 1,
+    width: 300,
     renderCell: (params) => {
       return params.row.selfId === params.row.id ? null : (
         <Impersonate id={params.row.id} />
       );
     },
+    sortable: false,
   },
   {
     field: "delete",
@@ -54,6 +56,7 @@ const columns: GridColDef[] = [
         <DeleteUser id={params.row.id} email={params.row.email} />
       );
     },
+    sortable: false,
   },
 ];
 
