@@ -13,14 +13,19 @@ jobs:
     runs-on: ubuntu-latest
     environment: Production
 
-    permissions:
-      contents: "read"
-      id-token: "write"
+    permissions: write-all
 
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2
+
+      - uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: production
+          target_branch: develop
+          github_token: ${{ github.token }}
 
       - id: "auth"
         uses: "google-github-actions/auth@v1"
@@ -58,3 +63,9 @@ jobs:
         continue-on-error: true
         run: |
           make delete-old-revisions
+
+      - name: "Merge production into fetch"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions
+          - name: Merge staging -> uat
