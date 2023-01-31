@@ -217,9 +217,11 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
               }}
               sx={{
                 textDecoration: "none",
+                width: "100%",
+                height: "100%",
               }}
             >
-              <Typography color="primary" variant="body2" alignContent="center">
+              <Typography color="primary" variant="body2" align="center">
                 Admin
               </Typography>
             </Link>
@@ -260,7 +262,8 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                         color="warning"
                         variant="contained"
                         disabled={deleteWorkflows.isMutating}
-                        onClick={async () => {
+                        onClick={async (e) => {
+                          e.stopPropagation();
                           await deleteWorkflows.trigger();
                           mutate();
                           setResetWorkflowIsOpen(false);
@@ -272,7 +275,8 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
                       <Button
                         variant="contained"
                         disabled={deleteWorkflows.isMutating}
-                        onClick={async () => {
+                        onClick={async (e) => {
+                          e.stopPropagation();
                           setResetWorkflowIsOpen(false);
                           handleClose();
                         }}
