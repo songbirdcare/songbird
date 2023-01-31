@@ -32,7 +32,7 @@ export class PsqlUserService implements UserService {
         await trx.query(
           sql.unsafe` DELETE FROM child WHERE sb_user_id = ${id}; `
         );
-        await trx.query(sql.unsafe` DELETE FROM user WHERE id = ${id}; `);
+        await trx.query(sql.unsafe` DELETE FROM sb_user WHERE id = ${id}; `);
       })
     );
   }

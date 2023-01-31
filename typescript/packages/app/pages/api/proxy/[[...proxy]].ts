@@ -16,15 +16,20 @@ export default withApiAuthRequired(async function proxy(
     return asArray.join("/");
   })();
 
-  const response = await fetch(`${endpoint}/api/v1/${proxy}`, {
-    method: req.method ?? "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      ...(impersonateHeader && { "X-Impersonate": impersonateHeader }),
-    },
-    ...(req.body ? { body: JSON.stringify(req.body) } : {}),
-  });
+  try {
+    const response = await fetch(`${endpoint}/api/v1/${proxy}`, {
+      method: req.method ?? "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        ...(impersonateHeader && { "X-Impersonate": impersonateHeader }),
+      },
+      ...(req.body ? { body: JSON.stringify(req.body) } : {}),
+    });
 
-  res.status(response.status).json(await response.json());
+    res.status(response.status).json(await response.json());
+  } catch (error: any) {
+    // Sends error to the client side
+    res.status(500).send(error.message || "Internal Server Error.");
+  }
 });

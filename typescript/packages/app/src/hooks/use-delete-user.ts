@@ -1,5 +1,6 @@
 import type { UserModel } from "@songbird/precedent-iso";
 import useSWRMutation from "swr/mutation";
+
 import { useFetchUsers } from "./use-fetch-users";
 
 interface DeleteUserRequest {

@@ -1,5 +1,6 @@
-import { Box, Button, Dialog, Typography } from "@mui/material";
+import { Box, Button, Dialog, TextField,Typography } from "@mui/material";
 import React from "react";
+
 import { useDeleteUser } from "../hooks/use-delete-user";
 
 export const DeleteUser: React.FC<{
@@ -7,7 +8,18 @@ export const DeleteUser: React.FC<{
   email: string;
 }> = (params) => {
   const [open, setOpen] = React.useState(false);
-  const { trigger, data, isLoading } = useDeleteUser();
+
+  const { trigger, data, isMutating } = useDeleteUser();
+
+  const [input, setInput] = React.useState("");
+
+  React.useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    setOpen(false);
+  }, [data, setOpen]);
 
   return (
     <Box>
@@ -17,16 +29,35 @@ export const DeleteUser: React.FC<{
 
       {open && (
         <Dialog onClose={() => setOpen(false)} open={true}>
-          <Box display="flex" flexDirection="column" padding={3}>
+          <Box display="flex" flexDirection="column" padding={3} gap={2}>
             <Typography>
-              Are you sure you want to delete {params.email}
+              Are you sure you want to delete {params.email}?
             </Typography>
 
-            <Box display="flex" justifyContent="center">
-              <Button color="warning" disabled={isLoading}>
+            <Typography>Type DELETE to confirm</Typography>
+            <TextField
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+
+            <Box display="flex" justifyContent="center" gap={2}>
+              <Button
+                color="warning"
+                variant="contained"
+                disabled={isMutating || input !== "DELETE"}
+                onClick={() => {
+                  trigger({ id: params.id });
+                }}
+              >
                 Yes
               </Button>
-              <Button disabled={isLoading} {() => setOpen(false)}>No</Button>
+              <Button
+                variant="contained"
+                disabled={isMutating}
+                onClick={() => setOpen(false)}
+              >
+                No
+              </Button>
             </Box>
           </Box>
         </Dialog>
