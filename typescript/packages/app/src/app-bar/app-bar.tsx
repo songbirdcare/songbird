@@ -18,6 +18,7 @@ import { useDeleteWorkflows } from "../hooks/use-delete-workflows";
 import { useFetchUser } from "../hooks/use-fetch-user";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
+import { ImpersonateService } from "../impersonate/impersonate-service";
 import { SONG_BIRD_GREEN_LIGHT } from "../style/colors";
 import { TRACKER } from "../track";
 import styles from "./app-bar.module.css";
@@ -161,9 +162,10 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
         <MenuItem
           dense
           onClick={() => {
-            router.push("/api/auth/logout");
             shutdown();
             handleClose();
+            ImpersonateService.clear();
+            router.push("/api/auth/logout");
           }}
         >
           <Box display="flex" justifyContent="center" width="100%">
