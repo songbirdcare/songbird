@@ -7,6 +7,7 @@ import * as React from "react";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
 import { ChangeRole } from "./change-role";
+import { DeleteUser } from "./delete-user";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "Id", width: 150 },
@@ -33,16 +34,29 @@ const columns: GridColDef[] = [
         />
       );
     },
+    sortable: false,
   },
   {
     field: "impersonate",
     headerName: "Impersonate",
-    flex: 1,
+    width: 300,
     renderCell: (params) => {
       return params.row.selfId === params.row.id ? null : (
         <Impersonate id={params.row.id} />
       );
     },
+    sortable: false,
+  },
+  {
+    field: "delete",
+    headerName: "Delete",
+    flex: 1,
+    renderCell: (params) => {
+      return params.row.selfId === params.row.id ? null : (
+        <DeleteUser id={params.row.id} email={params.row.email} />
+      );
+    },
+    sortable: false,
   },
 ];
 
