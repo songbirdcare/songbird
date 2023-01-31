@@ -20,13 +20,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - uses: devmasx/merge-branch@master
-        with:
-          type: now
-          from_branch: production
-          target_branch: develop
-          github_token: ${{ github.token }}
-
       - id: "auth"
         uses: "google-github-actions/auth@v1"
         with:
@@ -34,14 +27,8 @@ jobs:
 
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v1"
-
-      - name: "Echo version"
-        run: |
-          gcloud info
-
-      - name: "Install beta"
-        run: |
-          gcloud components install beta --quiet
+        with:
+          install_components: "beta"
 
       - name: "Build DB"
         run: |
@@ -64,8 +51,11 @@ jobs:
         run: |
           make delete-old-revisions
 
-      - name: "Merge production into fetch"
-        continue-on-error: true
-        run: |
-          make delete-old-revisions
-          - name: Merge staging -> uat
+      - uses: devmasx/merge-branch@master
+        name: "Merge production into develop"
+        with:
+          type: now
+          label_name: "Merge production into develop"
+          from_branch: production
+          target_branch: develop
+          github_token: ${{ github.token }}
