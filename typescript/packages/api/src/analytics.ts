@@ -19,7 +19,6 @@ export class AmplitudeAnalyticsService implements AnalyticsService {
 
   track = (event: string, properties?: Record<string, unknown>) => {
     if (!this.apiKey) {
-      debugger;
       if (SETTINGS.forceAmplitudeLogs) {
         LOGGER.info(`Analytics: ${event}`, properties);
       } else {
