@@ -1,3 +1,4 @@
+import { assertNever, UserModel } from "@songbird/precedent-iso";
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
@@ -28,16 +29,15 @@ export class UserInformationMiddleware {
         return;
       }
 
-      const { user, created } = await this.#getUser(sub);
+      const { user, info } = await this.#getUser(sub);
 
       const analytics = new AmplitudeAnalyticsService(SETTINGS.amplitudeKey, {
         type: "user",
         id: user.id,
       });
       req.trackUser = analytics.track;
-      if (created) {
-        req.trackUser("user_created");
-      }
+
+      trackUpsert(req.trackUser, info);
 
       const impersonate = req.headers["x-impersonate"];
       if (typeof impersonate === "string") {
@@ -53,15 +53,18 @@ export class UserInformationMiddleware {
       next();
     };
 
-  #getUser = async (sub: string) => {
+  #getUser = async (sub: string): Promise<UpsertUser> => {
     const user = await this.userService.getBySub(sub);
     if (user === undefined || !user.emailVerified) {
-      return { user: await this.#createUserLazily(sub), created: true };
+      return this.#upsertUser(sub, user !== undefined);
     }
-    return { user, created: false };
+    return { user, info: "already_exists" };
   };
 
-  #createUserLazily = async (sub: string) => {
+  #upsertUser = async (
+    sub: string,
+    userExists: boolean
+  ): Promise<UpsertUser> => {
     LOGGER.info(`Attempting to fetch profile from Auth0 sub=${sub}`);
     const fromAuth0 = await this.auth0Service.getUser(sub);
 
@@ -72,17 +75,33 @@ export class UserInformationMiddleware {
       fromAuth0.email
     );
 
+    const info: UpsertUser["info"] = (() => {
+      if (userExists) {
+        return "already_exists";
+      }
+      return submissionForm === undefined
+        ? "created_no_form"
+        : "created_found_form";
+    })();
+
     if (submissionForm) {
       LOGGER.info(`Found submission form for ${fromAuth0.email}`);
-      return await this.userService.upsert({
-        sub,
-        email: fromAuth0.email,
-        givenName: submissionForm.firstName,
-        familyName: submissionForm.lastName,
-        phone: submissionForm.phone,
-      });
+      return {
+        user: await this.userService.upsert({
+          sub,
+          email: fromAuth0.email,
+          givenName: submissionForm.firstName,
+          familyName: submissionForm.lastName,
+          phone: submissionForm.phone,
+        }),
+        info,
+      };
     }
-    return user;
+
+    return {
+      user,
+      info,
+    };
   };
 
   ensureUserVerified =
@@ -124,4 +143,29 @@ export class UserInformationMiddleware {
 
       next();
     };
+}
+
+function trackUpsert(
+  track: (message: string) => void,
+  info: UpsertUser["info"]
+) {
+  switch (info) {
+    case "already_exists":
+      return;
+    case "created_found_form":
+      track("user_created");
+      track("user_created_found_intake_form");
+      return;
+    case "created_no_form":
+      track("user_created");
+      track("user_created_no_intake_form");
+      return;
+    default:
+      assertNever(info);
+  }
+}
+
+interface UpsertUser {
+  user: UserModel;
+  info: "already_exists" | "created_no_form" | "created_found_form";
 }
