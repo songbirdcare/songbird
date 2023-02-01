@@ -1,10 +1,10 @@
 import EmbedFlow from "@formsort/react-embed";
 import { Box, Button, LinearProgress, Snackbar } from "@mui/material";
 import type { FormTask } from "@songbird/precedent-iso";
+import amplitude from "amplitude-js";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
-import amplitude from "amplitude-js";
 
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
