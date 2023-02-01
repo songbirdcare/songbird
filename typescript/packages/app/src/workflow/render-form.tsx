@@ -101,8 +101,6 @@ export const RenderForm: React.FC<{
 
 function getQueryParams() {
   const params: Array<[string, string]> = [["is_app_embedded", "true"]];
-
-  amplitude.getInstance().options.deviceId;
   if (SETTINGS.amplitudeKey) {
     const { deviceId } = amplitude.getInstance().options;
     if (deviceId) {
