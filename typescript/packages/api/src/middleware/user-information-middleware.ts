@@ -1,4 +1,8 @@
-import { assertNever, UserModel } from "@songbird/precedent-iso";
+import {
+  assertNever,
+  isInternalUser,
+  UserModel,
+} from "@songbird/precedent-iso";
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
@@ -34,6 +38,7 @@ export class UserInformationMiddleware {
       const analytics = new AmplitudeAnalyticsService(SETTINGS.amplitudeKey, {
         type: "user",
         id: user.id,
+        isInternal: isInternalUser(user),
       });
       req.trackUser = analytics.track;
 

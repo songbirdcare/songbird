@@ -1,10 +1,9 @@
-import type { UserModel } from "@songbird/precedent-iso";
-import LogRocket from "logrocket";
+import { isInternalUser, UserModel } from "@songbird/precedent-iso";
 import React from "react";
 import useSWR from "swr";
 
 import { initForRum } from "../monitoring/datadog-rum";
-import { SETTINGS } from "../settings";
+import { initForLogRocket } from "../monitoring/logrocket";
 import { TRACKER } from "../track";
 
 export const useInitTracking = () => {
@@ -20,41 +19,23 @@ export const useInitTracking = () => {
   // datadog rum
 
   React.useEffect(() => {
-    if (role === undefined || role === "admin") {
-      return;
-    }
-    initForRum();
-  }, [role]);
-
-  //amplitude
-  React.useEffect(() => {
-    if (role && email && id) {
-      TRACKER.identify({ role, email, id });
-    }
-  }, [role, email, id]);
-
-  // log rocket
-  React.useEffect(() => {
-    if (role === "admin" || !email || !id || !SETTINGS.logRocketId) {
+    if (!id || !role || !email) {
       return;
     }
 
-    LogRocket.init(SETTINGS.logRocketId);
+    const isInternal = isInternalUser({ role, email });
 
-    LogRocket.identify(id, {
-      email,
+    // amplitude
+    TRACKER.identify({
+      id,
+      isInternal,
     });
 
-    if (typeof window === "undefined") {
+    if (isInternalUser({ role, email })) {
       return;
     }
 
-    if (typeof window.Intercom === "undefined") {
-      return;
-    }
-
-    window.Intercom("update", {
-      logrocketURL: `https://app.logrocket.com/${SETTINGS.logRocketId}/sessions?u=${id}`,
-    });
-  }, [role, email, id]);
+    initForRum({ id, email });
+    initForLogRocket({ id, email });
+  }, [id, email, role]);
 };

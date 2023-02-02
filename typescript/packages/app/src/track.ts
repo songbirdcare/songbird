@@ -1,16 +1,12 @@
-import {
-  Identify,
-  identify,
-  init,
-  setUserId,
-  track,
-} from "@amplitude/analytics-browser";
-import type { UserRole } from "@songbird/precedent-iso";
+import { init, setUserId, track } from "@amplitude/analytics-browser";
 
 import { SETTINGS } from "./settings";
 
 export class Tracker {
+  #disableTracking: boolean;
+
   constructor(private readonly key: string | undefined) {
+    this.#disableTracking = false;
     if (key) {
       init(key);
     }
@@ -18,23 +14,24 @@ export class Tracker {
 
   track(event: string, data?: Record<string, unknown>) {
     if (!this.key) {
-      console.log(`Amplitude not initialized: ${event}`, data);
+      console.log(`Track| Amplitude not initialized: ${event}`, data);
+      return;
+    }
+
+    if (this.#disableTracking) {
+      console.log(`Track| Internal user detected: ${event}`, data);
       return;
     }
 
     track(event, data);
   }
 
-  identify({ id, email, role }: IdentifyArgs) {
+  identify({ id, isInternal }: IdentifyArgs) {
     if (!this.key) {
       return;
     }
     setUserId(id);
-    const identifyObj = new Identify();
-    identifyObj.set("role", role);
-    identifyObj.set("isSongbird", email.endsWith("@songbirdcare.com"));
-
-    identify(identifyObj);
+    this.#disableTracking = isInternal;
   }
 }
 
@@ -42,6 +39,5 @@ export const TRACKER = new Tracker(SETTINGS.amplitudeKey);
 
 interface IdentifyArgs {
   id: string;
-  email: string;
-  role: UserRole;
+  isInternal: boolean;
 }
