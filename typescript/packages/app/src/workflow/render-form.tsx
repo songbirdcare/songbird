@@ -1,7 +1,7 @@
+import amplitude from "@amplitude/analytics-browser";
 import EmbedFlow from "@formsort/react-embed";
 import { Box, Button, LinearProgress, Snackbar } from "@mui/material";
 import type { FormTask } from "@songbird/precedent-iso";
-import amplitude from "amplitude-js";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
@@ -102,7 +102,7 @@ export const RenderForm: React.FC<{
 function getQueryParams() {
   const params: Array<[string, string]> = [["is_app_embedded", "true"]];
   if (SETTINGS.amplitudeKey) {
-    const { deviceId } = amplitude.getInstance().options;
+    const deviceId = amplitude.getDeviceId();
     if (deviceId) {
       params.push(["amp_device_id", deviceId]);
     }
