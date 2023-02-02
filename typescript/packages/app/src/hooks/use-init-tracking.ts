@@ -35,7 +35,7 @@ export const useInitTracking = () => {
       return;
     }
 
-    initForRum();
+    initForRum({ id, email });
     initForLogRocket({ id, email });
   }, [id, email, role]);
 };
