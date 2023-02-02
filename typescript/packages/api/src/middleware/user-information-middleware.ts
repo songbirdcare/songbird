@@ -37,7 +37,7 @@ export class UserInformationMiddleware {
       });
       req.trackUser = analytics.track;
 
-      trackUpsert(req.trackUser, info);
+      trackUpsert(req.trackUser, info, user.sub);
 
       const impersonate = req.headers["x-impersonate"];
       if (typeof impersonate === "string") {
@@ -146,18 +146,21 @@ export class UserInformationMiddleware {
 }
 
 function trackUpsert(
-  track: (message: string) => void,
-  info: UpsertUser["info"]
+  track: (message: string, properties?: Record<string, unknown>) => void,
+  info: UpsertUser["info"],
+  sub: string
 ) {
+  const [provider] = sub.split("|", 1);
+
   switch (info) {
     case "already_exists":
       return;
     case "created_found_form":
-      track("user_created");
+      track("user_created", { provider });
       track("user_created_found_intake_form");
       return;
     case "created_no_form":
-      track("user_created");
+      track("user_created", { provider });
       track("user_created_no_intake_form");
       return;
     default:

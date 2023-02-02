@@ -1,5 +1,4 @@
 import type { UserModel } from "@songbird/precedent-iso";
-import amplitude from "amplitude-js";
 import LogRocket from "logrocket";
 import React from "react";
 import useSWR from "swr";
@@ -41,9 +40,6 @@ export const useInitTracking = () => {
     }
 
     LogRocket.init(SETTINGS.logRocketId);
-    LogRocket.getSessionURL((sessionURL) => {
-      amplitude.getInstance().logEvent("LogRocket", { sessionURL });
-    });
 
     LogRocket.identify(id, {
       email,
