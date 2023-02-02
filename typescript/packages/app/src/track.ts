@@ -3,10 +3,10 @@ import { init, setUserId, track } from "@amplitude/analytics-browser";
 import { SETTINGS } from "./settings";
 
 export class Tracker {
-  #isInternal: boolean;
+  #disableTracking: boolean;
 
   constructor(private readonly key: string | undefined) {
-    this.#isInternal = false;
+    this.#disableTracking = false;
     if (key) {
       init(key);
     }
@@ -18,7 +18,7 @@ export class Tracker {
       return;
     }
 
-    if (this.#isInternal) {
+    if (this.#disableTracking) {
       console.log(`Track| Internal user detected: ${event}`, data);
       return;
     }
@@ -31,7 +31,7 @@ export class Tracker {
       return;
     }
     setUserId(id);
-    this.#isInternal = isInternal;
+    this.#disableTracking = isInternal;
   }
 }
 
