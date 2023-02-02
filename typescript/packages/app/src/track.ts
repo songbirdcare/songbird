@@ -1,39 +1,40 @@
+import {
+  Identify,
+  identify,
+  init,
+  setUserId,
+  track,
+} from "@amplitude/analytics-browser";
 import type { UserRole } from "@songbird/precedent-iso";
-import amplitude, { AmplitudeClient, Identify } from "amplitude-js";
 
 import { SETTINGS } from "./settings";
 
 export class Tracker {
-  #client: AmplitudeClient | undefined;
-  constructor(key: string | undefined) {
-    if (!key) {
-      this.#client = undefined;
-      return;
+  constructor(private readonly key: string | undefined) {
+    if (key) {
+      init(key);
     }
-    this.#client = amplitude.getInstance();
-    this.#client.init(key);
   }
 
   track(event: string, data?: Record<string, unknown>) {
-    if (!this.#client) {
+    if (!this.key) {
       console.log(`Amplitude not initialized: ${event}`, data);
-
       return;
     }
 
-    this.#client.logEvent(event, data);
+    track(event, data);
   }
 
   identify({ id, email, role }: IdentifyArgs) {
-    if (!this.#client) {
+    if (!this.key) {
       return;
     }
-    this.#client.setUserId(id);
+    setUserId(id);
     const identifyObj = new Identify();
     identifyObj.set("role", role);
     identifyObj.set("isSongbird", email.endsWith("@songbirdcare.com"));
 
-    this.#client.identify(identifyObj);
+    identify(identifyObj);
   }
 }
 
