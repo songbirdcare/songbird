@@ -1,4 +1,10 @@
-import amplitude from "@amplitude/analytics-browser";
+import {
+  Identify,
+  identify,
+  init,
+  setUserId,
+  track,
+} from "@amplitude/analytics-browser";
 import type { UserRole } from "@songbird/precedent-iso";
 
 import { SETTINGS } from "./settings";
@@ -6,7 +12,7 @@ import { SETTINGS } from "./settings";
 export class Tracker {
   constructor(private readonly key: string | undefined) {
     if (key) {
-      amplitude.init(key);
+      init(key);
     }
   }
 
@@ -16,19 +22,19 @@ export class Tracker {
       return;
     }
 
-    amplitude.track(event, data);
+    track(event, data);
   }
 
   identify({ id, email, role }: IdentifyArgs) {
     if (!this.key) {
       return;
     }
-    amplitude.setUserId(id);
-    const identifyObj = new amplitude.Identify();
+    setUserId(id);
+    const identifyObj = new Identify();
     identifyObj.set("role", role);
     identifyObj.set("isSongbird", email.endsWith("@songbirdcare.com"));
 
-    amplitude.identify(identifyObj);
+    identify(identifyObj);
   }
 }
 
