@@ -10,7 +10,10 @@ import type { UserRole } from "@songbird/precedent-iso";
 import { SETTINGS } from "./settings";
 
 export class Tracker {
+  #isInternal: boolean;
+
   constructor(private readonly key: string | undefined) {
+    this.#isInternal = false;
     if (key) {
       init(key);
     }
@@ -18,7 +21,12 @@ export class Tracker {
 
   track(event: string, data?: Record<string, unknown>) {
     if (!this.key) {
-      console.log(`Amplitude not initialized: ${event}`, data);
+      console.log(`Track| Amplitude not initialized: ${event}`, data);
+      return;
+    }
+
+    if (this.#isInternal) {
+      console.log(`Track| Internal user detected: ${event}`, data);
       return;
     }
 
@@ -30,11 +38,10 @@ export class Tracker {
       return;
     }
     setUserId(id);
-    const identifyObj = new Identify();
-    identifyObj.set("role", role);
-    identifyObj.set("isSongbird", email.endsWith("@songbirdcare.com"));
-
-    identify(identifyObj);
+    // do not track internal users
+    if (role === "admin" || email.endsWith("@songbirdcare.com")) {
+      this.#isInternal = true;
+    }
   }
 }
 
