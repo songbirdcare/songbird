@@ -4,37 +4,19 @@ import { UserProvider } from "@auth0/nextjs-auth0/client";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
 import { Analytics } from "@vercel/analytics/react";
-import amplitude from "amplitude-js";
-import LogRocket from "logrocket";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import React from "react";
 import { IntercomProvider } from "react-use-intercom";
 
 import { ErrorBoundary } from "../src/error-boundary";
+import { useInitTracking } from "../src/hooks/use-init-tracking";
 import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
-import { initForRum } from "../src/monitoring/datadog-rum";
 import { SETTINGS } from "../src/settings";
 import { THEME } from "../src/style/theme";
 
-// only initialize when in the browser
-
 export default function App({ Component, pageProps }: AppProps) {
-  React.useEffect(() => {
-    if (SETTINGS.logRocketId) {
-      LogRocket.init(SETTINGS.logRocketId);
-      LogRocket.getSessionURL((sessionURL) => {
-        amplitude
-          .getInstance()
-          .logEvent("LogRocket", { sessionURL: sessionURL });
-      });
-    }
-  }, []);
-
-  React.useEffect(() => {
-    initForRum();
-  }, []);
-
+  useInitTracking();
   return (
     <>
       <Head>

@@ -21,7 +21,6 @@ import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
 import { SONG_BIRD_GREEN_LIGHT } from "../style/colors";
-import { TRACKER } from "../track";
 import styles from "./app-bar.module.css";
 
 export const AppBar: React.FC = () => {
@@ -34,7 +33,6 @@ export const AppBar: React.FC = () => {
     if (!user) {
       return;
     }
-    TRACKER.setUserId(user.id);
 
     boot({
       email: user.email,
