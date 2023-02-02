@@ -1,6 +1,7 @@
 import EmbedFlow from "@formsort/react-embed";
 import { Box, Button, LinearProgress, Snackbar } from "@mui/material";
 import type { FormTask } from "@songbird/precedent-iso";
+import amplitude from "amplitude-js";
 import { useRouter } from "next/router";
 import * as React from "react";
 import useSWRMutation from "swr/mutation";
@@ -8,6 +9,7 @@ import useSWRMutation from "swr/mutation";
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
+import { SETTINGS } from "../settings";
 
 const REDIRECT_WAIT_TIME = 5_000;
 
@@ -77,7 +79,7 @@ export const RenderForm: React.FC<{
           },
         }}
         onFlowFinalized={() => setHasSubmittedForm(true)}
-        queryParams={[["is_app_embedded", "true"]]}
+        queryParams={getQueryParams()}
       />
       {enableAdminDebugging && !data && (
         <Box display="flex" width="100%" paddingY={3} justifyContent="center">
@@ -96,3 +98,15 @@ export const RenderForm: React.FC<{
     </Box>
   );
 };
+
+function getQueryParams() {
+  const params: Array<[string, string]> = [["is_app_embedded", "true"]];
+  if (SETTINGS.amplitudeKey) {
+    const { deviceId } = amplitude.getInstance().options;
+    if (deviceId) {
+      params.push(["amp_device_id", deviceId]);
+    }
+  }
+
+  return params;
+}
