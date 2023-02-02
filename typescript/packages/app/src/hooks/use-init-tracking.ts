@@ -29,7 +29,10 @@ export const useInitTracking = () => {
   //amplitude
   React.useEffect(() => {
     if (role && email && id) {
-      TRACKER.identify({ role, email, id });
+      TRACKER.identify({
+        id,
+        isInternal: role === "admin" || email.endsWith("@songbirdcare.com"),
+      });
     }
   }, [role, email, id]);
 
