@@ -12,7 +12,7 @@ export const useInitTracking = () => {
     return response.json();
   });
 
-  const id = data?.email;
+  const id = data?.id;
   const email = data?.email;
   const role = data?.role;
 
