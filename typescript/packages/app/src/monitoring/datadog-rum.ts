@@ -2,7 +2,7 @@ import { datadogRum } from "@datadog/browser-rum";
 
 import { SETTINGS } from "../settings";
 
-export function initForRum() {
+export function initForRum({ id, email }: Args) {
   if (!SETTINGS.datadog) {
     return;
   }
@@ -23,5 +23,14 @@ export function initForRum() {
     defaultPrivacyLevel: "mask-user-input",
   });
 
+  datadogRum.setUser({
+    id,
+    email,
+  });
+
   datadogRum.startSessionReplayRecording();
+}
+interface Args {
+  id: string;
+  email: string;
 }
