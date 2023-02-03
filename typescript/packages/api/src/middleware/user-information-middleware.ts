@@ -164,12 +164,11 @@ function trackUpsert(
     case "already_exists":
       return;
     case "created_found_form":
-      track("user_created", { provider });
-      track("user_created_found_intake_form");
-      return;
     case "created_no_form":
-      track("user_created", { provider });
-      track("user_created_no_intake_form");
+      track("user_created", {
+        provider,
+        hasIntakeForm: info === "created_found_form",
+      });
       return;
     default:
       assertNever(info);
