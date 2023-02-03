@@ -103,7 +103,10 @@ export class WorkflowActionService {
         const exists = await this.calendarSubmissionService.exists({
           email: user.email,
         });
-        LOGGER.info(`Calendar entry for ${user.email} exists: ${exists}`);
+        LOGGER.info(
+          { email: user.email, exists },
+          `Calendar entry for ${user.email} exists: ${exists}`
+        );
         if (exists) {
           workflow.advance();
         }

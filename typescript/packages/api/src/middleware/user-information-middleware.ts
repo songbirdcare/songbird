@@ -35,31 +35,25 @@ export class UserInformationMiddleware {
 
       const { user, info } = await this.#getUser(sub);
 
-      LOGGER.info("Checking if user is internal", {
-        user,
-        email: user.email,
-        role: user.role,
-        isAdmin: user.role === "admin",
-        endsWith: user.email.endsWith("@songbirdcare.com"),
-      });
-      LOGGER.info(JSON.stringify(user), {
-        user,
-        email: user.email,
-        role: user.role,
-        isAdmin: user.role === "admin",
-        endsWith: user.email.endsWith("@songbirdcare.com"),
-      });
+      LOGGER.info(
+        {
+          user,
+          email: user.email,
+          role: user.role,
+          isAdmin: user.role === "admin",
+          endsWith: user.email.endsWith("@songbirdcare.com"),
+          isInternalUser: isInternalUser(user),
+        },
+        "Checking if user is internal"
+      );
 
       const analytics = new AmplitudeTrackingService(SETTINGS.amplitudeKey, {
         type: "user",
         id: user.id,
         isInternal: isInternalUser(user),
       });
+
       req.trackUser = analytics.track;
-      LOGGER.info("test", { A: "B" });
-
-      req.trackUser("Test Friday");
-
       trackUpsert(req.trackUser, info, user.sub);
 
       const impersonate = req.headers["x-impersonate"];
@@ -108,7 +102,10 @@ export class UserInformationMiddleware {
     })();
 
     if (submissionForm) {
-      LOGGER.info(`Found submission form for ${fromAuth0.email}`);
+      LOGGER.info(
+        { email: fromAuth0.email },
+        `Found submission form for ${fromAuth0.email}`
+      );
       return {
         user: await this.userService.upsert({
           sub,
