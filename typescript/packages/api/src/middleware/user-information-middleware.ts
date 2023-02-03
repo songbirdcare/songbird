@@ -169,8 +169,6 @@ function trackUpsert(
         provider,
         hasIntakeForm: info === "created_found_form",
       });
-      track("user_created_found_intake_form");
-
       return;
     default:
       assertNever(info);
