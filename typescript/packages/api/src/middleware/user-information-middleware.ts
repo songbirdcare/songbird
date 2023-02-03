@@ -35,12 +35,28 @@ export class UserInformationMiddleware {
 
       const { user, info } = await this.#getUser(sub);
 
+      LOGGER.info("Checking if user is internal", {
+        user,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.role === "admin",
+        endsWith: user.email.endsWith("@songbirdcare.com"),
+      });
+      LOGGER.info(JSON.stringify(user), {
+        user,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.role === "admin",
+        endsWith: user.email.endsWith("@songbirdcare.com"),
+      });
+
       const analytics = new AmplitudeTrackingService(SETTINGS.amplitudeKey, {
         type: "user",
         id: user.id,
         isInternal: isInternalUser(user),
       });
       req.trackUser = analytics.track;
+      LOGGER.info("test", { A: "B" });
 
       req.trackUser("Test Friday");
 
