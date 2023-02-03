@@ -1,5 +1,4 @@
 import { createPool, sql } from "slonik";
-import { updateQualifiedName } from "typescript";
 import { expect, test, beforeEach } from "vitest";
 import { PsqlFormSubmissionService } from "../../services/form-submission-service";
 import { TEST_SETTINGS } from "../test-settings";

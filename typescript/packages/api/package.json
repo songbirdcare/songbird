@@ -28,7 +28,7 @@
     "dev": "concurrently --restart-tries -1  --names \"HTTP,WATCH\" -c \"bgBlue.bold,bgMagenta.bold\" --restart-tries 100 \"yarn run-server::develop\" \"yarn watch\"",
     "run-server::prod": "node dist/index.js",
     "run-server::develop": "node --inspect=9331 --watch dist/index.js | pino-pretty",
-    "test:setup-sql": "docker compose run db_test_migration",
+    "test:sql": "docker compose run --build db_test_migration",
     "test": "yarn vitest src/tests",
     "lint": "eslint . --ext .ts",
     "fix": "yarn fix::lint; yarn fix::format",

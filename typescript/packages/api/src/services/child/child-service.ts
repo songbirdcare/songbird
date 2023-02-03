@@ -4,4 +4,5 @@ export interface ChildService {
 
 export interface Child {
   id: string;
+  //qualificationStatus: "not_qualified" | "qualified";
 }
