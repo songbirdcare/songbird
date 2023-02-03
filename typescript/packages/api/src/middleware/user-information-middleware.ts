@@ -35,18 +35,6 @@ export class UserInformationMiddleware {
 
       const { user, info } = await this.#getUser(sub);
 
-      LOGGER.info(
-        {
-          user,
-          email: user.email,
-          role: user.role,
-          isAdmin: user.role === "admin",
-          endsWith: user.email.endsWith("@songbirdcare.com"),
-          isInternalUser: isInternalUser(user),
-        },
-        "Checking if user is internal"
-      );
-
       const analytics = new AmplitudeTrackingService(SETTINGS.amplitudeKey, {
         type: "user",
         id: user.id,
