@@ -35,7 +35,10 @@ export class Auth0Service {
 
     // do we have to check for multiple connections here?
     if (users.length > 0) {
-      LOGGER.info(`Not creating email=${email} as they already exist`);
+      LOGGER.info(
+        { email },
+        `Not creating email=${email} as they already exist`
+      );
       const id = users[0]?.user_id;
       if (id === undefined) {
         throw new Error("User ID is undefined");

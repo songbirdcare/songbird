@@ -2,7 +2,6 @@ import { init, track } from "@amplitude/analytics-node";
 import { assertNever } from "@songbird/precedent-iso";
 
 import { LOGGER } from "./logger";
-import { SETTINGS } from "./settings";
 
 export class AmplitudeTrackingService implements TrackingService {
   #disableTracking: boolean;
@@ -14,7 +13,7 @@ export class AmplitudeTrackingService implements TrackingService {
     this.#disableTracking = false;
 
     if (!apiKey) {
-      LOGGER.info("Amplitude API key not present");
+      LOGGER.debug("Amplitude API key not present");
       return;
     }
 
@@ -32,23 +31,15 @@ export class AmplitudeTrackingService implements TrackingService {
   }
 
   track = (event: string, properties?: Record<string, unknown>) => {
-    LOGGER.info(`Track | called: ${event}`, properties);
     if (!this.apiKey) {
-      if (SETTINGS.forceAmplitudeLogs) {
-        LOGGER.info(`Track | console: ${event}`, properties);
-      } else {
-        LOGGER.info(`Track | console: ${event}`, properties);
-      }
+      LOGGER.debug({ properties, event }, `Track | console: ${event}`);
       return;
     }
 
     if (this.#disableTracking) {
-      LOGGER.info(`Track | disabled ${event}`, properties);
+      LOGGER.debug({ properties, event }, `Track | disabled ${event}`);
       return;
     }
-
-    LOGGER.info(`Track | API: ${event} ${this.mode}`, properties);
-
     switch (this.mode.type) {
       case "device":
         track(event, properties, {

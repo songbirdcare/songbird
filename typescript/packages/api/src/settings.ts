@@ -32,7 +32,6 @@ const ZSettings = z.object({
     env: z.string(),
   }),
   amplitudeKey: z.string().optional(),
-  forceAmplitudeLogs: z.boolean().optional(),
 });
 
 const domain = process.env["AUTH0_DOMAIN"];
@@ -79,5 +78,4 @@ export const SETTINGS = ZSettings.parse({
     apiKey: process.env["DD_API_KEY"],
   },
   amplitudeKey: process.env["AMPLITUDE_KEY"],
-  forceAmplitudeLogs: process.env["FORCE_AMPLITUDE_LOGS"] === "true",
 });

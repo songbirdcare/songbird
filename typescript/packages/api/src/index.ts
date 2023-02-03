@@ -38,7 +38,7 @@ import pino from "pino-http";
 import { LOGGER } from "./logger";
 import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
 
-LOGGER.info("Booting application!", { test: "property" });
+LOGGER.info("Server starting ...");
 
 const jwtCheck = expressjwt({
   secret: expressJwtSecret({
