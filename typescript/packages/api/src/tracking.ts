@@ -32,6 +32,7 @@ export class AmplitudeTrackingService implements TrackingService {
   }
 
   track = (event: string, properties?: Record<string, unknown>) => {
+    LOGGER.info(`Track | called: ${event}`, properties);
     if (!this.apiKey) {
       if (SETTINGS.forceAmplitudeLogs) {
         LOGGER.info(`Track | console: ${event}`, properties);
@@ -42,7 +43,7 @@ export class AmplitudeTrackingService implements TrackingService {
     }
 
     if (this.#disableTracking) {
-      LOGGER.debug(`Track | disabled ${event}`, properties);
+      LOGGER.info(`Track | disabled ${event}`, properties);
       return;
     }
 
