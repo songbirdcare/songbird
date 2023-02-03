@@ -23,7 +23,6 @@ export function initForRum({ id, email }: Args) {
   });
 
   datadogRum.startSessionReplayRecording();
-  console.log("dd rum initialized");
   datadogRum.setUser({
     id,
     email,

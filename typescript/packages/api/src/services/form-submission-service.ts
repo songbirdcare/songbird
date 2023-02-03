@@ -18,13 +18,17 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
         return undefined;
       }
       try {
-        const { parent_last_name, parent_first_name, phone_number } =
-          ZSignupAnswers.parse(form.submission["answers"]);
+        const parsed = ZSignupAnswers.parse(form.submission["answers"]);
 
         return {
-          firstName: parent_first_name,
-          lastName: parent_last_name,
-          phone: phone_number,
+          firstName: parsed.parent_first_name,
+          lastName: parsed.parent_last_name,
+          phone: parsed.phone_number,
+          isQualified: parsed.is_qualified,
+          isQualifiedWithoutDiagnosis: parsed.is_qualified_without_diagnosis,
+          isParentLedQualified: parsed.is_parent_led_qualified,
+          isQualifiedRegion: parsed.is_qualified_region,
+          isQualifiedAge: parsed.is_qualified_age,
         };
       } catch (e) {
         if (e instanceof z.ZodError) {
@@ -70,16 +74,27 @@ INSERT INTO form_submissions (email, submission, flow_label, variant_label, vari
 }
 
 interface SignupForm {
-  phone: string | undefined;
-  firstName: string | undefined;
-  lastName: string | undefined;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  isQualified: boolean;
+  isQualifiedWithoutDiagnosis: boolean;
+  isParentLedQualified: boolean;
+  isQualifiedRegion: boolean;
+  isQualifiedAge: boolean;
 }
 
 const ZSignupAnswers = z.object({
-  parent_last_name: z.string().optional(),
-  email_address: z.string().optional(),
-  phone_number: z.string().optional(),
-  parent_first_name: z.string().optional(),
+  parent_last_name: z.string(),
+  email_address: z.string(),
+  embedded_email: z.string().optional(),
+  phone_number: z.string(),
+  parent_first_name: z.string(),
+  is_qualified: z.boolean(),
+  is_qualified_without_diagnosis: z.boolean(),
+  is_parent_led_qualified: z.boolean(),
+  is_qualified_region: z.boolean(),
+  is_qualified_age: z.boolean(),
 });
 
 export interface FormSubmissionService {
