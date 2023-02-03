@@ -42,6 +42,8 @@ export class UserInformationMiddleware {
       });
       req.trackUser = analytics.track;
 
+      req.trackUser("Test Friday");
+
       trackUpsert(req.trackUser, info, user.sub);
 
       const impersonate = req.headers["x-impersonate"];
