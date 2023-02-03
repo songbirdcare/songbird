@@ -1,8 +1,8 @@
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
-import { AmplitudeAnalyticsService } from "../analytics";
 import { SETTINGS } from "../settings";
+import { AmplitudeTrackingService } from "../tracking";
 
 export class DeviceTrackingMiddleware {
   static async setMiddleware(
@@ -11,7 +11,7 @@ export class DeviceTrackingMiddleware {
     next: NextFunction
   ): Promise<void> {
     const id = req.get("User-Agent") || req.ip || "unknown";
-    const analytics = new AmplitudeAnalyticsService(SETTINGS.amplitudeKey, {
+    const analytics = new AmplitudeTrackingService(SETTINGS.amplitudeKey, {
       type: "device",
       id,
     });
