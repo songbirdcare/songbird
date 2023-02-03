@@ -25,3 +25,5 @@ delete-old-images:
 		gcloud artifacts docker images list "us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/$$svc" --sort-by "~CREATE_TIME" | tail -n +10  | awk '{print $$2}' | xargs -I {} gcloud artifacts docker images delete  us-central1-docker.pkg.dev/proud-amphora-371018/songbird-assets/api@{} --delete-tags --quiet; \
 	done
 
+migrate-local:
+	docker compose run --build db_migration
