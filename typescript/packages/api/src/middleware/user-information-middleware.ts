@@ -6,12 +6,12 @@ import {
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
-import { AmplitudeAnalyticsService } from "../analytics";
 import { LOGGER } from "../logger";
 import type { Auth0Service } from "../services/auth0/auth0-service";
 import type { FormSubmissionService } from "../services/form-submission-service";
 import type { UserService } from "../services/user-service";
 import { SETTINGS } from "../settings";
+import { AmplitudeAnalyticsService } from "../tracking";
 
 export class UserInformationMiddleware {
   constructor(

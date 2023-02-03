@@ -4,7 +4,7 @@ import { assertNever } from "@songbird/precedent-iso";
 import { LOGGER } from "./logger";
 import { SETTINGS } from "./settings";
 
-export class AmplitudeTrackingService implements TrackingService {
+export class AmplitudeAnalyticsService implements AnalyticsService {
   #disableTracking: boolean;
 
   constructor(
@@ -14,7 +14,7 @@ export class AmplitudeTrackingService implements TrackingService {
     this.#disableTracking = false;
 
     if (!apiKey) {
-      LOGGER.info("Amplitude API key not present");
+      LOGGER.debug("Amplitude API key not present");
       return;
     }
 
@@ -34,15 +34,15 @@ export class AmplitudeTrackingService implements TrackingService {
   track = (event: string, properties?: Record<string, unknown>) => {
     if (!this.apiKey) {
       if (SETTINGS.forceAmplitudeLogs) {
-        LOGGER.info(`Track: Force Log ${event}`, properties);
+        LOGGER.info(`Analytics: ${event}`, properties);
       } else {
-        LOGGER.info(`Track: ${event}`, properties);
+        LOGGER.debug(`Analytics: ${event}`, properties);
       }
       return;
     }
 
     if (this.#disableTracking) {
-      LOGGER.info(`Track: Disabled ${event}`, properties);
+      LOGGER.debug(`Track | Tracking disabled ${event}`, properties);
       return;
     }
 
@@ -67,6 +67,6 @@ export type AnalyticsMode =
   | { type: "device"; id: string }
   | { type: "user"; id: string; isInternal: boolean };
 
-export interface TrackingService {
+export interface AnalyticsService {
   track: (event: string, properties?: Record<string, unknown>) => void;
 }

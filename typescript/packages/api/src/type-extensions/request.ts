@@ -1,6 +1,6 @@
 import type { UserModel } from "@songbird/precedent-iso";
 
-import type { AnalyticsService } from "../analytics";
+import type { AnalyticsService } from "../tracking";
 
 declare global {
   namespace Express {
