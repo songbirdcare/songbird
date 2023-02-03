@@ -23,12 +23,12 @@ export function initForRum({ id, email }: Args) {
     defaultPrivacyLevel: "mask-user-input",
   });
 
+  datadogRum.startSessionReplayRecording();
+
   datadogRum.setUser({
     id,
     email,
   });
-
-  datadogRum.startSessionReplayRecording();
 }
 interface Args {
   id: string;
