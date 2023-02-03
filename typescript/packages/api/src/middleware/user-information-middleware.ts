@@ -11,7 +11,7 @@ import type { Auth0Service } from "../services/auth0/auth0-service";
 import type { FormSubmissionService } from "../services/form-submission-service";
 import type { UserService } from "../services/user-service";
 import { SETTINGS } from "../settings";
-import { AmplitudeAnalyticsService } from "../tracking";
+import { AmplitudeTrackingService } from "../tracking";
 
 export class UserInformationMiddleware {
   constructor(
@@ -35,7 +35,7 @@ export class UserInformationMiddleware {
 
       const { user, info } = await this.#getUser(sub);
 
-      const analytics = new AmplitudeAnalyticsService(SETTINGS.amplitudeKey, {
+      const analytics = new AmplitudeTrackingService(SETTINGS.amplitudeKey, {
         type: "user",
         id: user.id,
         isInternal: isInternalUser(user),
