@@ -2,7 +2,6 @@
   "name": "@songbird/api",
   "packageManager": "yarn@3.3.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@amplitude/analytics-node": "^1.0.3",
     "@songbird/precedent-iso": "workspace:^",
