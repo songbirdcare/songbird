@@ -1308,7 +1308,6 @@ __metadata:
     "@types/react-dom": ^18.0.10
     "@typescript-eslint/eslint-plugin": ^5.50.0
     "@typescript-eslint/parser": ^5.50.0
-    "@vercel/analytics": ^0.1.8
     eslint: ^8.33.0
     eslint-plugin-react: ^7.32.2
     eslint-plugin-react-hooks: ^4.6.0
@@ -1736,15 +1735,6 @@ __metadata:
     "@typescript-eslint/types": 5.50.0
     eslint-visitor-keys: ^3.3.0
   checksum: 55319cb7ee7b78d07d9dc67a388d69fe0b7f11cbc79190e17e7f87a39c9992d08dab3b5872d5a7f01094dda28ad6ac61d3573e59015ef70bf138d4c4f8c45b88
-  languageName: node
-  linkType: hard
-
-"@vercel/analytics@npm:^0.1.8":
-  version: 0.1.8
-  resolution: "@vercel/analytics@npm:0.1.8"
-  peerDependencies:
-    react: ^16.8||^17||^18
-  checksum: e837f66494372d557e32383e7ab7192a40da242a16d4f650f61b6e0c5ea282b2a37120ec125d3c5d5e3228c3d1957f48c93d299b4b466169e9d7a853a8014c3a
   languageName: node
   linkType: hard
 
