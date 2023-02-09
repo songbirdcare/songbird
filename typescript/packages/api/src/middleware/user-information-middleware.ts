@@ -1,14 +1,12 @@
-import {
-  assertNever,
-  isInternalUser,
-  UserModel,
-} from "@songbird/precedent-iso";
+import { isInternalUser, UserModel } from "@songbird/precedent-iso";
 import type { NextFunction, Response } from "express";
 import type { Request } from "express-jwt";
 
 import { LOGGER } from "../logger";
 import type { Auth0Service } from "../services/auth0/auth0-service";
+import type { ChildService } from "../services/child/child-service";
 import type { FormSubmissionService } from "../services/form/form-submissions-service";
+import { qualifiedStatusFromForm } from "../services/form/qualified-status-from-form";
 import type { UserService } from "../services/user-service";
 import { SETTINGS } from "../settings";
 import { AmplitudeTrackingService } from "../tracking";
@@ -16,6 +14,7 @@ import { AmplitudeTrackingService } from "../tracking";
 export class UserInformationMiddleware {
   constructor(
     private readonly userService: UserService,
+    private readonly childService: ChildService,
     private readonly auth0Service: Auth0Service,
     private readonly formSubmissionService: FormSubmissionService
   ) {}
@@ -33,7 +32,7 @@ export class UserInformationMiddleware {
         return;
       }
 
-      const { user, info } = await this.#getUser(sub);
+      const { user, isNewUser } = await this.#getUser(sub);
 
       const analytics = new AmplitudeTrackingService(SETTINGS.amplitudeKey, {
         type: "user",
@@ -42,7 +41,11 @@ export class UserInformationMiddleware {
       });
 
       req.trackUser = analytics.track;
-      trackUpsert(req.trackUser, info, user.sub);
+      if (isNewUser) {
+        req.trackUser("user_created", {
+          provider: user.sub.split("|", 1)[0],
+        });
+      }
 
       const impersonate = req.headers["x-impersonate"];
       if (typeof impersonate === "string") {
@@ -58,58 +61,45 @@ export class UserInformationMiddleware {
       next();
     };
 
-  #getUser = async (sub: string): Promise<UpsertUser> => {
-    const user = await this.userService.getBySub(sub);
-    if (user === undefined || !user.emailVerified) {
-      return this.#upsertUser(sub, user !== undefined);
-    }
-    return { user, info: "already_exists" };
+  #getUser = async (sub: string) => {
+    const fromSub = await this.userService.getBySub(sub);
+
+    const user =
+      fromSub === undefined || !fromSub.emailVerified
+        ? await this.#upsertUser(sub)
+        : fromSub;
+
+    return { user, isNewUser: fromSub === undefined };
   };
 
-  #upsertUser = async (
-    sub: string,
-    userExists: boolean
-  ): Promise<UpsertUser> => {
-    LOGGER.info(`Attempting to fetch profile from Auth0 sub=${sub}`);
+  #upsertUser = async (sub: string): Promise<UserModel> => {
     const fromAuth0 = await this.auth0Service.getUser(sub);
-
-    LOGGER.info(`Fetched profile from Auth0 sub=${sub}`);
     const user = await this.userService.upsert(fromAuth0);
 
-    const submissionForm = await this.formSubmissionService.getSignupForm(
+    const signupForm = await this.formSubmissionService.getSignupForm(
       fromAuth0.email
     );
 
-    const info: UpsertUser["info"] = (() => {
-      if (userExists) {
-        return "already_exists";
-      }
-      return submissionForm === undefined
-        ? "created_no_form"
-        : "created_found_form";
-    })();
+    await this.childService.createIfNeeded(
+      user.id,
+      qualifiedStatusFromForm(signupForm)
+    );
 
-    if (submissionForm) {
+    if (signupForm) {
       LOGGER.info(
         { email: fromAuth0.email },
         `Found submission form for ${fromAuth0.email}`
       );
-      return {
-        user: await this.userService.upsert({
-          sub,
-          email: fromAuth0.email,
-          givenName: submissionForm.firstName,
-          familyName: submissionForm.lastName,
-          phone: submissionForm.phone,
-        }),
-        info,
-      };
+      return this.userService.upsert({
+        sub,
+        email: fromAuth0.email,
+        givenName: signupForm.firstName,
+        familyName: signupForm.lastName,
+        phone: signupForm.phone,
+      });
     }
 
-    return {
-      user,
-      info,
-    };
+    return user;
   };
 
   ensureUserVerified =
@@ -151,31 +141,4 @@ export class UserInformationMiddleware {
 
       next();
     };
-}
-
-function trackUpsert(
-  track: (message: string, properties?: Record<string, unknown>) => void,
-  info: UpsertUser["info"],
-  sub: string
-) {
-  const [provider] = sub.split("|", 1);
-
-  switch (info) {
-    case "already_exists":
-      return;
-    case "created_found_form":
-    case "created_no_form":
-      track("user_created", {
-        provider,
-        hasIntakeForm: info === "created_found_form",
-      });
-      return;
-    default:
-      assertNever(info);
-  }
-}
-
-interface UpsertUser {
-  user: UserModel;
-  info: "already_exists" | "created_no_form" | "created_found_form";
 }

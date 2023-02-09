@@ -13,10 +13,10 @@ const FIELDS = sql.fragment`id, qualification_status`;
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async getOrCreate(userId: string): Promise<Child> {
+  async get(userId: string): Promise<Child> {
     const child = await this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) => {
-        const children = await trx.query(
+      connection.transaction(async (trx) =>
+        trx.one(
           sql.type(ZChildFromSql)`
 SELECT
     ${FIELDS}
@@ -24,26 +24,46 @@ FROM
     child
 WHERE
     sb_user_id = ${userId}
-LIMIT 2
+`
+        )
+      )
+    );
+    return fromSql(child);
+  }
+
+  async createIfNeeded(
+    userId: string,
+    qualified: QualificationStatus
+  ): Promise<Child> {
+    const qualifiedForSql = QualifiedSqlConverter.to(qualified);
+    const child = await this.pool.connect(async (connection) =>
+      connection.transaction(async (trx) => {
+        const child = await trx.maybeOne(
+          sql.type(ZChildFromSql)`
+SELECT
+    ${FIELDS}
+FROM
+    child
+WHERE
+    sb_user_id = ${userId}
 `
         );
 
-        const [user] = children.rows;
+        if (child) {
+          return child;
+        }
 
-        if (user === undefined) {
-          return trx.one(
+        return (
+          child ??
+          trx.one(
             sql.type(ZChildFromSql)`
-INSERT INTO child (sb_user_id)
-    VALUES (${userId})
+INSERT INTO child (sb_user_id, qualification_status)
+    VALUES (${userId}, ${qualifiedForSql})
 RETURNING
     ${FIELDS}
 `
-          );
-        } else if (children.rows.length > 1) {
-          throw new Error(`Multiple children found for user=${userId}`);
-        }
-
-        return user;
+          )
+        );
       })
     );
     return fromSql(child);
@@ -51,35 +71,54 @@ RETURNING
 }
 
 function fromSql({ id, qualification_status }: ChildFromSql): Child {
-  return { id, qualified: fromStatus(qualification_status) };
-}
-
-function fromStatus(status: SqlQualificationStatus): QualificationStatus {
-  switch (status) {
-    case "qualified":
-      return { type: "qualified" };
-    case undefined:
-    case null:
-      return { type: "unknown" };
-    case "location":
-    case "age":
-    case "insurance":
-    case "other":
-      return { type: "disqualified", reason: status };
-    default:
-      assertNever(status);
-  }
+  return { id, qualified: QualifiedSqlConverter.from(qualification_status) };
 }
 
 export type ChildFromSql = z.infer<typeof ZChildFromSql>;
 
-const ZSqlQualificationStatus = z
-  .enum(["qualified", "location", "age", "insurance", "other"])
-  .optional();
+const ZQualificationColumn = z.enum([
+  "qualified",
+  "location",
+  "age",
+  "insurance",
+  "other",
+]);
 
-type SqlQualificationStatus = z.infer<typeof ZSqlQualificationStatus>;
+type QualificationColumn = z.infer<typeof ZQualificationColumn>;
 
 const ZChildFromSql = z.object({
   id: z.string(),
-  qualification_status: ZSqlQualificationStatus,
+  qualification_status: ZQualificationColumn,
 });
+
+class QualifiedSqlConverter {
+  static to = (qualified: QualificationStatus): QualificationColumn | null => {
+    switch (qualified.type) {
+      case "qualified":
+        return "qualified";
+      case "unknown":
+        return null;
+      case "disqualified":
+        return qualified.reason;
+      default:
+        assertNever(qualified);
+    }
+  };
+
+  static from = (qualified: QualificationColumn): QualificationStatus => {
+    switch (qualified) {
+      case "qualified":
+        return { type: "qualified" };
+      case undefined:
+      case null:
+        return { type: "unknown" };
+      case "location":
+      case "age":
+      case "insurance":
+      case "other":
+        return { type: "disqualified", reason: qualified };
+      default:
+        assertNever(qualified);
+    }
+  };
+}

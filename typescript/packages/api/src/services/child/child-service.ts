@@ -1,5 +1,9 @@
-import type { Child } from "@songbird/precedent-iso";
+import type { Child, QualificationStatus } from "@songbird/precedent-iso";
 
 export interface ChildService {
-  getOrCreate(userId: string): Promise<Child>;
+  get(userId: string): Promise<Child>;
+  createIfNeeded(
+    userId: string,
+    qualified: QualificationStatus
+  ): Promise<Child>;
 }
