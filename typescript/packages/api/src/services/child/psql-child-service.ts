@@ -1,18 +1,26 @@
+import {
+  assertNever,
+  Child,
+  QualificationStatus,
+} from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { Child, ChildService } from "./child-service";
+import type { ChildService } from "./child-service";
+
+const FIELDS = sql.fragment`id, qualification_status`;
 
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
 
   async getOrCreate(userId: string): Promise<Child> {
-    return this.pool.connect(async (connection) =>
+    const child = await this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
-        const users = await trx.query(
+        const children = await trx.query(
           sql.type(ZChildFromSql)`
+
 SELECT
-    id
+    ${FIELDS}
 FROM
     child
 WHERE
@@ -21,7 +29,7 @@ LIMIT 2
 `
         );
 
-        const [user] = users.rows;
+        const [user] = children.rows;
 
         if (user === undefined) {
           return trx.one(
@@ -29,21 +37,47 @@ LIMIT 2
 INSERT INTO child (sb_user_id)
     VALUES (${userId})
 RETURNING
-    id
+    ${FIELDS}
 `
           );
-        } else if (users.rows.length > 1) {
+        } else if (children.rows.length > 1) {
           throw new Error(`Multiple children found for user=${userId}`);
         }
 
         return user;
       })
     );
+    return fromSql(child);
+  }
+}
+
+function fromSql({ id, qualification_status }: ChildFromSql): Child {
+  return { id, qualified: fromStatus(qualification_status) };
+}
+
+function fromStatus(status: SqlQualificationStatus): QualificationStatus {
+  switch (status) {
+    case "qualified":
+    case undefined:
+      return { type: status === undefined ? "unknown" : "qualified" };
+    case "location":
+    case "age":
+    case "insurance":
+      return { type: "not_qualified", reason: status };
+    default:
+      assertNever(status);
   }
 }
 
 export type ChildFromSql = z.infer<typeof ZChildFromSql>;
 
+const ZSqlQualificationStatus = z
+  .enum(["qualified", "location", "age", "insurance"])
+  .optional();
+
+type SqlQualificationStatus = z.infer<typeof ZSqlQualificationStatus>;
+
 const ZChildFromSql = z.object({
   id: z.string(),
+  qualification_status: ZSqlQualificationStatus,
 });

@@ -1,5 +1,6 @@
 import { createPool, sql } from "slonik";
-import { expect, test, beforeEach } from "vitest";
+import { beforeEach, expect, test } from "vitest";
+
 import { PsqlFormSubmissionService } from "../../services/form-submission-service";
 import { TEST_SETTINGS } from "../test-settings";
 import { QUALIFIED, UNQUALIFIED } from "./dummy-data";
