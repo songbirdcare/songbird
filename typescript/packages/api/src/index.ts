@@ -37,6 +37,7 @@ import { AdminUserRouter } from "./routers/admin-user";
 import pino from "pino-http";
 import { LOGGER } from "./logger";
 import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
+import { ChildRouter } from "./routers/child";
 
 LOGGER.info("Server starting ...");
 
@@ -143,6 +144,14 @@ async function start() {
       workflowService,
       workflowActionService
     ).init()
+  );
+
+  app.use(
+    "/api/v1/child",
+    jwtCheck,
+    addUser,
+    userIsVerified,
+    new ChildRouter(childService).init()
   );
 
   app.use(
