@@ -8,7 +8,7 @@ import type { Request } from "express-jwt";
 
 import { LOGGER } from "../logger";
 import type { Auth0Service } from "../services/auth0/auth0-service";
-import type { FormSubmissionService } from "../services/form-submission-service";
+import type { FormSubmissionService } from "../services/form/form-submissions-service";
 import type { UserService } from "../services/user-service";
 import { SETTINGS } from "../settings";
 import { AmplitudeTrackingService } from "../tracking";

@@ -17,7 +17,7 @@ import { HealthRouter } from "./routers/health";
 import { TokenRouter } from "./routers/token";
 import { UserRouter } from "./routers/user";
 import { Auth0Service } from "./services/auth0/auth0-service";
-import { PsqlFormSubmissionService } from "./services/form-submission-service";
+import { PsqlFormSubmissionService } from "./services/form/form-submissions-service";
 import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
 import { POOL } from "./sql";

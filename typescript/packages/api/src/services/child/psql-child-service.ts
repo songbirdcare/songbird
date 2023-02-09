@@ -18,7 +18,6 @@ export class PsqlChildService implements ChildService {
       connection.transaction(async (trx) => {
         const children = await trx.query(
           sql.type(ZChildFromSql)`
-
 SELECT
     ${FIELDS}
 FROM
@@ -59,11 +58,13 @@ function fromStatus(status: SqlQualificationStatus): QualificationStatus {
   switch (status) {
     case "qualified":
     case undefined:
+    case null:
       return { type: status === undefined ? "unknown" : "qualified" };
     case "location":
     case "age":
     case "insurance":
-      return { type: "not_qualified", reason: status };
+    case "other":
+      return { type: "disqualified", reason: status };
     default:
       assertNever(status);
   }
@@ -72,7 +73,7 @@ function fromStatus(status: SqlQualificationStatus): QualificationStatus {
 export type ChildFromSql = z.infer<typeof ZChildFromSql>;
 
 const ZSqlQualificationStatus = z
-  .enum(["qualified", "location", "age", "insurance"])
+  .enum(["qualified", "location", "age", "insurance", "other"])
   .optional();
 
 type SqlQualificationStatus = z.infer<typeof ZSqlQualificationStatus>;
