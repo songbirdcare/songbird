@@ -57,9 +57,10 @@ function fromSql({ id, qualification_status }: ChildFromSql): Child {
 function fromStatus(status: SqlQualificationStatus): QualificationStatus {
   switch (status) {
     case "qualified":
+      return { type: "qualified" };
     case undefined:
     case null:
-      return { type: status === undefined ? "unknown" : "qualified" };
+      return { type: "unknown" };
     case "location":
     case "age":
     case "insurance":

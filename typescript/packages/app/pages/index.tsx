@@ -4,6 +4,7 @@ import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
+import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
@@ -15,6 +16,9 @@ const Home: React.FC = () => {
   const { data: user } = useFetchUser();
   const { data: workflow } = useFetchWorkflow();
   useRedirectIfNotVerified();
+
+  const { data } = useFetchChild();
+  console.log(data);
 
   useTrackOnce("page_accessed", { page: "home" });
   return (
