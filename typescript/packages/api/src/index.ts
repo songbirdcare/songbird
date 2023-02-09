@@ -112,6 +112,7 @@ async function start() {
 
   const userInformationMiddleware = new UserInformationMiddleware(
     userService,
+    childService,
     auth0Service,
     formSubmissionService
   );

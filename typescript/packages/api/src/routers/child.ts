@@ -8,7 +8,7 @@ export class ChildRouter {
   init() {
     const router = express.Router();
     router.get("/", async (req: express.Request, res: express.Response) => {
-      const child = await this.childService.getOrCreate(req.user.id);
+      const child = await this.childService.get(req.user.id);
       res.json({ child });
     });
 
