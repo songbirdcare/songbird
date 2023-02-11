@@ -24,8 +24,10 @@ test("getSignupForm", async () => {
   }
 
   const { impl } = await setup();
+  const ids = getIds();
+  console.log(`Total: ${ids.length}`);
 
-  const data = await impl.getStageData(["73970247003"]);
+  const data = await impl.getStageData(ids);
 
-  writeFileSync("data.json", JSON.stringify(data));
+  writeFileSync("greenhouse-activity-feed.json", JSON.stringify(data));
 }, 60_000_000);
