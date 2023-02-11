@@ -15,12 +15,16 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     });
   }
 
-  async getStageData(ids: string[]): Promise<Record<string, StageData>> {
+  async getStageData(ids: string[]): Promise<Report> {
     const feeds = await this.#getActivityFeeds(ids);
-
-    return Object.fromEntries(
+    const stageData = Object.fromEntries(
       Object.entries(feeds).map(([k, v]) => [k, this.#parseStageData(v)])
     );
+
+    return {
+      feeds,
+      stageData,
+    };
   }
 
   #parseStageData = (items: ActivityItem[]): StageData => {
@@ -89,28 +93,37 @@ export class GreenhouseServiceImpl implements GreenhouseService {
         acc[id] = activityFeed;
       }
 
-      await setTimeout(TIMEOUT);
+      if (i + CHUNK_SIZE < ids.length) {
+        console.log(`Sleeping for ${TIMEOUT}ms`);
+        await setTimeout(TIMEOUT);
+      }
     }
 
     return acc;
   }
 
   #getActivityFeed = async (id: string): Promise<ActivityItem[]> => {
-    const resp = await this.#client.get(`/candidates/${id}/activity_feed`);
-
-    return ZRawActivity.transform((val) => ({
-      createdAt: new Date(val.created_at),
-      subject: val.subject?.toLowerCase() ?? undefined,
-      body: val.body?.toLowerCase() ?? undefined,
-    }))
-      .array()
-      .parse(resp.data.activities)
-      .reverse();
+    try {
+      const resp = await this.#client.get(`/candidates/${id}/activity_feed`);
+      return ZRawActivity.transform((val) => ({
+        createdAt: new Date(val.created_at),
+        subject: val.subject?.toLowerCase() ?? undefined,
+        body: val.body?.toLowerCase() ?? undefined,
+      }))
+        .array()
+        .parse(resp.data.activities)
+        .reverse();
+    } catch (e: any) {
+      if (e.message === "Request failed with status code 404") {
+        return [];
+      }
+      throw e;
+    }
   };
 }
 
 interface GreenhouseService {
-  getStageData(ids: string[]): Promise<Record<string, StageData>>;
+  getStageData(ids: string[]): Promise<Report>;
 }
 
 interface ActivityItem {
@@ -135,4 +148,9 @@ interface StageData {
   createdOffer: Date | null;
   accepted: Date | null;
   unrejected: Date | null;
+}
+
+interface Report {
+  feeds: Record<string, ActivityItem[]>;
+  stageData: Record<string, StageData>;
 }

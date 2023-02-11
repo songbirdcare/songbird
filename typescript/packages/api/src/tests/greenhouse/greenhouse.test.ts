@@ -11,18 +11,21 @@ async function setup() {
   };
 }
 
+export function getIds(): string[] {
+  return readFileSync(
+    "/Users/nasrmaswood/code/songbird/typescript/packages/api/src/tests/greenhouse/ids.txt",
+    "utf-8"
+  ).split("\n");
+}
+
 test("getSignupForm", async () => {
   if (!TEST_SETTINGS.greenhouseApiKey) {
     console.info("Skipping greenhouse test");
   }
 
   const { impl } = await setup();
-  const ids = readFileSync(
-    "/Users/nasrmaswood/code/songbird/typescript/packages/api/src/tests/greenhouse/ids.txt",
-    "utf-8"
-  ).split("\n");
 
-  const data = await impl.getStageData(ids);
+  const data = await impl.getStageData(["73970247003"]);
 
   writeFileSync("data.json", JSON.stringify(data));
 }, 60_000_000);
