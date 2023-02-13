@@ -78,6 +78,7 @@ export type ChildFromSql = z.infer<typeof ZChildFromSql>;
 
 const ZQualificationColumn = z.enum([
   "qualified",
+  "grandfathered-qualified",
   "location",
   "age",
   "insurance",
@@ -108,6 +109,7 @@ class QualifiedSqlConverter {
   static from = (qualified: QualificationColumn): QualificationStatus => {
     switch (qualified) {
       case "qualified":
+      case "grandfathered-qualified":
         return { type: "qualified" };
       case undefined:
       case null:
