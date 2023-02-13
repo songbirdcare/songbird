@@ -2,8 +2,8 @@ import type { Child, QualificationStatus } from "@songbird/precedent-iso";
 
 export interface ChildService {
   get(userId: string): Promise<Child>;
-  createIfNeeded(
+  createOnlyIfNeeded(
     userId: string,
     qualified: QualificationStatus
-  ): Promise<Child>;
+  ): Promise<"created" | "not_created">;
 }

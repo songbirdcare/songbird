@@ -31,12 +31,11 @@ WHERE
     return fromSql(child);
   }
 
-  async createIfNeeded(
+  async createOnlyIfNeeded(
     userId: string,
     qualified: QualificationStatus
-  ): Promise<Child> {
-    const qualifiedForSql = QualifiedSqlConverter.to(qualified);
-    const child = await this.pool.connect(async (connection) =>
+  ): Promise<"created" | "not_created"> {
+    return this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
         const child = await trx.maybeOne(
           sql.type(ZChildFromSql)`
@@ -50,23 +49,19 @@ WHERE
         );
 
         if (child) {
-          return child;
+          return "not_created";
         }
 
-        return (
-          child ??
-          trx.one(
-            sql.type(ZChildFromSql)`
+        await trx.query(
+          sql.type(ZChildFromSql)`
+
 INSERT INTO child (sb_user_id, qualification_status)
-    VALUES (${userId}, ${qualifiedForSql})
-RETURNING
-    ${FIELDS}
+    VALUES (${userId}, ${QualifiedSqlConverter.to(qualified)})
 `
-          )
         );
+        return "created";
       })
     );
-    return fromSql(child);
   }
 }
 

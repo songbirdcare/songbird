@@ -29,7 +29,15 @@ test("create", async () => {
     email: "test@gmail.com",
   });
 
-  const child = await childService.createIfNeeded(user.id, { type: "unknown" });
-  await childService.createIfNeeded(user.id, { type: "unknown" });
-  expect(child.qualified.type).toBe("unknown");
+  expect(
+    await childService.createOnlyIfNeeded(user.id, {
+      type: "unknown",
+    })
+  ).toEqual("created");
+
+  expect(
+    await childService.createOnlyIfNeeded(user.id, {
+      type: "unknown",
+    })
+  ).toEqual("not_created");
 });
