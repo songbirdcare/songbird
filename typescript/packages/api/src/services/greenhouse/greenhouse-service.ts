@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
-const TIMEOUT = 7_500;
+const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
 
 export class GreenhouseServiceImpl implements GreenhouseService {
@@ -44,10 +44,13 @@ export class GreenhouseServiceImpl implements GreenhouseService {
         continue;
       }
 
+      // add case for application review
       if (body.includes("applied online to the")) {
         stageData.applied = createdAt;
       } else if (body.includes("moved into recruiter screen")) {
         stageData.recruiterScreen = createdAt;
+      } else if (body.includes("moved into application review")) {
+        stageData.applicationReview = createdAt;
       } else if (body.includes("was moved into offer")) {
         stageData.createdOffer = createdAt;
       } else if (body.includes("was moved into unresponsive")) {
@@ -57,6 +60,10 @@ export class GreenhouseServiceImpl implements GreenhouseService {
         body.includes("accepted")
       ) {
         stageData.accepted = createdAt;
+      } else if (body.includes("unrejected from")) {
+        stageData.unrejected = createdAt;
+      } else if (body.includes("rejected from")) {
+        stageData.rejected = createdAt;
       }
 
       if (!subject) {
