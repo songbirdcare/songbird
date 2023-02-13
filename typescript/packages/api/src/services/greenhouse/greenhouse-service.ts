@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
-const TIMEOUT = 15_000;
+const TIMEOUT = 7_500;
 const CHUNK_SIZE = 10;
 
 export class GreenhouseServiceImpl implements GreenhouseService {
@@ -82,13 +82,21 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
       console.log(`Fetching ${i} to ${i + CHUNK_SIZE}`);
       const chunk = ids.slice(i, i + CHUNK_SIZE);
+      if (chunk.length === 0) {
+        continue;
+      }
 
       const activityFeeds = await Promise.all(chunk.map(this.#getActivityFeed));
 
       for (const [idx, activityFeed] of activityFeeds.entries()) {
         const id = chunk[idx];
         if (!id) {
-          throw new Error("invalid id");
+          console.error({
+            chunk,
+            activityFeeds,
+            message: "Invalid id",
+          });
+          continue;
         }
         acc[id] = activityFeed;
       }
