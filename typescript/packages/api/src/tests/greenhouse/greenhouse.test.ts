@@ -12,15 +12,18 @@ async function setup() {
 }
 
 export function getIds(): string[] {
-  return readFileSync(
+  const ids = readFileSync(
     "/Users/nasrmaswood/code/songbird/typescript/packages/api/src/tests/greenhouse/ids.txt",
     "utf-8"
   ).split("\n");
+
+  return ids.map((id) => id.trim()).filter((id) => id.length > 0);
 }
 
 test("getSignupForm", async () => {
   if (!TEST_SETTINGS.greenhouseApiKey || !TEST_SETTINGS.enableGreenhouseTest) {
     console.info("Skipping greenhouse test");
+    return;
   }
 
   const { impl } = await setup();

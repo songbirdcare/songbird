@@ -72,8 +72,12 @@ export class UserInformationMiddleware {
     if (fromSub) {
       // there is an edge case where a user gets created w/o a child
       // this should in theory never happen
-      LOGGER.warn("User created without child", { userId: user.id });
-      await this.childService.createOnlyIfNeeded(user.id, { type: "unknown" });
+      const resp = await this.childService.createOnlyIfNeeded(user.id, {
+        type: "unknown",
+      });
+      if (resp === "created") {
+        LOGGER.warn("User created without child", { userId: user.id });
+      }
     }
 
     return { user, isNewUser: fromSub === undefined };

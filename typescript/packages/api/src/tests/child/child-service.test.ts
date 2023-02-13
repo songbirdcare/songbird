@@ -39,5 +39,5 @@ test("create", async () => {
     await childService.createOnlyIfNeeded(user.id, {
       type: "unknown",
     })
-  ).toEqual("not-created");
+  ).toEqual("not_created");
 });
