@@ -4,12 +4,10 @@ import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
-import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
-import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 
 const Home: React.FC = () => {
@@ -17,13 +15,9 @@ const Home: React.FC = () => {
   const { data: workflow } = useFetchWorkflow();
   useRedirectIfNotVerified();
 
-  const { data } = useFetchChild();
-  console.log(data);
-
   useTrackOnce("page_accessed", { page: "home" });
   return (
     <>
-      <ImpersonateBanner />
       <AppBar />
 
       <BodyContainer>
