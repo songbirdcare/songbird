@@ -19,7 +19,7 @@ export function getIds(): string[] {
 }
 
 test("getSignupForm", async () => {
-  if (!TEST_SETTINGS.greenhouseApiKey) {
+  if (!TEST_SETTINGS.greenhouseApiKey || !TEST_SETTINGS.enableGreenhouseTest) {
     console.info("Skipping greenhouse test");
   }
 
