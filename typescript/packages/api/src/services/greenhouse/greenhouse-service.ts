@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
-const TIMEOUT = 5;
+const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
 
 export class GreenhouseServiceImpl implements GreenhouseService {
