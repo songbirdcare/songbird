@@ -3,6 +3,8 @@ export interface Child {
   qualified: QualificationStatus;
 }
 
+export type DisqualificationReason = "location" | "age" | "insurance" | "other";
+
 // technically speaking you can have more than one disqualification
 // reason, but to keep it simple let's just stick to one
 export type QualificationStatus =
@@ -11,5 +13,5 @@ export type QualificationStatus =
     }
   | {
       type: "disqualified";
-      reason: "location" | "age" | "insurance" | "other";
+      reason: DisqualificationReason;
     };
