@@ -17,19 +17,18 @@
     "clean::dist": "rm -rf tsconfig.tsbuildinfo dist"
   },
   "dependencies": {
-    "@amplitude/analytics-browser": "^1.7.0",
+    "@amplitude/analytics-browser": "^1.8.0",
     "@auth0/nextjs-auth0": "^2.2.1",
-    "@datadog/browser-rum": "^4.32.1",
+    "@datadog/browser-rum": "^4.34.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@formsort/react-embed": "^3.1.1",
     "@mui/icons-material": "^5.11.0",
-    "@mui/lab": "^5.0.0-alpha.118",
-    "@mui/material": "^5.11.7",
-    "@mui/x-data-grid": "^5.17.22",
+    "@mui/lab": "^5.0.0-alpha.119",
+    "@mui/material": "^5.11.8",
+    "@mui/x-data-grid": "^5.17.23",
     "@next/font": "^13.1.6",
     "@songbird/precedent-iso": "workspace:^",
-    "@vercel/analytics": "^0.1.8",
     "logrocket": "^3.0.1",
     "next": "^13.1.6",
     "react": "^18.2.0",
@@ -38,21 +37,21 @@
     "react-use-intercom": "^3.0.2",
     "swr": "^2.0.3",
     "typescript-cookie": "^1.0.4",
-    "zod": "^3.20.2"
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "@types/eslint": "^8.21.0",
     "@types/prettier": "^2.7.2",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
-    "@typescript-eslint/eslint-plugin": "^5.50.0",
-    "@typescript-eslint/parser": "^5.50.0",
+    "@typescript-eslint/eslint-plugin": "^5.51.0",
+    "@typescript-eslint/parser": "^5.51.0",
     "eslint": "^8.33.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "prettier": "^2.8.3",
+    "prettier": "^2.8.4",
     "typescript": "^4.9.5",
-    "vitest": "^0.28.3"
+    "vitest": "^0.28.4"
   }
 }

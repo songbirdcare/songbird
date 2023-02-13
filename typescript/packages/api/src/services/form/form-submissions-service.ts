@@ -1,7 +1,7 @@
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import { LOGGER } from "../logger";
+import { LOGGER } from "../../logger";
 
 export class PsqlFormSubmissionService implements FormSubmissionService {
   constructor(private readonly pool: DatabasePool) {}
@@ -29,6 +29,7 @@ export class PsqlFormSubmissionService implements FormSubmissionService {
           isParentLedQualified: parsed.is_parent_led_qualified,
           isQualifiedRegion: parsed.is_qualified_region,
           isQualifiedAge: parsed.is_qualified_age,
+          isQualifiedInsurance: parsed.is_qualified_insurance,
         };
       } catch (e) {
         if (e instanceof z.ZodError) {
@@ -73,7 +74,7 @@ INSERT INTO form_submissions (email, submission, flow_label, variant_label, vari
   parse = (raw: Record<string, unknown>): ParsedForm => ZParsedForm.parse(raw);
 }
 
-interface SignupForm {
+export interface SignupForm {
   phone: string;
   firstName: string;
   lastName: string;
@@ -82,6 +83,7 @@ interface SignupForm {
   isParentLedQualified: boolean;
   isQualifiedRegion: boolean;
   isQualifiedAge: boolean;
+  isQualifiedInsurance: boolean;
 }
 
 const ZSignupAnswers = z.object({
@@ -95,6 +97,7 @@ const ZSignupAnswers = z.object({
   is_parent_led_qualified: z.boolean(),
   is_qualified_region: z.boolean(),
   is_qualified_age: z.boolean(),
+  is_qualified_insurance: z.boolean(),
 });
 
 export interface FormSubmissionService {
@@ -107,7 +110,6 @@ interface OptionalArguments {
   email?: string;
   applicationSlug?: string;
 }
-
 export interface InsertFormSubmissionArgs {
   raw: Record<string, unknown>;
 }

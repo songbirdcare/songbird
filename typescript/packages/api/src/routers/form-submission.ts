@@ -4,7 +4,7 @@ import express from "express";
 import { z } from "zod";
 
 import { LOGGER } from "../logger";
-import type { FormSubmissionService } from "../services/form-submission-service";
+import type { FormSubmissionService } from "../services/form/form-submissions-service";
 import { SETTINGS } from "../settings";
 
 export class FormSubmissionRouter {

@@ -1,49 +1,121 @@
+import {
+  assertNever,
+  Child,
+  QualificationStatus,
+} from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { Child, ChildService } from "./child-service";
+import type { ChildService } from "./child-service";
+
+const FIELDS = sql.fragment`id, qualification_status`;
 
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
 
-  async getOrCreate(userId: string): Promise<Child> {
-    return this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) => {
-        const users = await trx.query(
+  async get(userId: string): Promise<Child> {
+    const child = await this.pool.connect(async (connection) =>
+      connection.transaction(async (trx) =>
+        trx.one(
           sql.type(ZChildFromSql)`
 SELECT
-    id
+    ${FIELDS}
 FROM
     child
 WHERE
     sb_user_id = ${userId}
-LIMIT 2
+`
+        )
+      )
+    );
+    return fromSql(child);
+  }
+
+  async createOnlyIfNeeded(
+    userId: string,
+    qualified: QualificationStatus
+  ): Promise<"created" | "not_created"> {
+    return this.pool.connect(async (connection) =>
+      connection.transaction(async (trx) => {
+        const child = await trx.maybeOne(
+          sql.type(ZChildFromSql)`
+SELECT
+    ${FIELDS}
+FROM
+    child
+WHERE
+    sb_user_id = ${userId}
 `
         );
 
-        const [user] = users.rows;
-
-        if (user === undefined) {
-          return trx.one(
-            sql.type(ZChildFromSql)`
-INSERT INTO child (sb_user_id)
-    VALUES (${userId})
-RETURNING
-    id
-`
-          );
-        } else if (users.rows.length > 1) {
-          throw new Error(`Multiple children found for user=${userId}`);
+        if (child) {
+          return "not_created";
         }
 
-        return user;
+        await trx.query(
+          sql.type(ZChildFromSql)`
+
+INSERT INTO child (sb_user_id, qualification_status)
+    VALUES (${userId}, ${QualifiedSqlConverter.to(qualified)})
+`
+        );
+        return "created";
       })
     );
   }
 }
 
+function fromSql({ id, qualification_status }: ChildFromSql): Child {
+  return { id, qualified: QualifiedSqlConverter.from(qualification_status) };
+}
+
 export type ChildFromSql = z.infer<typeof ZChildFromSql>;
+
+const ZQualificationColumn = z.enum([
+  "qualified",
+  "grandfathered-qualified",
+  "location",
+  "age",
+  "insurance",
+  "other",
+]);
+
+type QualificationColumn = z.infer<typeof ZQualificationColumn>;
 
 const ZChildFromSql = z.object({
   id: z.string(),
+  qualification_status: ZQualificationColumn,
 });
+
+class QualifiedSqlConverter {
+  static to = (qualified: QualificationStatus): QualificationColumn | null => {
+    switch (qualified.type) {
+      case "qualified":
+        return "qualified";
+      case "unknown":
+        return null;
+      case "disqualified":
+        return qualified.reason;
+      default:
+        assertNever(qualified);
+    }
+  };
+
+  static from = (qualified: QualificationColumn): QualificationStatus => {
+    switch (qualified) {
+      case "qualified":
+      case "grandfathered-qualified":
+        return { type: "qualified" };
+      case undefined:
+      case null:
+        return { type: "unknown" };
+      case "location":
+      case "age":
+      case "insurance":
+      case "other":
+        return { type: "disqualified", reason: qualified };
+      default:
+        assertNever(qualified);
+    }
+  };
+}

@@ -3,7 +3,6 @@ import "../styles/globals.css";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import Box from "@mui/material/Box";
 import { ThemeProvider } from "@mui/material/styles";
-import { Analytics } from "@vercel/analytics/react";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import React from "react";
@@ -42,7 +41,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </UserProvider>
         </ImpersonateProvider>
       </ThemeProvider>
-      <Analytics />
     </>
   );
 }

@@ -17,7 +17,7 @@ import { HealthRouter } from "./routers/health";
 import { TokenRouter } from "./routers/token";
 import { UserRouter } from "./routers/user";
 import { Auth0Service } from "./services/auth0/auth0-service";
-import { PsqlFormSubmissionService } from "./services/form-submission-service";
+import { PsqlFormSubmissionService } from "./services/form/form-submissions-service";
 import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
 import { POOL } from "./sql";
@@ -37,6 +37,7 @@ import { AdminUserRouter } from "./routers/admin-user";
 import pino from "pino-http";
 import { LOGGER } from "./logger";
 import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
+import { ChildRouter } from "./routers/child";
 
 LOGGER.info("Server starting ...");
 
@@ -111,6 +112,7 @@ async function start() {
 
   const userInformationMiddleware = new UserInformationMiddleware(
     userService,
+    childService,
     auth0Service,
     formSubmissionService
   );
@@ -143,6 +145,14 @@ async function start() {
       workflowService,
       workflowActionService
     ).init()
+  );
+
+  app.use(
+    "/api/v1/child",
+    jwtCheck,
+    addUser,
+    userIsVerified,
+    new ChildRouter(childService).init()
   );
 
   app.use(
