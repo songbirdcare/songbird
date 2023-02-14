@@ -1,7 +1,6 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
-import type { DisqualificationReason } from "@songbird/precedent-iso";
-import { Child } from "@songbird/precedent-iso";
+import type { Child, DisqualificationReason } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
