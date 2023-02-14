@@ -9,6 +9,7 @@ import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
+import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
 import { RenderWorkflow } from "../src/workflow/render-workflow";
@@ -17,6 +18,8 @@ const CompleteStage: React.FC = () => {
   useRedirectIfNotVerified();
   const { data: workflow } = useFetchWorkflow();
   const { data: user } = useFetchUser();
+
+  useRedirectIfNotEligible();
   const stageTypeFromUrl = useGetStageType();
 
   const [stageType, setStageType] = React.useState<Stage["type"] | undefined>(

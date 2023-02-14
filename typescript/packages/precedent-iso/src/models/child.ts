@@ -9,7 +9,7 @@ export type DisqualificationReason = "location" | "age" | "insurance" | "other";
 // reason, but to keep it simple let's just stick to one
 export type QualificationStatus =
   | {
-      type: "qualified" | "unknown";
+      type: "qualified" | "unknown" | "qualified-without-diagnosis";
     }
   | {
       type: "disqualified";
