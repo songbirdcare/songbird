@@ -6,7 +6,7 @@
   "packageManager": "yarn@3.3.0",
   "private": true,
   "devDependencies": {
-    "@types/eslint": "^8.21.1",
+    "@types/eslint": "^8.21.0",
     "@types/prettier": "^2.7.2",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",

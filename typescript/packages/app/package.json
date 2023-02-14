@@ -23,9 +23,9 @@
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@formsort/react-embed": "^3.1.1",
-    "@mui/icons-material": "^5.11.9",
-    "@mui/lab": "^5.0.0-alpha.120",
-    "@mui/material": "^5.11.9",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.119",
+    "@mui/material": "^5.11.8",
     "@mui/x-data-grid": "^5.17.23",
     "@next/font": "^13.1.6",
     "@songbird/precedent-iso": "workspace:^",
@@ -40,7 +40,7 @@
     "zod": "^3.20.6"
   },
   "devDependencies": {
-    "@types/eslint": "^8.21.1",
+    "@types/eslint": "^8.21.0",
     "@types/prettier": "^2.7.2",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.10",
