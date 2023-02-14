@@ -2,8 +2,6 @@ import { isInternalUser, UserModel } from "@songbird/precedent-iso";
 import React from "react";
 import useSWR from "swr";
 
-import { useFlagsmith } from "flagsmith/react";
-
 import { initForRum } from "../monitoring/datadog-rum";
 import { initForLogRocket } from "../monitoring/logrocket";
 import { TRACKER } from "../track";

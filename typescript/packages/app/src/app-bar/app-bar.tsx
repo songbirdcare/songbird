@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import type { UserModel } from "@songbird/precedent-iso";
+import { useFlagsmith } from "flagsmith/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -80,6 +81,7 @@ export const AppBarBody: React.FC<{
           >
             <Link href="/" underline="none">
               <Image
+                priority
                 src="/songbird-logo.svg"
                 alt="me"
                 width="128"
@@ -117,6 +119,8 @@ export const AppBarBody: React.FC<{
 
 const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const flagsmith = useFlagsmith();
 
   const { isOpen, hide, show, shutdown } = useIntercom();
   const deleteWorkflows = useDeleteWorkflows();
@@ -166,6 +170,7 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
             shutdown();
             handleClose();
             ImpersonateService.clear();
+            flagsmith.logout();
             router.push("/api/auth/logout");
           }}
         >
