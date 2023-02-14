@@ -26,7 +26,9 @@ const NotFound: React.FC = () => {
           <MessageWithIcon
             icon={"/onboarding/flag.svg"}
             alt="Page not found"
-            message="Page not found"
+            title="Page not found"
+            width={64}
+            height={60}
           />
         </Box>
       </BodyContainer>

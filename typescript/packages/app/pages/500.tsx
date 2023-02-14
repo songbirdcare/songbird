@@ -26,7 +26,9 @@ const NotFound: React.FC = () => {
           <MessageWithIcon
             icon={"/onboarding/flag.svg"}
             alt="Error has occurred"
-            message="Sorry! An unexpected error has occurred"
+            title="Sorry! An unexpected error has occurred"
+            width={64}
+            height={60}
           />
         </Box>
       </BodyContainer>

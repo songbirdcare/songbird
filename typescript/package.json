@@ -14,6 +14,7 @@
     "clean": "yarn workspaces foreach -vp run clean && yarn clean::deps",
     "clean::dist": "yarn workspaces foreach -vp run clean::dist",
     "clean::deps": "rm -rf node_modules",
-    "bootstrap": "echo todo"
+    "bootstrap": "echo todo",
+    "upgrade-all": "yarn up '**'"
   }
 }
