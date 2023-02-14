@@ -29,15 +29,13 @@ test("create", async () => {
     email: "test@gmail.com",
   });
 
-  expect(
-    await childService.createOnlyIfNeeded(user.id, {
-      type: "unknown",
-    })
-  ).toEqual("created");
+  const resp = await Promise.all(
+    new Array(20).fill(undefined).map(() =>
+      childService.createOnlyIfNeeded(user.id, {
+        type: "unknown",
+      })
+    )
+  );
 
-  expect(
-    await childService.createOnlyIfNeeded(user.id, {
-      type: "unknown",
-    })
-  ).toEqual("not_created");
+  expect(resp.filter((r) => r === "created").length).toEqual(1);
 });

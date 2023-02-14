@@ -11,12 +11,12 @@ import { Disqualify } from "../src/disqualify/disqualify";
 import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
+import { TRACKER } from "../src/track";
 
 const ThankYou: React.FC = () => {
   useRedirectIfNotVerified();
 
   const { data, isLoading } = useFetchChild();
-  console.log(data);
 
   const reason = getReason(data);
   const router = useRouter();
@@ -25,6 +25,8 @@ const ThankYou: React.FC = () => {
 
   React.useEffect(() => {
     if (data && !reason) {
+      TRACKER.track("not_eligible_redirect");
+
       router.push("/");
     }
   }, [router, reason, data]);
@@ -61,6 +63,7 @@ function getReason(
   switch (child.qualified.type) {
     case "qualified":
     case "unknown":
+    case "qualified-without-diagnosis":
       return undefined;
     case "disqualified":
       return child.qualified.reason;
