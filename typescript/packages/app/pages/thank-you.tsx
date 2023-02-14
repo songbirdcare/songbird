@@ -2,7 +2,6 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
 import type { Child, DisqualificationReason } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
-import { track } from "logrocket";
 import { useRouter } from "next/router";
 import * as React from "react";
 
@@ -64,6 +63,7 @@ function getReason(
   switch (child.qualified.type) {
     case "qualified":
     case "unknown":
+    case "qualified-without-diagnosis":
       return undefined;
     case "disqualified":
       return child.qualified.reason;

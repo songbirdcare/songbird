@@ -30,7 +30,7 @@ test("create", async () => {
   });
 
   const resp = await Promise.all(
-    new Array(20).fill(undefined).map((_) =>
+    new Array(20).fill(undefined).map(() =>
       childService.createOnlyIfNeeded(user.id, {
         type: "unknown",
       })

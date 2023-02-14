@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { TRACKER } from "../track";
 
+import { TRACKER } from "../track";
 import { useFetchChild } from "./use-fetch-child";
 
 export const useRedirectIfNotEligible = () => {
