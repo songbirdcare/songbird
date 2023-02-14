@@ -1,6 +1,6 @@
 # songbird
 
-Monorepo for songbird services
+Monorepo for Songbird services
 
 ## Setup
 
