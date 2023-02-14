@@ -37,24 +37,16 @@ WHERE
   ): Promise<"created" | "not_created"> {
     return this.pool.connect(async (connection) =>
       connection.transaction(async (trx) => {
-        const child = await trx.maybeOne(
-          sql.type(ZChildFromSql)`
-SELECT
-    ${FIELDS}
-FROM
-    child
-WHERE
-    sb_user_id = ${userId}
-`
+        const exists = await trx.exists(
+          sql.unsafe` SELECT 1 FROM child WHERE sb_user_id = ${userId} `
         );
 
-        if (child) {
+        if (exists) {
           return "not_created";
         }
 
         await trx.query(
           sql.type(ZChildFromSql)`
-
 INSERT INTO child (sb_user_id, qualification_status)
     VALUES (${userId}, ${QualifiedSqlConverter.to(qualified)})
 `
@@ -78,6 +70,7 @@ const ZQualificationColumn = z.enum([
   "age",
   "insurance",
   "other",
+  "qualified-without-diagnosis",
 ]);
 
 type QualificationColumn = z.infer<typeof ZQualificationColumn>;
@@ -92,6 +85,8 @@ class QualifiedSqlConverter {
     switch (qualified.type) {
       case "qualified":
         return "qualified";
+      case "qualified-without-diagnosis":
+        return "qualified-without-diagnosis";
       case "unknown":
         return null;
       case "disqualified":
@@ -106,6 +101,8 @@ class QualifiedSqlConverter {
       case "qualified":
       case "grandfathered-qualified":
         return { type: "qualified" };
+      case "qualified-without-diagnosis":
+        return { type: "qualified-without-diagnosis" };
       case undefined:
       case null:
         return { type: "unknown" };

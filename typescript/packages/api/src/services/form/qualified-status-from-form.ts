@@ -15,6 +15,10 @@ export function qualifiedStatusFromForm(
     return {
       type: "qualified",
     };
+  } else if (answers.isQualifiedWithoutDiagnosis) {
+    return {
+      type: "qualified-without-diagnosis",
+    };
   } else if (!answers.isQualifiedAge) {
     return {
       type: "disqualified",
