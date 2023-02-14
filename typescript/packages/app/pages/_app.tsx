@@ -10,6 +10,7 @@ import { IntercomProvider } from "react-use-intercom";
 
 import { ErrorBoundary } from "../src/error-boundary";
 import { useInitTracking } from "../src/hooks/use-init-tracking";
+import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
 import { SETTINGS } from "../src/settings";
 import { THEME } from "../src/style/theme";
@@ -34,6 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 position="relative"
               >
                 <ErrorBoundary>
+                  <ImpersonateBanner />
                   <Component {...pageProps} />
                 </ErrorBoundary>
               </Box>

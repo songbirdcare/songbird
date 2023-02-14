@@ -7,7 +7,6 @@ import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useTrackOnce } from "../src/hooks/use-track-once";
-import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 import { VerifyEmail } from "../src/verify-email/verify-email";
 
 const VerifyEmailPage: React.FC = () => {
@@ -25,7 +24,6 @@ const VerifyEmailPage: React.FC = () => {
 
   return (
     <>
-      <ImpersonateBanner />
       <AppBar />
 
       <BodyContainer>
