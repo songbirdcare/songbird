@@ -6,7 +6,7 @@ import { initForRum } from "../monitoring/datadog-rum";
 import { initForLogRocket } from "../monitoring/logrocket";
 import { TRACKER } from "../track";
 
-export const useInitTracking = () => {
+export const useInitThirdParty = () => {
   const { data } = useSWR<UserModel>("/api/proxy/users/me", async (url) => {
     const response = await fetch(url);
     return response.json();
