@@ -1272,6 +1272,7 @@ __metadata:
     eslint-plugin-react: ^7.32.2
     eslint-plugin-react-hooks: ^4.6.0
     eslint-plugin-simple-import-sort: ^10.0.0
+    flagsmith: ^3.16.0
     logrocket: ^3.0.1
     next: ^13.1.6
     prettier: ^2.8.4
@@ -3480,6 +3481,13 @@ __metadata:
   version: 2.2.3
   resolution: "findit2@npm:2.2.3"
   checksum: 70738b5610b44a101baa9b55b0b023851641357ca673e0dd6f3bb3e836369aed7eda9ee93953ce633dacbdd8fde5a1ec3341556de5beaf7853f1cb5649a93918
+  languageName: node
+  linkType: hard
+
+"flagsmith@npm:^3.16.0":
+  version: 3.16.0
+  resolution: "flagsmith@npm:3.16.0"
+  checksum: 4b502e50a2c5d0bec90d1429852d08f4b8c0fd0452bff66ca6ac1a8e9c8a17536995005132da169bc2f3a07addba86afe219733f779f7010aa307d5914e2e8c1
   languageName: node
   linkType: hard
 

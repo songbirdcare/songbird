@@ -7,16 +7,22 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import React from "react";
 import { IntercomProvider } from "react-use-intercom";
+import flagsmith from "flagsmith/isomorphic";
+import { FlagsmithProvider } from "flagsmith/react";
 
 import { ErrorBoundary } from "../src/error-boundary";
-import { useInitTracking } from "../src/hooks/use-init-tracking";
+import { useInitThirdParty } from "../src/hooks/use-init-third-party";
 import { ImpersonateBanner } from "../src/impersonate/impersonate-banner";
 import { ImpersonateProvider } from "../src/impersonate/impersonate-context";
 import { SETTINGS } from "../src/settings";
 import { THEME } from "../src/style/theme";
 
+const OPTIONS = {
+  environmentID: SETTINGS.flagSmith,
+};
+
 export default function App({ Component, pageProps }: AppProps) {
-  useInitTracking();
+  useInitThirdParty();
   return (
     <>
       <Head>
@@ -24,25 +30,27 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="description" content="Innovative care" />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <ThemeProvider theme={THEME}>
-        <ImpersonateProvider>
-          <UserProvider>
-            <IntercomProvider appId={SETTINGS.intercomId}>
-              <Box
-                display="flex"
-                flexDirection="column"
-                height="100%"
-                position="relative"
-              >
-                <ErrorBoundary>
-                  <ImpersonateBanner />
-                  <Component {...pageProps} />
-                </ErrorBoundary>
-              </Box>
-            </IntercomProvider>
-          </UserProvider>
-        </ImpersonateProvider>
-      </ThemeProvider>
+      <FlagsmithProvider options={OPTIONS} flagsmith={flagsmith}>
+        <ThemeProvider theme={THEME}>
+          <ImpersonateProvider>
+            <UserProvider>
+              <IntercomProvider appId={SETTINGS.intercomId}>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  height="100%"
+                  position="relative"
+                >
+                  <ErrorBoundary>
+                    <ImpersonateBanner />
+                    <Component {...pageProps} />
+                  </ErrorBoundary>
+                </Box>
+              </IntercomProvider>
+            </UserProvider>
+          </ImpersonateProvider>
+        </ThemeProvider>
+      </FlagsmithProvider>
     </>
   );
 }

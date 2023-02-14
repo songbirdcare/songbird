@@ -10,11 +10,13 @@ import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligi
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
 import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
+import { useSBFlags } from "../src/hooks/use-flags";
 
 const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
   const { data: workflow, isLoading: workflowIsLoading } = useFetchWorkflow();
   const { isLoading: childIsLoading } = useRedirectIfNotEligible();
+  useSBFlags();
 
   useRedirectIfNotVerified();
 

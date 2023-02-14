@@ -29,6 +29,7 @@
     "@mui/x-data-grid": "^5.17.23",
     "@next/font": "^13.1.6",
     "@songbird/precedent-iso": "workspace:^",
+    "flagsmith": "^3.16.0",
     "logrocket": "^3.0.1",
     "next": "^13.1.6",
     "react": "^18.2.0",
