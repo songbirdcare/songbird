@@ -1,9 +1,11 @@
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { isEligibleForAdmin, UserModel } from "@songbird/precedent-iso";
+import { useFlagsmith } from "flagsmith/react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
+import { useFetchUser } from "../hooks/use-fetch-user";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
 import { ChangeRole } from "./change-role";
@@ -63,12 +65,16 @@ const columns: GridColDef[] = [
 const Impersonate: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const { setId } = useImpersonateContext();
+  const flagsmith = useFlagsmith();
+  const { mutate } = useFetchUser();
   return (
     <Button
       onClick={() => {
         ImpersonateService.set(id);
+        flagsmith.logout();
         setId(id);
         router.push("/");
+        mutate();
       }}
     >
       Impersonate

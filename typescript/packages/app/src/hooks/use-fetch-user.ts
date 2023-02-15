@@ -2,7 +2,7 @@ import type { UserModel } from "@songbird/precedent-iso";
 import useSWR from "swr";
 
 export const useFetchUser = () => {
-  const { data, isLoading } = useSWR<UserModel>(
+  const { data, isLoading, mutate } = useSWR<UserModel>(
     "/api/proxy/users/me",
     async (url) => {
       const response = await fetch(url);
@@ -10,5 +10,5 @@ export const useFetchUser = () => {
     }
   );
 
-  return { data, isLoading };
+  return { data, isLoading, mutate };
 };
