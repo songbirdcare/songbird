@@ -49,7 +49,7 @@ export const OnboardingFlowV1: React.FC<
       alignItems="center"
       marginX={2}
     >
-      <Box display="flex" flexDirection="column" width="100%">
+      <Box display="flex" flexDirection="column" width="100%" gap={1}>
         <StatusMessage header={copy.header} byline={copy.byline} />
       </Box>
       <Box
