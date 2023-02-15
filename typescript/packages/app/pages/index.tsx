@@ -1,5 +1,6 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";
@@ -37,7 +38,8 @@ const Home: React.FC = () => {
             firstName={user.givenName?.trim()}
             isCompleted={workflow.status === "completed"}
             currentStageIndex={workflow.currentStageIndex}
-            stages={workflow.stages}
+            // TODO get rid of this cast
+            stages={workflow.stages as OnboardingStage[]}
             extendedOnboarding={flags.flags.extendedOnboarding}
           />
         )}
