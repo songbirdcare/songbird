@@ -77,36 +77,6 @@ export class WorkflowRouter {
       }
     );
 
-    router.put(
-      "/action/:workflowId",
-      async (req: express.Request, res: express.Response) => {
-        const { workflowId } = req.params;
-        if (workflowId === undefined) {
-          throw new Error("undefined workflowId");
-        }
-        LOGGER.info("Processing workflow action", { workflowId });
-
-        const action = ZAction.parse(req.body);
-
-        const workflow = await this.workflowActionService.processAction(
-          workflowId,
-          action
-        );
-
-        if (workflow.status === "completed") {
-          req.trackUser!("completed_workflow"); // eslint-disable-line @typescript-eslint/no-non-null-assertion
-        } else {
-          req.trackUser!("process_workflow_action"); // eslint-disable-line @typescript-eslint/no-non-null-assertion
-        }
-
-        res.json({
-          data: {
-            workflow,
-          },
-        });
-      }
-    );
-
     return router;
   }
 }
