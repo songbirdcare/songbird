@@ -4,8 +4,8 @@ import { isEligibleForAdmin, UserModel } from "@songbird/precedent-iso";
 import { useFlagsmith } from "flagsmith/react";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { useFetchUser } from "../hooks/use-fetch-user";
 
+import { useFetchUser } from "../hooks/use-fetch-user";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
 import { ChangeRole } from "./change-role";
