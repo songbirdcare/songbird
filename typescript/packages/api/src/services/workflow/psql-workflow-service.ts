@@ -1,4 +1,8 @@
-import type { Stage, WorkflowModel } from "@songbird/precedent-iso";
+import {
+  OnboardingStage,
+  WorkflowModel,
+  ZWorkflowSlug,
+} from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
@@ -154,7 +158,7 @@ export type WorkflowFromSql = z.infer<typeof ZWorkflowFromSql>;
 
 interface UpdateWorkflow {
   id: string;
-  stages: Stage[];
+  stages: OnboardingStage[];
   currentStageIndex: number;
   status: WorkflowStatus;
 }
@@ -167,8 +171,8 @@ const ZWorkflowFromSql = z.object({
   id: z.string(),
   sb_user_id: z.string(),
   child_id: z.string(),
-  workflow_slug: z.string(),
-  version: z.string(),
+  workflow_slug: ZWorkflowSlug,
+  version: z.literal(1),
   stages: z.any(),
   current_stage_idx: z.number(),
   status: ZWorkflowStatus,

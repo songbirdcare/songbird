@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import type { Stage } from "@songbird/precedent-iso";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 
 import { STAGE_DISPLAY_INFO_LOOKUP } from "../stage-display-information-lookup";
 import { DisplayCompletedStages } from "./display-completed-stages";
@@ -8,7 +8,7 @@ import type { StageWithIndex } from "./stage-display-information";
 
 export const DisplayStages: React.FC<{
   currentStageIndex: number;
-  stages: Stage[];
+  stages: OnboardingStage[];
   isCompleted: boolean;
 }> = ({ stages, currentStageIndex, isCompleted }) => {
   const { completed, nonCompleted } = processStages(
@@ -51,7 +51,7 @@ export const DisplayStages: React.FC<{
 function processStages(
   isCompleted: boolean,
   currentStageIndex: number,
-  stages: Stage[]
+  stages: OnboardingStage[]
 ): ProcessedStages {
   const nonCompleted: StageWithIndex[] = [];
   const completed: StageWithIndex[] = [];

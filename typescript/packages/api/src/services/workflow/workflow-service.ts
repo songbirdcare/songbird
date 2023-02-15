@@ -1,5 +1,5 @@
-import type { WorkflowModel } from "@songbird/precedent-iso";
-import type { Stage } from "@songbird/precedent-iso";
+import type { WorkflowModel, WorkflowSlug } from "@songbird/precedent-iso";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 
 export interface WorkflowService {
   deleteAllForUser(userId: string): Promise<void>;
@@ -11,7 +11,7 @@ export interface WorkflowService {
 }
 
 export interface GetOrCreateWorkflowArguments {
-  slug: string;
+  slug: WorkflowSlug;
   userId: string;
   childId: string;
 }
@@ -23,6 +23,6 @@ export interface SubmitFormArguments {
 
 interface UpdateWorkflow {
   id: string;
-  stages: Stage[];
+  stages: OnboardingStage[];
   currentStageIndex: number;
 }

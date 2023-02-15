@@ -1,9 +1,9 @@
-import type { StageType } from "@songbird/precedent-iso";
+import type { OnboardingStageType } from "@songbird/precedent-iso";
 
 import type { StageDisplayInformation } from "./stage/stage-display-information";
 
 export const STAGE_DISPLAY_INFO_LOOKUP: Record<
-  StageType,
+  OnboardingStageType,
   StageDisplayInformation
 > = {
   create_account: {

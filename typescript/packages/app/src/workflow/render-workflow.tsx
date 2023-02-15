@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import type { WorkflowModel } from "@songbird/precedent-iso";
-import type { Stage } from "@songbird/precedent-iso";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -16,7 +16,7 @@ import { RenderSchedule } from "./render-schedule";
 export const RenderWorkflow: React.FC<{
   userId: string;
   workflow: WorkflowModel;
-  stageType: Stage["type"] | undefined;
+  stageType: OnboardingStage["type"] | undefined;
 }> = ({ userId, workflow, stageType }) => {
   const { currentStageIndex, stages } = workflow;
 
@@ -41,7 +41,7 @@ export const RenderWorkflow: React.FC<{
 
 export const RenderStage: React.FC<{
   userId: string;
-  stage: Stage;
+  stage: OnboardingStage;
   workflowId: string;
 }> = ({ stage, userId, workflowId }) => {
   const [task] = stage.blockingTasks;
