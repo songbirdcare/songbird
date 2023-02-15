@@ -1,8 +1,8 @@
-import type { Stage } from "@songbird/precedent-iso";
+import type { Stage, WorkflowSlug } from "@songbird/precedent-iso";
 import { randomUUID } from "crypto";
 
 export const CURRENT_VERSION = 1 as const;
-export const INITIAL_SLUG = "onboarding";
+export const INITIAL_SLUG: WorkflowSlug = "onboarding";
 
 export function createInitialStages(): Stage[] {
   return [

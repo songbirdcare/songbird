@@ -1,4 +1,8 @@
-export type WorkflowSlug = "onboarding" | "care_plan" | "care_team";
+import { z } from "zod";
+
+export const ZWorkflowSlug = z.enum(["onboarding", "care_plan", "care_team"]);
+export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
+
 export type Stage =
   | CreateAccount
   | CheckInsuranceCoverage
@@ -57,8 +61,8 @@ export interface WorkflowModel {
   id: string;
   userId: string;
   childId: string;
-  slug: string;
-  version: string;
+  slug: WorkflowSlug;
+  version: 1;
   stages: Stage[];
   currentStageIndex: number;
   status: "pending" | "completed";

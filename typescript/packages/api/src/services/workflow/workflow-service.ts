@@ -1,4 +1,4 @@
-import type { WorkflowModel } from "@songbird/precedent-iso";
+import type { WorkflowModel, WorkflowSlug } from "@songbird/precedent-iso";
 import type { Stage } from "@songbird/precedent-iso";
 
 export interface WorkflowService {
@@ -11,7 +11,7 @@ export interface WorkflowService {
 }
 
 export interface GetOrCreateWorkflowArguments {
-  slug: string;
+  slug: WorkflowSlug;
   userId: string;
   childId: string;
 }
