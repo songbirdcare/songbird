@@ -1,8 +1,8 @@
 import { useFlagsmith } from "flagsmith/react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { useImpersonateContext } from "../impersonate/impersonate-context";
 
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { useFetchUser } from "./use-fetch-user";
 
 export const useSBFlags = (): Flags => {
