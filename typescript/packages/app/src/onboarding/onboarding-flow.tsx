@@ -2,10 +2,9 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import type { Stage } from "@songbird/precedent-iso";
-import { WorkflowSlug } from "@songbird/precedent-iso";
+import type { WorkflowSlug } from "@songbird/precedent-iso";
 import React from "react";
 
-import styles from "./onboarding.module.css";
 import { DisplayStages } from "./stage/display-stages";
 import { StatusMessage } from "./status-message/status-message";
 import { StatusMessageCopy } from "./status-message-copy";
