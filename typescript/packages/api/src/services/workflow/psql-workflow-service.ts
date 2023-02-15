@@ -7,7 +7,7 @@ import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
 import {
-  createInitialStages,
+  CreateInitialWorkflow,
   CURRENT_VERSION,
   INITIAL_SLUG,
 } from "./create-initial-workflow";
@@ -87,7 +87,7 @@ WHERE
         sql.type(ZWorkflowFromSql)`
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
     VALUES (${userId}, ${childId}, ${slug}, ${CURRENT_VERSION}, ${JSON.stringify(
-          createInitialStages()
+          CreateInitialWorkflow.forSlug(slug)
         )}, 0)
 RETURNING
     ${FIELDS}
