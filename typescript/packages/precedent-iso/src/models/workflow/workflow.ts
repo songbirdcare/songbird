@@ -3,17 +3,17 @@ import { z } from "zod";
 export const ZWorkflowSlug = z.enum(["onboarding", "care_plan", "care_team"]);
 export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
-export type Stage =
+export type OnboardingStage =
   | CreateAccount
   | CheckInsuranceCoverage
   | SubmitRecords
   | CommitmentToCare;
 
-export type StageType = Stage["type"];
+export type OnboardingStageType = OnboardingStage["type"];
 
 type Unarray<T> = T extends Array<infer U> ? U : T;
 
-export type Task = Unarray<Stage["blockingTasks"]>;
+export type OnboardingTask = Unarray<OnboardingStage["blockingTasks"]>;
 
 interface BaseTask {
   id: string;
@@ -63,7 +63,7 @@ export interface WorkflowModel {
   childId: string;
   slug: WorkflowSlug;
   version: 1;
-  stages: Stage[];
+  stages: OnboardingStage[];
   currentStageIndex: number;
   status: "pending" | "completed";
 }
@@ -89,7 +89,7 @@ export class WorkflowWrapper {
     return this.#copy.status === "completed";
   }
 
-  get currentStage(): Stage {
+  get currentStage(): OnboardingStage {
     const { stages, currentStageIndex } = this.#copy;
     const stage = stages[currentStageIndex];
     if (stage === undefined) {
@@ -103,7 +103,7 @@ export class WorkflowWrapper {
     if (!stage) {
       throw new Error("stage does not exist");
     }
-    const task = (stage.blockingTasks as Task[]).find(
+    const task = (stage.blockingTasks as OnboardingTask[]).find(
       (task) => task.id === taskId
     );
 
@@ -118,9 +118,9 @@ export class WorkflowWrapper {
 
     this.#hasChanged = true;
 
-    const firstPendingTaskIndex = (stage.blockingTasks as Task[]).findIndex(
-      (t) => t.status === "pending"
-    );
+    const firstPendingTaskIndex = (
+      stage.blockingTasks as OnboardingTask[]
+    ).findIndex((t) => t.status === "pending");
 
     if (firstPendingTaskIndex === -1) {
       throw new Error("no pending tasks available");
@@ -145,7 +145,7 @@ export class WorkflowWrapper {
     return this.#copy.currentStageIndex === this.#copy.stages.length - 1;
   }
 
-  static getLatestBlockingTask<S extends Stage>({
+  static getLatestBlockingTask<S extends OnboardingStage>({
     blockingTasks,
   }: S): S["blockingTasks"][number] {
     const [task] = blockingTasks;

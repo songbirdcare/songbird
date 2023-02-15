@@ -7,4 +7,4 @@ export { EmailVerification } from "./models/auth0/email-verification";
 export * from "./models/child";
 export { FormSortConfig, ZFormSortConfig } from "./models/form-sort-config";
 export * from "./models/user";
-export * from "./models/workflow";
+export * from "./models/workflow/workflow";
