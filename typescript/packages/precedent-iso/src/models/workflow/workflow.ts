@@ -1,61 +1,9 @@
 import { z } from "zod";
 
+import type { OnboardingStage, OnboardingTask } from "./onboarding";
+
 export const ZWorkflowSlug = z.enum(["onboarding", "care_plan", "care_team"]);
 export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
-
-export type OnboardingStage =
-  | CreateAccount
-  | CheckInsuranceCoverage
-  | SubmitRecords
-  | CommitmentToCare;
-
-export type OnboardingStageType = OnboardingStage["type"];
-
-type Unarray<T> = T extends Array<infer U> ? U : T;
-
-export type OnboardingTask = Unarray<OnboardingStage["blockingTasks"]>;
-
-interface BaseTask {
-  id: string;
-  status: "pending" | "complete";
-}
-
-interface BaseStage {
-  id: string;
-}
-
-export interface CreateAccount extends BaseStage {
-  type: "create_account";
-  blockingTasks: ScheduleTask[];
-}
-
-export interface CheckInsuranceCoverage extends BaseStage {
-  type: "check_insurance_coverage";
-  blockingTasks: FormTask[];
-}
-
-export interface SubmitRecords extends BaseStage {
-  type: "submit_records";
-  blockingTasks: FormTask[];
-}
-
-export interface CommitmentToCare extends BaseStage {
-  type: "commitment_to_care";
-  blockingTasks: SignatureTask[];
-}
-
-export interface ScheduleTask extends BaseTask {
-  type: "schedule";
-}
-
-export interface FormTask extends BaseTask {
-  type: "form";
-  slug: "check_insurance_coverage" | "submit_records";
-}
-
-export interface SignatureTask extends BaseTask {
-  type: "signature";
-}
 
 export interface WorkflowModel {
   id: string;

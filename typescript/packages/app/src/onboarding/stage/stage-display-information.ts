@@ -1,7 +1,7 @@
-import type { Stage } from "@songbird/precedent-iso";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 
 export interface StageWithIndex {
-  stage: Stage;
+  stage: OnboardingStage;
   index: number;
 }
 export interface StageDisplayInformation {
