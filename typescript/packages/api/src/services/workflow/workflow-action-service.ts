@@ -137,7 +137,8 @@ export class WorkflowActionService {
       case "insurance_approval":
       case "review_care_plan":
       case "complete_assessment":
-        throw new Error("case not handled");
+        //  TODO do something eventually
+        break;
       default:
         assertNever(currentStage);
     }

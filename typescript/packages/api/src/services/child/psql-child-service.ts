@@ -9,7 +9,7 @@ import { z } from "zod";
 
 import type { ChildService } from "./child-service";
 
-const FIELDS = sql.fragment`id, qualification_status`;
+const FIELDS = sql.fragment`id, qualification_status, workflow_slug`;
 
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
