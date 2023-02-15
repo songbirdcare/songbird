@@ -16,14 +16,16 @@ interface OnboardingFlowProps {
   currentStageIndex: number;
   stages: OnboardingStage[];
   extendedOnboarding: boolean;
+  workflowSlug: WorkflowSlug;
 }
 
 export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
   extendedOnboarding,
   ...rest
 }) => {
+  console.log({ slug: rest.workflowSlug });
   const [selectedWorkflowSlug, setSelectedWorkflowSlug] =
-    React.useState<WorkflowSlug>("onboarding");
+    React.useState<WorkflowSlug>(rest.workflowSlug);
 
   return extendedOnboarding ? (
     <OnboardingFlowV2
@@ -37,7 +39,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
 };
 
 export const OnboardingFlowV1: React.FC<
-  Omit<OnboardingFlowProps, "extendedOnboarding">
+  Omit<OnboardingFlowProps, "extendedOnboarding" | "workflowSlug">
 > = ({ isCompleted, currentStageIndex, stages, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
   return (

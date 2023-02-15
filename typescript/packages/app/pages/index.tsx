@@ -5,8 +5,10 @@ import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
+import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
+import { useFetchWorkflowV2 } from "../src/hooks/use-fetch-workflow-v2";
 import { useSBFlags } from "../src/hooks/use-flags";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
@@ -16,6 +18,7 @@ import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
   const { data: workflow, isLoading: workflowIsLoading } = useFetchWorkflow();
+  const { data: child } = useFetchChild();
   const { isLoading: childIsLoading } = useRedirectIfNotEligible();
 
   useRedirectIfNotVerified();
@@ -33,7 +36,7 @@ const Home: React.FC = () => {
             <LinearProgress />
           </Box>
         )}
-        {!isLoading && workflow && user && (
+        {!isLoading && workflow && user && child && (
           <OnboardingFlow
             firstName={user.givenName?.trim()}
             isCompleted={workflow.status === "completed"}
@@ -41,6 +44,7 @@ const Home: React.FC = () => {
             // TODO get rid of this cast
             stages={workflow.stages as OnboardingStage[]}
             extendedOnboarding={flags.flags.extendedOnboarding}
+            workflowSlug={child.workflowSlug}
           />
         )}
       </BodyContainer>
