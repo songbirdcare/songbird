@@ -27,3 +27,11 @@ export const ZSignatureTask = z.object({
 });
 
 export type SignatureTask = z.infer<typeof ZSignatureTask>;
+
+export const ZDummyTask = z.object({
+  id: z.string(),
+  status: ZTaskStatus,
+  type: z.literal("dummy"),
+});
+
+export type DummyTask = z.infer<typeof ZDummyTask>;

@@ -2,6 +2,8 @@ import {
   assertNever,
   OnboardingStage,
   WorkflowModel,
+  ZCarePlanStage,
+  ZCareTeamStage,
   ZOnboardingStage,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
@@ -152,8 +154,15 @@ function fromSQL({
           stages: ZOnboardingStage.array().parse(stages),
         };
       case "care_plan":
+        return {
+          slug: "care_plan" as const,
+          stages: ZCarePlanStage.array().parse(stages),
+        };
       case "care_team":
-        throw new Error("not implemented");
+        return {
+          slug: "care_team" as const,
+          stages: ZCareTeamStage.array().parse(stages),
+        };
       default:
         assertNever(workflow_slug);
     }
@@ -168,7 +177,7 @@ function fromSQL({
     stages,
     currentStageIndex: current_stage_idx,
     status,
-    stagesV2: stagesV2(),
+    stagesWithSlug: stagesV2(),
   };
 }
 
