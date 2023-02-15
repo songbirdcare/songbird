@@ -11,9 +11,8 @@ export class StatusMessageCopy {
     } else {
       const name = firstName ? `${firstName}, we're ` : "We're ";
       return {
-        header: `${name} forward to supporting your family.`,
-        byline:
-          "Our team will be in touch about your assessment, therapist match, and starting ongoing care.",
+        header: `${name} looking forward to supporting your family.`,
+        byline: "Here’s what’s needed to start care.",
       };
     }
   }
