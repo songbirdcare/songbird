@@ -3,7 +3,7 @@ import type { WorkflowSlug } from "./workflow/workflow";
 export interface Child {
   id: string;
   qualified: QualificationStatus;
-  workflowSlug: WorkflowSlug | undefined;
+  workflowSlug: WorkflowSlug;
 }
 
 export type DisqualificationReason = "location" | "age" | "insurance" | "other";
