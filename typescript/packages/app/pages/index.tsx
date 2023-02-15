@@ -6,6 +6,7 @@ import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
+import { useSBFlags } from "../src/hooks/use-flags";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
@@ -20,6 +21,7 @@ const Home: React.FC = () => {
 
   useTrackOnce("page_accessed", { page: "home" });
   const isLoading = userIsLoading || workflowIsLoading || childIsLoading;
+  const flags = useSBFlags();
   return (
     <>
       <AppBar />
@@ -36,6 +38,7 @@ const Home: React.FC = () => {
             isCompleted={workflow.status === "completed"}
             currentStageIndex={workflow.currentStageIndex}
             stages={workflow.stages}
+            extendedOnboarding={flags.flags.extendedOnboarding}
           />
         )}
       </BodyContainer>

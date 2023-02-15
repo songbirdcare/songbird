@@ -18,6 +18,8 @@ export const useSBFlags = (): Flags => {
     };
   });
 
+  window._flags = flags;
+
   useEffect(() => {
     async function fetchFlags() {
       if (!id || !role) {
@@ -35,12 +37,12 @@ export const useSBFlags = (): Flags => {
   return flags;
 };
 
-interface Flags {
+export interface Flags {
   hasLoaded: boolean;
   flags: FlagBody;
 }
 
-interface FlagBody {
+export interface FlagBody {
   extendedOnboarding: boolean;
 }
 

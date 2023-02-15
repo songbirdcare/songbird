@@ -1,3 +1,4 @@
+export type WorkflowSlug = "onboarding" | "care_plan" | "care_team";
 export type Stage =
   | CreateAccount
   | CheckInsuranceCoverage
