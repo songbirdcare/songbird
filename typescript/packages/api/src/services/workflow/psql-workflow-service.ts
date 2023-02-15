@@ -1,6 +1,8 @@
 import {
+  assertNever,
   OnboardingStage,
   WorkflowModel,
+  ZOnboardingStage,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
@@ -142,6 +144,21 @@ function fromSQL({
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
+  const stagesV2 = () => {
+    switch (workflow_slug) {
+      case "onboarding":
+        return {
+          slug: "onboarding" as const,
+          stages: ZOnboardingStage.array().parse(stages),
+        };
+      case "care_plan":
+      case "care_team":
+        throw new Error("not implemented");
+      default:
+        assertNever(workflow_slug);
+    }
+  };
+
   return {
     id,
     userId: sb_user_id,
@@ -151,6 +168,7 @@ function fromSQL({
     stages,
     currentStageIndex: current_stage_idx,
     status,
+    stagesV2: stagesV2(),
   };
 }
 

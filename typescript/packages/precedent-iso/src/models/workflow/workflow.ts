@@ -12,6 +12,10 @@ export interface WorkflowModel {
   slug: WorkflowSlug;
   version: 1;
   stages: OnboardingStage[];
+  stagesV2: {
+    slug: "onboarding";
+    stages: OnboardingStage[];
+  };
   currentStageIndex: number;
   status: "pending" | "completed";
 }
