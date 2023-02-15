@@ -1,6 +1,7 @@
 import { useFlagsmith } from "flagsmith/react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import { useImpersonateContext } from "../impersonate/impersonate-context";
 
 import { useFetchUser } from "./use-fetch-user";
 
@@ -10,6 +11,7 @@ export const useSBFlags = (): Flags => {
   const id = data?.id;
   const role = data?.role;
   const flagsmith = useFlagsmith();
+  const impersonate = useImpersonateContext();
 
   const [flags, setFlags] = useState<Flags>(() => {
     return {
@@ -32,7 +34,7 @@ export const useSBFlags = (): Flags => {
       });
     }
     fetchFlags();
-  }, [flagsmith, id, role]);
+  }, [flagsmith, id, role, impersonate.id]);
 
   return flags;
 };
