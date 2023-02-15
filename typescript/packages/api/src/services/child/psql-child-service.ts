@@ -58,7 +58,11 @@ INSERT INTO child (sb_user_id, qualification_status)
 }
 
 function fromSql({ id, qualification_status }: ChildFromSql): Child {
-  return { id, qualified: QualifiedSqlConverter.from(qualification_status) };
+  return {
+    id,
+    qualified: QualifiedSqlConverter.from(qualification_status),
+    workflowSlug: undefined,
+  };
 }
 
 export type ChildFromSql = z.infer<typeof ZChildFromSql>;

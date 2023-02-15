@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
-import type { Stage } from "@songbird/precedent-iso";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 import type { WorkflowSlug } from "@songbird/precedent-iso";
 import React from "react";
 
@@ -14,7 +14,7 @@ interface OnboardingFlowProps {
   firstName: string | undefined;
   isCompleted: boolean;
   currentStageIndex: number;
-  stages: Stage[];
+  stages: OnboardingStage[];
   extendedOnboarding: boolean;
 }
 

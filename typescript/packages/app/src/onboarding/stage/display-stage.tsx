@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { assertNever, Stage } from "@songbird/precedent-iso";
+import { assertNever, OnboardingStage } from "@songbird/precedent-iso";
 import Image from "next/image";
 
 import { useImpersonateContext } from "../../impersonate/impersonate-context";
@@ -13,7 +13,7 @@ import styles from "./display-stage.module.css";
 import type { StageDisplayInformation } from "./stage-display-information";
 
 export const DisplayStage: React.FC<{
-  stage: Stage;
+  stage: OnboardingStage;
   stageDisplayInformation: StageDisplayInformation;
   index: number;
   isCurrentStage: boolean;
@@ -89,7 +89,7 @@ export const DisplayStage: React.FC<{
 };
 
 interface CopyForStageArgs {
-  stage: Stage;
+  stage: OnboardingStage;
   isCurrentStage: boolean;
   byline: string;
 }
@@ -111,10 +111,10 @@ function copyForStage({ stage, isCurrentStage, byline }: CopyForStageArgs) {
   }
 }
 
-const StageButton: React.FC<{ stage: Stage; isCurrentStage: boolean }> = ({
-  stage,
-  isCurrentStage,
-}) => {
+const StageButton: React.FC<{
+  stage: OnboardingStage;
+  isCurrentStage: boolean;
+}> = ({ stage, isCurrentStage }) => {
   const onClick = () =>
     TRACKER.track("clicked_stage_button", { type: stage.type });
 
