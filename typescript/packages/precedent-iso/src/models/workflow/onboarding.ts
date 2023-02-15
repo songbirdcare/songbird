@@ -1,10 +1,6 @@
-import type * as T from "./task";
+import { z } from "zod";
 
-export type OnboardingStage =
-  | CreateAccount
-  | CheckInsuranceCoverage
-  | SubmitRecords
-  | CommitmentToCare;
+import * as T from "./task";
 
 export type OnboardingStageType = OnboardingStage["type"];
 
@@ -12,26 +8,42 @@ type Unarray<T> = T extends Array<infer U> ? U : T;
 
 export type OnboardingTask = Unarray<OnboardingStage["blockingTasks"]>;
 
-interface BaseStage {
-  id: string;
-}
+export const ZCreateAccount = z.object({
+  id: z.string(),
+  type: z.literal("create_account"),
+  blockingTasks: T.ZScheduleTask.array(),
+});
 
-export interface CreateAccount extends BaseStage {
-  type: "create_account";
-  blockingTasks: T.ScheduleTask[];
-}
+export type CreateAccount = z.infer<typeof ZCreateAccount>;
 
-export interface CheckInsuranceCoverage extends BaseStage {
-  type: "check_insurance_coverage";
-  blockingTasks: T.FormTask[];
-}
+export const ZCheckInsuranceCoverage = z.object({
+  id: z.string(),
+  type: z.literal("check_insurance_coverage"),
+  blockingTasks: T.ZFormTask.array(),
+});
 
-export interface SubmitRecords extends BaseStage {
-  type: "submit_records";
-  blockingTasks: T.FormTask[];
-}
+export type CheckInsuranceCoverage = z.infer<typeof ZCheckInsuranceCoverage>;
 
-export interface CommitmentToCare extends BaseStage {
-  type: "commitment_to_care";
-  blockingTasks: T.SignatureTask[];
-}
+export const ZSubmitRecords = z.object({
+  id: z.string(),
+  type: z.literal("submit_records"),
+  blockingTasks: T.ZFormTask.array(),
+});
+
+export type SubmitRecords = z.infer<typeof ZSubmitRecords>;
+
+export const ZCommitmentToCare = z.object({
+  id: z.string(),
+  type: z.literal("commitment_to_care"),
+  blockingTasks: T.ZSignatureTask.array(),
+});
+
+export type CommitmentToCare = z.infer<typeof ZCommitmentToCare>;
+export const ZOnboardingStage = z.discriminatedUnion("type", [
+  ZCreateAccount,
+  ZCheckInsuranceCoverage,
+  ZSubmitRecords,
+  ZCommitmentToCare,
+]);
+
+export type OnboardingStage = z.infer<typeof ZOnboardingStage>;

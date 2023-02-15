@@ -36,7 +36,14 @@ export const RenderWorkflow: React.FC<{
     return stage;
   })();
 
-  return <RenderStage userId={userId} workflowId={workflow.id} stage={stage} />;
+  return (
+    <RenderStage
+      userId={userId}
+      workflowId={workflow.id}
+      // TODO get rid of cast
+      stage={stage as OnboardingStage}
+    />
+  );
 };
 
 export const RenderStage: React.FC<{

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import type { OnboardingStage, OnboardingTask } from "./onboarding";
+import type { OnboardingTask } from "./onboarding";
+import type { Stage, StagesWithSlug } from "./stages";
 
 export const ZWorkflowSlug = z.enum(["onboarding", "care_plan", "care_team"]);
 export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
@@ -11,7 +12,8 @@ export interface WorkflowModel {
   childId: string;
   slug: WorkflowSlug;
   version: 1;
-  stages: OnboardingStage[];
+  stages: Stage[];
+  stagesWithSlug: StagesWithSlug;
   currentStageIndex: number;
   status: "pending" | "completed";
 }
@@ -37,7 +39,7 @@ export class WorkflowWrapper {
     return this.#copy.status === "completed";
   }
 
-  get currentStage(): OnboardingStage {
+  get currentStage(): Stage {
     const { stages, currentStageIndex } = this.#copy;
     const stage = stages[currentStageIndex];
     if (stage === undefined) {
@@ -93,7 +95,7 @@ export class WorkflowWrapper {
     return this.#copy.currentStageIndex === this.#copy.stages.length - 1;
   }
 
-  static getLatestBlockingTask<S extends OnboardingStage>({
+  static getLatestBlockingTask<S extends Stage>({
     blockingTasks,
   }: S): S["blockingTasks"][number] {
     const [task] = blockingTasks;

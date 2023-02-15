@@ -133,6 +133,11 @@ export class WorkflowActionService {
 
         break;
       }
+      case "therapist_matching":
+      case "insurance_approval":
+      case "review_care_plan":
+      case "complete_assessment":
+        throw new Error("case not handled");
       default:
         assertNever(currentStage);
     }
