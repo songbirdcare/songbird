@@ -8,7 +8,6 @@ import { BodyContainer } from "../src/body-container";
 import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
-import { useFetchWorkflowV2 } from "../src/hooks/use-fetch-workflow-v2";
 import { useSBFlags } from "../src/hooks/use-flags";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
