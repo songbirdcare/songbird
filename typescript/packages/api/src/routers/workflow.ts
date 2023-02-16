@@ -27,41 +27,19 @@ export class WorkflowRouter {
     );
 
     router.get(
-      "/for-slug/:slug?",
-      async (req: express.Request, res: express.Response) => {
-        const slug = ZWorkflowSlug.optional().parse(req.params.slug);
-        const child = await this.childService.get(req.user.id);
-        const workflow = await this.workflowService.getBySlug({
-          userId: req.user.id,
-          childId: child.id,
-          slug: slug ?? child.workflowSlug,
-        });
-
-        const advancedWorkflow = await this.workflowActionService.tryAdvance(
-          { userId: req.user.id },
-          workflow
-        );
-
-        res.json({
-          data: advancedWorkflow,
-        });
-      }
-    );
-
-    router.get(
       "/get-all",
       async (req: express.Request, res: express.Response) => {
-        const slug = ZWorkflowSlug.optional().parse(req.params.slug);
         const child = await this.childService.get(req.user.id);
-        const workflow = await this.workflowService.getBySlug({
+        const workflows = await this.workflowService.getAll({
           userId: req.user.id,
           childId: child.id,
-          slug: slug ?? child.workflowSlug,
         });
+
+        const selectedWorkflow = workflows[child.workflowSlug];
 
         const advancedWorkflow = await this.workflowActionService.tryAdvance(
           { userId: req.user.id },
-          workflow
+          selectedWorkflow
         );
 
         res.json({

@@ -2,6 +2,7 @@ import {
   ALL_WORKFLOW_SLUGS,
   assertNever,
   Stage,
+  StagesWithSlug,
   WorkflowModel,
   WorkflowSlug,
   ZCarePlanStage,
@@ -87,13 +88,21 @@ WHERE
 `
     );
 
-    const slugs = slugResponse.rows.map((row) => row.workflow_slug);
-
-    const { missing } = processSlugs(childId, slugs);
+    const missing = Array.from(
+      slugResponse.rows.reduce((acc, row) => {
+        acc.delete(row.workflow_slug);
+        return acc;
+      }, new Set(ALL_WORKFLOW_SLUGS))
+    );
+    console.log({
+      missing,
+      present: slugResponse.rows.map((r) => r.workflow_slug),
+    });
 
     if (missing.length) {
       await trx.query(
         sql.type(ZWorkflowFromSql)`
+
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
 SELECT
     *
@@ -113,6 +122,7 @@ ON CONFLICT (sb_user_id,
     child_id,
     workflow_slug)
     DO NOTHING;
+
 `
       );
     }
@@ -177,21 +187,21 @@ function fromSQL({
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
-  const stagesV2 = () => {
+  const stagesWithSlug = (): StagesWithSlug => {
     switch (workflow_slug) {
       case "onboarding":
         return {
-          slug: "onboarding" as const,
+          slug: "onboarding",
           stages: ZOnboardingStage.array().parse(stages),
         };
       case "care_plan":
         return {
-          slug: "care_plan" as const,
+          slug: "care_plan",
           stages: ZCarePlanStage.array().parse(stages),
         };
       case "care_team":
         return {
-          slug: "care_team" as const,
+          slug: "care_team",
           stages: ZCareTeamStage.array().parse(stages),
         };
       default:
@@ -208,7 +218,7 @@ function fromSQL({
     stages,
     currentStageIndex: current_stage_idx,
     status,
-    stagesWithSlug: stagesV2(),
+    stagesWithSlug: stagesWithSlug(),
   };
 }
 
@@ -239,27 +249,3 @@ const ZWorkflowFromSql = z.object({
   current_stage_idx: z.number(),
   status: ZWorkflowStatus,
 });
-
-function processSlugs(childId: string, slugs: WorkflowSlug[]) {
-  const seen = new Set<WorkflowSlug>();
-  for (const slug of slugs) {
-    if (seen.has(slug)) {
-      throw new Error(
-        `Multiple workflows found for child=${childId} slug=${slug}`
-      );
-    }
-
-    seen.add(slug);
-  }
-
-  const all = new Set(ALL_WORKFLOW_SLUGS);
-
-  for (const slug of seen) {
-    all.delete(slug);
-  }
-
-  return {
-    present: [...seen],
-    missing: [...all],
-  };
-}

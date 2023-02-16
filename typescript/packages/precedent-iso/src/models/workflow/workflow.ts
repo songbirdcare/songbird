@@ -8,7 +8,6 @@ export const ALL_WORKFLOW_SLUGS = [
   "care_team",
 ] as const;
 
-export const ALL_WORKFLOW_SLUGS_SET = new Set(ALL_WORKFLOW_SLUGS);
 export const ZWorkflowSlug = z.enum(ALL_WORKFLOW_SLUGS);
 export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
