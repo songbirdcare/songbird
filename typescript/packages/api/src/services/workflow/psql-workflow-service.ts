@@ -1,7 +1,10 @@
 import {
+  ALL_WORKFLOW_SLUGS,
   assertNever,
-  OnboardingStage,
+  Stage,
+  StagesWithSlug,
   WorkflowModel,
+  WorkflowSlug,
   ZCarePlanStage,
   ZCareTeamStage,
   ZOnboardingStage,
@@ -13,10 +16,10 @@ import { z } from "zod";
 import {
   CreateInitialWorkflow,
   CURRENT_VERSION,
-  INITIAL_SLUG,
 } from "./create-initial-workflow";
 import type {
-  GetOrCreateWorkflowArguments,
+  GetAllArguments,
+  GetBySlugArguments,
   WorkflowService,
 } from "./workflow-service";
 
@@ -56,21 +59,68 @@ WHERE
     });
   }
 
-  async getOrCreateInitial(
-    args: GetOrCreateWorkflowArguments
-  ): Promise<WorkflowModel> {
+  getBySlug = async (args: GetBySlugArguments): Promise<WorkflowModel> => {
+    const all = await this.getAll(args);
+    return all[args.slug];
+  };
+
+  async getAll(
+    args: GetAllArguments
+  ): Promise<Record<WorkflowSlug, WorkflowModel>> {
     return this.pool.connect(async (cnx) =>
-      cnx.transaction(async (trx) =>
-        fromSQL(await this.#getOrCreateSql(trx, args))
-      )
+      cnx.transaction((trx) => this.#getAll(trx, args))
     );
   }
 
-  async #getOrCreateSql(
+  async #getAll(
     trx: DatabaseTransactionConnection,
+    { userId, childId }: GetAllArguments
+  ): Promise<Record<WorkflowSlug, WorkflowModel>> {
+    const slugResponse = await trx.query(
+      sql.type(ZWorkflowSlugFromSql)`
+SELECT
+    workflow_slug
+FROM
+    workflow
+WHERE
+    sb_user_id = ${userId}
+    AND child_id = ${childId}
+`
+    );
 
-    { userId, childId, slug }: GetOrCreateWorkflowArguments
-  ): Promise<WorkflowFromSql> {
+    const missing = Array.from(
+      slugResponse.rows.reduce((acc, row) => {
+        acc.delete(row.workflow_slug);
+        return acc;
+      }, new Set(ALL_WORKFLOW_SLUGS))
+    );
+
+    if (missing.length) {
+      await trx.query(
+        sql.type(ZWorkflowFromSql)`
+INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
+SELECT
+    *
+FROM
+    ${sql.unnest(
+      missing.map((slug) => [
+        userId,
+        childId,
+        slug,
+        CURRENT_VERSION,
+        JSON.stringify(CreateInitialWorkflow.forSlug(slug)),
+        0,
+      ]),
+      ["uuid", "uuid", "text", "int4", "jsonb", "int4"]
+    )}
+ON CONFLICT (sb_user_id,
+    child_id,
+    workflow_slug)
+    DO NOTHING;
+`
+      );
+    }
+
     const workflows = await trx.query(
       sql.type(ZWorkflowFromSql)`
 SELECT
@@ -80,30 +130,15 @@ FROM
 WHERE
     sb_user_id = ${userId}
     AND child_id = ${childId}
-    AND workflow_slug = ${slug}
 `
     );
 
-    const [workflow] = workflows.rows;
+    const acc: Partial<Record<WorkflowSlug, WorkflowModel>> = {};
 
-    if (workflow === undefined) {
-      return trx.one(
-        sql.type(ZWorkflowFromSql)`
-INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
-    VALUES (${userId}, ${childId}, ${slug}, ${CURRENT_VERSION}, ${JSON.stringify(
-          CreateInitialWorkflow.forSlug(slug)
-        )}, 0)
-RETURNING
-    ${FIELDS}
-`
-      );
-    } else if (workflows.rows.length > 1) {
-      throw new Error(
-        `Multiple workflows found for user=${userId} child=${childId} slug=${INITIAL_SLUG}`
-      );
+    for (const workflow of workflows.rows) {
+      acc[workflow.workflow_slug] = fromSQL(workflow);
     }
-
-    return workflow;
+    return acc as Record<WorkflowSlug, WorkflowModel>;
   }
 
   update = async (args: UpdateWorkflow): Promise<WorkflowModel> => {
@@ -146,21 +181,21 @@ function fromSQL({
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
-  const stagesV2 = () => {
+  const stagesWithSlug = (): StagesWithSlug => {
     switch (workflow_slug) {
       case "onboarding":
         return {
-          slug: "onboarding" as const,
+          slug: "onboarding",
           stages: ZOnboardingStage.array().parse(stages),
         };
       case "care_plan":
         return {
-          slug: "care_plan" as const,
+          slug: "care_plan",
           stages: ZCarePlanStage.array().parse(stages),
         };
       case "care_team":
         return {
-          slug: "care_team" as const,
+          slug: "care_team",
           stages: ZCareTeamStage.array().parse(stages),
         };
       default:
@@ -177,7 +212,7 @@ function fromSQL({
     stages,
     currentStageIndex: current_stage_idx,
     status,
-    stagesWithSlug: stagesV2(),
+    stagesWithSlug: stagesWithSlug(),
   };
 }
 
@@ -185,7 +220,7 @@ export type WorkflowFromSql = z.infer<typeof ZWorkflowFromSql>;
 
 interface UpdateWorkflow {
   id: string;
-  stages: OnboardingStage[];
+  stages: Stage[];
   currentStageIndex: number;
   status: WorkflowStatus;
 }
@@ -193,6 +228,10 @@ interface UpdateWorkflow {
 export type WorkflowStatus = z.infer<typeof ZWorkflowStatus>;
 
 const ZWorkflowStatus = z.union([z.literal("pending"), z.literal("completed")]);
+
+const ZWorkflowSlugFromSql = z.object({
+  workflow_slug: ZWorkflowSlug,
+});
 
 const ZWorkflowFromSql = z.object({
   id: z.string(),

@@ -1,8 +1,7 @@
 import { useFlagsmith } from "flagsmith/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { useFetchUser } from "./use-fetch-user";
 
 export const useSBFlags = (): Flags => {
@@ -11,8 +10,8 @@ export const useSBFlags = (): Flags => {
   const id = data?.id;
   const role = data?.role;
   const flagsmith = useFlagsmith();
-  const impersonate = useImpersonateContext();
 
+  const start = useRef(Date.now());
   const [flags, setFlags] = useState<Flags>(() => {
     return {
       hasLoaded: false,
@@ -28,13 +27,17 @@ export const useSBFlags = (): Flags => {
         return;
       }
       await flagsmith.identify(id, { role });
+
+      console.info("Flagsmith load took", Date.now() - start.current);
+      start.current = Date.now();
+
       setFlags({
         hasLoaded: true,
         flags: ZFlags.parse(flagsmith.getAllFlags()),
       });
     }
     fetchFlags();
-  }, [flagsmith, id, role, impersonate.id]);
+  }, [flagsmith, id, role]);
 
   return flags;
 };

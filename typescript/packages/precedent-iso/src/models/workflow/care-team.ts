@@ -1,11 +1,10 @@
 import { z } from "zod";
 
-import type { Unarray } from "../../type-methods";
 import * as T from "./task";
 
 export type CareTeamStageType = CareTeamStage["type"];
 
-export type CareTeamTask = Unarray<CareTeamStage["blockingTasks"]>;
+export type CareTeamTask = CareTeamStage["blockingTasks"][number];
 
 export const ZInsuranceApproval = z.object({
   id: z.string(),
