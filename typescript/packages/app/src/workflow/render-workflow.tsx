@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
-import type { WorkflowModel } from "@songbird/precedent-iso";
-import type { OnboardingStage } from "@songbird/precedent-iso";
+import type { Stage, WorkflowModel } from "@songbird/precedent-iso";
 import { assertNever } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -16,7 +15,7 @@ import { RenderSchedule } from "./render-schedule";
 export const RenderWorkflow: React.FC<{
   userId: string;
   workflow: WorkflowModel;
-  stageType: OnboardingStage["type"] | undefined;
+  stageType: Stage["type"] | undefined;
 }> = ({ userId, workflow, stageType }) => {
   const { currentStageIndex, stages } = workflow;
 
@@ -36,19 +35,12 @@ export const RenderWorkflow: React.FC<{
     return stage;
   })();
 
-  return (
-    <RenderStage
-      userId={userId}
-      workflowId={workflow.id}
-      // TODO get rid of cast
-      stage={stage as OnboardingStage}
-    />
-  );
+  return <RenderStage userId={userId} workflowId={workflow.id} stage={stage} />;
 };
 
 export const RenderStage: React.FC<{
   userId: string;
-  stage: OnboardingStage;
+  stage: Stage;
   workflowId: string;
 }> = ({ stage, userId, workflowId }) => {
   const [task] = stage.blockingTasks;
@@ -62,30 +54,8 @@ export const RenderStage: React.FC<{
     return <CompletedStage />;
   }
 
-  switch (stage.type) {
-    case "create_account": {
-      const [task] = stage.blockingTasks;
-
-      if (task === undefined) {
-        throw new Error("illegal state");
-      }
-      return (
-        <RenderSchedule
-          stageId={stage.id}
-          taskId={task.id}
-          workflowId={workflowId}
-        />
-      );
-    }
-
-    case "submit_records":
-    case "check_insurance_coverage": {
-      const [task] = stage.blockingTasks;
-
-      if (task === undefined) {
-        throw new Error("illegal state");
-      }
-
+  switch (task.type) {
+    case "form":
       return (
         <RenderForm
           task={task}
@@ -94,13 +64,7 @@ export const RenderStage: React.FC<{
           workflowId={workflowId}
         />
       );
-    }
-    case "commitment_to_care": {
-      const [task] = stage.blockingTasks;
-
-      if (task === undefined) {
-        throw new Error("illegal state");
-      }
+    case "signature":
       return (
         <RenderSignature
           workflowId={workflowId}
@@ -108,9 +72,19 @@ export const RenderStage: React.FC<{
           taskId={task.id}
         />
       );
-    }
+
+    case "schedule":
+      return (
+        <RenderSchedule
+          stageId={stage.id}
+          taskId={task.id}
+          workflowId={workflowId}
+        />
+      );
+    case "dummy":
+      throw new Error("not implemented");
     default:
-      assertNever(stage);
+      assertNever(task);
   }
 };
 
