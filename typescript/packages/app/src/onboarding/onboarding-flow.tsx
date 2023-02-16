@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
-import type { OnboardingStage } from "@songbird/precedent-iso";
+import type { StagesWithSlug } from "@songbird/precedent-iso";
 import type { WorkflowSlug } from "@songbird/precedent-iso";
 import React from "react";
 
@@ -10,38 +10,43 @@ import { StatusMessage } from "./status-message/status-message";
 import { StatusMessageCopy } from "./status-message-copy";
 import { WorkflowSelector } from "./workflow-selector";
 
-interface OnboardingFlowProps {
+interface RenderWorkflowProps {
   firstName: string | undefined;
   isCompleted: boolean;
   currentStageIndex: number;
-  stages: OnboardingStage[];
+  stagesWithSlug: StagesWithSlug;
   extendedOnboarding: boolean;
   workflowSlug: WorkflowSlug;
 }
 
-export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
+export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
   extendedOnboarding,
   ...rest
 }) => {
-  console.log({ slug: rest.workflowSlug });
   const [selectedWorkflowSlug, setSelectedWorkflowSlug] =
-    React.useState<WorkflowSlug>(rest.workflowSlug);
+    React.useState<WorkflowSlug>(rest.stagesWithSlug.slug);
 
   return extendedOnboarding ? (
-    <OnboardingFlowV2
+    <DisplayWorkflowStagesV2
       {...rest}
       selectedWorkflowSlug={selectedWorkflowSlug}
       setSelectedWorkflowSlug={setSelectedWorkflowSlug}
     />
   ) : (
-    <OnboardingFlowV1 {...rest} />
+    <DisplayWorkflowStagesV1 {...rest} />
   );
 };
 
-export const OnboardingFlowV1: React.FC<
-  Omit<OnboardingFlowProps, "extendedOnboarding" | "workflowSlug">
-> = ({ isCompleted, currentStageIndex, stages, firstName }) => {
+export const DisplayWorkflowStagesV1: React.FC<
+  Omit<RenderWorkflowProps, "extendedOnboarding" | "workflowSlug">
+> = ({ isCompleted, currentStageIndex, stagesWithSlug, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
+  if (stagesWithSlug.slug !== "onboarding") {
+    throw new Error("not supported");
+  }
+
+  const stages = stagesWithSlug.stages;
+
   return (
     <Box
       display="flex"
@@ -73,6 +78,7 @@ export const OnboardingFlowV1: React.FC<
       </Box>
 
       <DisplayStages
+        workflowSlug={stagesWithSlug.slug}
         isCompleted={isCompleted}
         currentStageIndex={currentStageIndex}
         stages={stages}
@@ -81,19 +87,24 @@ export const OnboardingFlowV1: React.FC<
   );
 };
 
-export const OnboardingFlowV2: React.FC<
-  Omit<OnboardingFlowProps, "extendedOnboarding" | "firstName"> & {
+export const DisplayWorkflowStagesV2: React.FC<
+  Omit<RenderWorkflowProps, "extendedOnboarding" | "firstName"> & {
     selectedWorkflowSlug: WorkflowSlug;
     setSelectedWorkflowSlug: (slug: WorkflowSlug) => void;
   }
 > = ({
   isCompleted,
   currentStageIndex,
-  stages,
+  stagesWithSlug,
   selectedWorkflowSlug,
   setSelectedWorkflowSlug,
+  workflowSlug,
 }) => {
   const copy = StatusMessageCopy.forV2(selectedWorkflowSlug);
+  if (stagesWithSlug.slug !== "onboarding") {
+    throw new Error("not implemented");
+  }
+  const stages = stagesWithSlug.stages;
   return (
     <Box
       display="flex"
@@ -117,6 +128,7 @@ export const OnboardingFlowV2: React.FC<
         isCompleted={isCompleted}
         currentStageIndex={currentStageIndex}
         stages={stages}
+        workflowSlug={workflowSlug}
       />
       <Box
         display="flex"
