@@ -1,7 +1,7 @@
 import {
   ALL_WORKFLOW_SLUGS,
   assertNever,
-  OnboardingStage,
+  Stage,
   WorkflowModel,
   WorkflowSlug,
   ZCarePlanStage,
@@ -75,7 +75,7 @@ WHERE
     trx: DatabaseTransactionConnection,
     { userId, childId }: GetAllArguments
   ): Promise<Record<WorkflowSlug, WorkflowModel>> {
-    const slugs = await trx.query(
+    const slugResponse = await trx.query(
       sql.type(ZWorkflowSlugFromSql)`
 SELECT
     workflow_slug
@@ -87,10 +87,9 @@ WHERE
 `
     );
 
-    const { missing } = processSlugs(
-      childId,
-      slugs.rows.map((row) => row.workflow_slug)
-    );
+    const slugs = slugResponse.rows.map((row) => row.workflow_slug);
+
+    const { missing } = processSlugs(childId, slugs);
 
     if (missing.length) {
       await trx.query(
@@ -110,6 +109,10 @@ FROM
       ]),
       ["uuid", "uuid", "text", "int4", "jsonb", "int4"]
     )}
+ON CONFLICT (sb_user_id,
+    child_id,
+    workflow_slug)
+    DO NOTHING;
 `
       );
     }
@@ -213,7 +216,7 @@ export type WorkflowFromSql = z.infer<typeof ZWorkflowFromSql>;
 
 interface UpdateWorkflow {
   id: string;
-  stages: OnboardingStage[];
+  stages: Stage[];
   currentStageIndex: number;
   status: WorkflowStatus;
 }
