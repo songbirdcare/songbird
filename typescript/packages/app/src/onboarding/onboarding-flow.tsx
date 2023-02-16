@@ -17,20 +17,18 @@ interface RenderWorkflowProps {
   stagesWithSlug: StagesWithSlug;
   extendedOnboarding: boolean;
   workflowSlug: WorkflowSlug;
+  setWorkflowSlug: (workflowSlug: WorkflowSlug) => void;
 }
 
 export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
   extendedOnboarding,
   ...rest
 }) => {
-  const [selectedWorkflowSlug, setSelectedWorkflowSlug] =
-    React.useState<WorkflowSlug>(rest.stagesWithSlug.slug);
-
   return extendedOnboarding ? (
     <DisplayWorkflowStagesV2
       {...rest}
-      selectedWorkflowSlug={selectedWorkflowSlug}
-      setSelectedWorkflowSlug={setSelectedWorkflowSlug}
+      selectedWorkflowSlug={rest.workflowSlug}
+      setSelectedWorkflowSlug={rest.setWorkflowSlug}
     />
   ) : (
     <DisplayWorkflowStagesV1 {...rest} />
@@ -101,9 +99,7 @@ export const DisplayWorkflowStagesV2: React.FC<
   workflowSlug,
 }) => {
   const copy = StatusMessageCopy.forV2(selectedWorkflowSlug);
-  if (stagesWithSlug.slug !== "onboarding") {
-    throw new Error("not implemented");
-  }
+
   const stages = stagesWithSlug.stages;
   return (
     <Box

@@ -1,4 +1,4 @@
-import { ZAction, ZWorkflowSlug } from "@songbird/precedent-iso";
+import { ZAction } from "@songbird/precedent-iso";
 import express from "express";
 
 import { LOGGER } from "../logger";
@@ -37,13 +37,13 @@ export class WorkflowRouter {
 
         const selectedWorkflow = workflows[child.workflowSlug];
 
-        const advancedWorkflow = await this.workflowActionService.tryAdvance(
+        await this.workflowActionService.tryAdvance(
           { userId: req.user.id },
           selectedWorkflow
         );
 
         res.json({
-          data: advancedWorkflow,
+          data: workflows,
         });
       }
     );

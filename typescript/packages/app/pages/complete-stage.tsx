@@ -96,6 +96,7 @@ function shouldRenderAppBar(stageType: Stage["type"] | undefined): boolean {
     case "therapist_matching":
     case "complete_assessment":
     case "review_care_plan":
+    case "ongoing_care":
       return false;
     default:
       assertNever(stageType);
