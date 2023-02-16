@@ -12,7 +12,7 @@ import { useSBFlags } from "../src/hooks/use-flags";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
-import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
+import { RenderWorkflow } from "../src/onboarding/onboarding-flow";
 
 const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
           </Box>
         )}
         {!isLoading && workflow && user && child && (
-          <OnboardingFlow
+          <RenderWorkflow
             firstName={user.givenName?.trim()}
             isCompleted={workflow.status === "completed"}
             currentStageIndex={workflow.currentStageIndex}

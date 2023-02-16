@@ -10,7 +10,7 @@ import { StatusMessage } from "./status-message/status-message";
 import { StatusMessageCopy } from "./status-message-copy";
 import { WorkflowSelector } from "./workflow-selector";
 
-interface OnboardingFlowProps {
+interface RenderWorkflowProps {
   firstName: string | undefined;
   isCompleted: boolean;
   currentStageIndex: number;
@@ -19,7 +19,7 @@ interface OnboardingFlowProps {
   workflowSlug: WorkflowSlug;
 }
 
-export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
+export const RenderWorkflow: React.FC<RenderWorkflowProps> = ({
   extendedOnboarding,
   ...rest
 }) => {
@@ -28,18 +28,18 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
     React.useState<WorkflowSlug>(rest.workflowSlug);
 
   return extendedOnboarding ? (
-    <OnboardingFlowV2
+    <RenderWorkflowV2
       {...rest}
       selectedWorkflowSlug={selectedWorkflowSlug}
       setSelectedWorkflowSlug={setSelectedWorkflowSlug}
     />
   ) : (
-    <OnboardingFlowV1 {...rest} />
+    <RenderWorkflowV1 {...rest} />
   );
 };
 
-export const OnboardingFlowV1: React.FC<
-  Omit<OnboardingFlowProps, "extendedOnboarding" | "workflowSlug">
+export const RenderWorkflowV1: React.FC<
+  Omit<RenderWorkflowProps, "extendedOnboarding" | "workflowSlug">
 > = ({ isCompleted, currentStageIndex, stages, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
   return (
@@ -81,8 +81,8 @@ export const OnboardingFlowV1: React.FC<
   );
 };
 
-export const OnboardingFlowV2: React.FC<
-  Omit<OnboardingFlowProps, "extendedOnboarding" | "firstName"> & {
+export const RenderWorkflowV2: React.FC<
+  Omit<RenderWorkflowProps, "extendedOnboarding" | "firstName"> & {
     selectedWorkflowSlug: WorkflowSlug;
     setSelectedWorkflowSlug: (slug: WorkflowSlug) => void;
   }
