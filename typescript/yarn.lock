@@ -174,34 +174,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@datadog/browser-core@npm:4.34.0":
-  version: 4.34.0
-  resolution: "@datadog/browser-core@npm:4.34.0"
-  checksum: 6d9f55a43d7cd0be036324454c91c66837755d5e303b971195e8ab894aa7d3a4bb9c382a7096715408fbb2dcd3299734bc14cf93e53682e1c375fb46b469afb5
+"@datadog/browser-core@npm:4.34.1":
+  version: 4.34.1
+  resolution: "@datadog/browser-core@npm:4.34.1"
+  checksum: af46e3d809e53942e88771617477aad5c686777bc39835ae46aa23c676d989d28a3fd1d3abcf29f027a8597b0e96fb1ff2329a9d0229616ff202d922b8102b62
   languageName: node
   linkType: hard
 
-"@datadog/browser-rum-core@npm:4.34.0":
-  version: 4.34.0
-  resolution: "@datadog/browser-rum-core@npm:4.34.0"
+"@datadog/browser-rum-core@npm:4.34.1":
+  version: 4.34.1
+  resolution: "@datadog/browser-rum-core@npm:4.34.1"
   dependencies:
-    "@datadog/browser-core": 4.34.0
-  checksum: b5e13c6a7abcc8fdcbb0d7cb0595b7f14ff224064236bbd350b0371d08156b33fee413ba2829e18d933aad836df9dc525a712d802adebed47e69d0da48c68023
+    "@datadog/browser-core": 4.34.1
+  checksum: 7897f64bc4149a6fd9493b508b932d6d008afa5e4b2e0b802e4a3b454b3c421b05674bae6b605ab7254734aa8b3893cef474a6eca1b004448cbf2797011a9671
   languageName: node
   linkType: hard
 
-"@datadog/browser-rum@npm:^4.34.0":
-  version: 4.34.0
-  resolution: "@datadog/browser-rum@npm:4.34.0"
+"@datadog/browser-rum@npm:^4.34.1":
+  version: 4.34.1
+  resolution: "@datadog/browser-rum@npm:4.34.1"
   dependencies:
-    "@datadog/browser-core": 4.34.0
-    "@datadog/browser-rum-core": 4.34.0
+    "@datadog/browser-core": 4.34.1
+    "@datadog/browser-rum-core": 4.34.1
   peerDependencies:
-    "@datadog/browser-logs": 4.34.0
+    "@datadog/browser-logs": 4.34.1
   peerDependenciesMeta:
     "@datadog/browser-logs":
       optional: true
-  checksum: 2609feb1a754dfcfb333f761ad5cc44eeeac70c1e848b164cb175fd25adc70bfc756d0334ce04929f563ae095465572c44502f038136956f27900bf764f4e52d
+  checksum: 81f96508fd8dc4151d7741b2144a77a1604bc488f2627b6171de18ca6bb31bf9b148ad7699f7d1ff2b58d31a17200691dba1e9b0f99ed1c6bca58d7c14b14067
   languageName: node
   linkType: hard
 
@@ -871,9 +871,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/x-data-grid@npm:^5.17.23":
-  version: 5.17.23
-  resolution: "@mui/x-data-grid@npm:5.17.23"
+"@mui/x-data-grid@npm:^5.17.24":
+  version: 5.17.24
+  resolution: "@mui/x-data-grid@npm:5.17.24"
   dependencies:
     "@babel/runtime": ^7.18.9
     "@mui/utils": ^5.10.3
@@ -885,7 +885,7 @@ __metadata:
     "@mui/system": ^5.4.1
     react: ^17.0.2 || ^18.0.0
     react-dom: ^17.0.2 || ^18.0.0
-  checksum: 183d9167623818e769821548cc2441c70c04ab5144cbbb009d79c170f09e8eb2dd59a7105682cc578c27f95fa124f1335da20e462db36659e9839526d18592f7
+  checksum: 9fdcd0075b9e4ac121121fab62659e31e32bb003eaabd99238fdb4bdafdcf2f5964bb68c901add2d4af033548b4f3306854f807d5bd5ec3713222ce4307b7c4e
   languageName: node
   linkType: hard
 
@@ -1261,23 +1261,24 @@ __metadata:
   dependencies:
     "@amplitude/analytics-browser": ^1.8.0
     "@auth0/nextjs-auth0": ^2.2.1
-    "@datadog/browser-rum": ^4.34.0
+    "@datadog/browser-rum": ^4.34.1
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@formsort/react-embed": ^3.1.1
     "@mui/icons-material": ^5.11.9
     "@mui/lab": ^5.0.0-alpha.120
     "@mui/material": ^5.11.9
-    "@mui/x-data-grid": ^5.17.23
+    "@mui/x-data-grid": ^5.17.24
     "@next/eslint-plugin-next": ^13.1.6
     "@next/font": ^13.1.6
     "@songbird/precedent-iso": "workspace:^"
     "@types/eslint": ^8.21.1
     "@types/prettier": ^2.7.2
     "@types/react": ^18.0.28
-    "@types/react-dom": ^18.0.10
+    "@types/react-dom": ^18.0.11
     "@typescript-eslint/eslint-plugin": ^5.52.0
     "@typescript-eslint/parser": ^5.52.0
+    concurrently: ^7.6.0
     eslint: ^8.34.0
     eslint-plugin-react: ^7.32.2
     eslint-plugin-react-hooks: ^4.6.0
@@ -1487,12 +1488,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.0.10":
-  version: 18.0.10
-  resolution: "@types/react-dom@npm:18.0.10"
+"@types/react-dom@npm:^18.0.11":
+  version: 18.0.11
+  resolution: "@types/react-dom@npm:18.0.11"
   dependencies:
     "@types/react": "*"
-  checksum: ff8282d5005a0b1cd95fb65bf79d3d8485e4cfe2aaf052129033a178684b940014a3f4536bc20d573f8a01cf4c6f4770c74988cef7c2b5cac3041d9f172647e3
+  checksum: 579691e4d5ec09688087568037c35edf8cfb1ab3e07f6c60029280733ee7b5c06d66df6fcc90786702c93ac8cb13bc7ff16c79ddfc75d082938fbaa36e1cdbf4
   languageName: node
   linkType: hard
 

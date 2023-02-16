@@ -3,7 +3,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { assertNever, OnboardingStage } from "@songbird/precedent-iso";
+import {
+  assertNever,
+  OnboardingStage,
+  WorkflowSlug,
+} from "@songbird/precedent-iso";
 import Image from "next/image";
 
 import { useImpersonateContext } from "../../impersonate/impersonate-context";
@@ -18,11 +22,13 @@ export const DisplayStage: React.FC<{
   index: number;
   isCurrentStage: boolean;
   currentStageIndex: number;
+  workflowSlug: WorkflowSlug;
 }> = ({
   stageDisplayInformation: { title, byline, asset },
   index,
   isCurrentStage,
   stage,
+  workflowSlug,
 }) => {
   const copy = copyForStage({
     isCurrentStage,
@@ -82,7 +88,11 @@ export const DisplayStage: React.FC<{
         height="100%"
         alignItems="center"
       >
-        <StageButton stage={stage} isCurrentStage={isCurrentStage} />
+        <StageButton
+          stage={stage}
+          isCurrentStage={isCurrentStage}
+          workflowSlug={workflowSlug}
+        />
       </Box>
     </Paper>
   );
@@ -114,9 +124,17 @@ function copyForStage({ stage, isCurrentStage, byline }: CopyForStageArgs) {
 const StageButton: React.FC<{
   stage: OnboardingStage;
   isCurrentStage: boolean;
-}> = ({ stage, isCurrentStage }) => {
+  workflowSlug: WorkflowSlug;
+}> = ({ stage, isCurrentStage, workflowSlug }) => {
   const onClick = () =>
     TRACKER.track("clicked_stage_button", { type: stage.type });
+
+  const url = (() => {
+    const params = new URLSearchParams();
+    params.set("workflow", workflowSlug);
+    params.set("stage", stage.type);
+    return `/complete-stage?${params}`;
+  })();
 
   const { enableAdminDebugging } = useImpersonateContext();
 
@@ -126,7 +144,7 @@ const StageButton: React.FC<{
     case "submit_records":
       return (
         <Button
-          href={`/complete-stage?stage=${stage.type}`}
+          href={url}
           variant="contained"
           onClick={onClick}
           disabled={!isCurrentStage}
@@ -138,7 +156,7 @@ const StageButton: React.FC<{
     case "commitment_to_care": {
       return (
         <Button
-          href={`/complete-stage?stage=${stage.type}`}
+          href={url}
           variant="contained"
           onClick={onClick}
           disabled={!isCurrentStage || !enableAdminDebugging}
