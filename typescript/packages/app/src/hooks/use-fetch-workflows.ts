@@ -1,4 +1,4 @@
-import type { WorkflowModel,WorkflowSlug } from "@songbird/precedent-iso";
+import type { WorkflowModel, WorkflowSlug } from "@songbird/precedent-iso";
 import useSWR from "swr";
 
 export const useFetchWorkflows = () => {
@@ -7,7 +7,6 @@ export const useFetchWorkflows = () => {
   >("/api/proxy/workflows/get-all", async (url) => {
     const response = await fetch(url);
     const data = await response.json();
-    console.log({ hafsa: data.data });
     return data.data;
   });
 
