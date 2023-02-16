@@ -1,13 +1,17 @@
 import {
+  assertNever,
   OnboardingStage,
   WorkflowModel,
+  ZCarePlanStage,
+  ZCareTeamStage,
+  ZOnboardingStage,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
 import { z } from "zod";
 
 import {
-  createInitialStages,
+  CreateInitialWorkflow,
   CURRENT_VERSION,
   INITIAL_SLUG,
 } from "./create-initial-workflow";
@@ -87,7 +91,7 @@ WHERE
         sql.type(ZWorkflowFromSql)`
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
     VALUES (${userId}, ${childId}, ${slug}, ${CURRENT_VERSION}, ${JSON.stringify(
-          createInitialStages()
+          CreateInitialWorkflow.forSlug(slug)
         )}, 0)
 RETURNING
     ${FIELDS}
@@ -142,6 +146,28 @@ function fromSQL({
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
+  const stagesV2 = () => {
+    switch (workflow_slug) {
+      case "onboarding":
+        return {
+          slug: "onboarding" as const,
+          stages: ZOnboardingStage.array().parse(stages),
+        };
+      case "care_plan":
+        return {
+          slug: "care_plan" as const,
+          stages: ZCarePlanStage.array().parse(stages),
+        };
+      case "care_team":
+        return {
+          slug: "care_team" as const,
+          stages: ZCareTeamStage.array().parse(stages),
+        };
+      default:
+        assertNever(workflow_slug);
+    }
+  };
+
   return {
     id,
     userId: sb_user_id,
@@ -151,6 +177,7 @@ function fromSQL({
     stages,
     currentStageIndex: current_stage_idx,
     status,
+    stagesWithSlug: stagesV2(),
   };
 }
 

@@ -1,9 +1,11 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
+import type { OnboardingStage } from "@songbird/precedent-iso";
 import * as React from "react";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
+import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useSBFlags } from "../src/hooks/use-flags";
@@ -15,6 +17,7 @@ import { OnboardingFlow } from "../src/onboarding/onboarding-flow";
 const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
   const { data: workflow, isLoading: workflowIsLoading } = useFetchWorkflow();
+  const { data: child } = useFetchChild();
   const { isLoading: childIsLoading } = useRedirectIfNotEligible();
 
   useRedirectIfNotVerified();
@@ -32,13 +35,15 @@ const Home: React.FC = () => {
             <LinearProgress />
           </Box>
         )}
-        {!isLoading && workflow && user && (
+        {!isLoading && workflow && user && child && (
           <OnboardingFlow
             firstName={user.givenName?.trim()}
             isCompleted={workflow.status === "completed"}
             currentStageIndex={workflow.currentStageIndex}
-            stages={workflow.stages}
+            // TODO get rid of this cast
+            stages={workflow.stages as OnboardingStage[]}
             extendedOnboarding={flags.flags.extendedOnboarding}
+            workflowSlug={child.workflowSlug}
           />
         )}
       </BodyContainer>

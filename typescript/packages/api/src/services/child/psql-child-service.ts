@@ -2,13 +2,14 @@ import {
   assertNever,
   Child,
   QualificationStatus,
+  ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
 import type { ChildService } from "./child-service";
 
-const FIELDS = sql.fragment`id, qualification_status`;
+const FIELDS = sql.fragment`id, qualification_status, workflow_slug`;
 
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
@@ -57,11 +58,15 @@ INSERT INTO child (sb_user_id, qualification_status)
   }
 }
 
-function fromSql({ id, qualification_status }: ChildFromSql): Child {
+function fromSql({
+  id,
+  qualification_status,
+  workflow_slug,
+}: ChildFromSql): Child {
   return {
     id,
     qualified: QualifiedSqlConverter.from(qualification_status),
-    workflowSlug: undefined,
+    workflowSlug: workflow_slug,
   };
 }
 
@@ -82,6 +87,7 @@ type QualificationColumn = z.infer<typeof ZQualificationColumn>;
 const ZChildFromSql = z.object({
   id: z.string(),
   qualification_status: ZQualificationColumn,
+  workflow_slug: ZWorkflowSlug,
 });
 
 class QualifiedSqlConverter {

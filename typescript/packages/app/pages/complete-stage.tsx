@@ -37,7 +37,8 @@ const CompleteStage: React.FC = () => {
       throw new Error("undefined");
     }
 
-    setStageType(stage["type"]);
+    // todo remove this cast
+    setStageType(stage["type"] as OnboardingStage["type"]);
   }, [stageType, workflow]);
 
   const userId = user?.id;

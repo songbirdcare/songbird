@@ -133,6 +133,12 @@ export class WorkflowActionService {
 
         break;
       }
+      case "therapist_matching":
+      case "insurance_approval":
+      case "review_care_plan":
+      case "complete_assessment":
+        //  TODO do something eventually
+        break;
       default:
         assertNever(currentStage);
     }
