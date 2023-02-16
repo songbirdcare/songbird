@@ -94,15 +94,10 @@ WHERE
         return acc;
       }, new Set(ALL_WORKFLOW_SLUGS))
     );
-    console.log({
-      missing,
-      present: slugResponse.rows.map((r) => r.workflow_slug),
-    });
 
     if (missing.length) {
       await trx.query(
         sql.type(ZWorkflowFromSql)`
-
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
 SELECT
     *
@@ -122,7 +117,6 @@ ON CONFLICT (sb_user_id,
     child_id,
     workflow_slug)
     DO NOTHING;
-
 `
       );
     }
