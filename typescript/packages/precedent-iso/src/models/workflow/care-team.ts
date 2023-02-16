@@ -33,6 +33,7 @@ export type OngoingCare = z.infer<typeof ZOngoingCare>;
 export const ZCareTeamStage = z.discriminatedUnion("type", [
   ZInsuranceApproval,
   ZTherapistMatching,
+  ZOngoingCare,
 ]);
 
 export type CareTeamStage = z.infer<typeof ZCareTeamStage>;

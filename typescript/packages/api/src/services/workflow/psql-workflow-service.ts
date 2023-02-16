@@ -98,6 +98,7 @@ WHERE
     if (missing.length) {
       await trx.query(
         sql.type(ZWorkflowFromSql)`
+
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
 SELECT
     *
@@ -117,6 +118,7 @@ ON CONFLICT (sb_user_id,
     child_id,
     workflow_slug)
     DO NOTHING;
+
 `
       );
     }

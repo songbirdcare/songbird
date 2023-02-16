@@ -3,11 +3,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import {
-  assertNever,
-  OnboardingStage,
-  WorkflowSlug,
-} from "@songbird/precedent-iso";
+import { assertNever, Stage, WorkflowSlug } from "@songbird/precedent-iso";
 import Image from "next/image";
 
 import { useImpersonateContext } from "../../impersonate/impersonate-context";
@@ -17,7 +13,7 @@ import styles from "./display-stage.module.css";
 import type { StageDisplayInformation } from "./stage-display-information";
 
 export const DisplayStage: React.FC<{
-  stage: OnboardingStage;
+  stage: Stage;
   stageDisplayInformation: StageDisplayInformation;
   index: number;
   isCurrentStage: boolean;
@@ -99,7 +95,7 @@ export const DisplayStage: React.FC<{
 };
 
 interface CopyForStageArgs {
-  stage: OnboardingStage;
+  stage: Stage;
   isCurrentStage: boolean;
   byline: string;
 }
@@ -109,6 +105,11 @@ function copyForStage({ stage, isCurrentStage, byline }: CopyForStageArgs) {
     case "create_account":
     case "check_insurance_coverage":
     case "submit_records":
+    case "therapist_matching":
+    case "review_care_plan":
+    case "insurance_approval":
+    case "ongoing_care":
+    case "complete_assessment":
       return byline;
 
     case "commitment_to_care": {
@@ -122,7 +123,7 @@ function copyForStage({ stage, isCurrentStage, byline }: CopyForStageArgs) {
 }
 
 const StageButton: React.FC<{
-  stage: OnboardingStage;
+  stage: Stage;
   isCurrentStage: boolean;
   workflowSlug: WorkflowSlug;
 }> = ({ stage, isCurrentStage, workflowSlug }) => {
@@ -142,6 +143,11 @@ const StageButton: React.FC<{
     case "create_account":
     case "check_insurance_coverage":
     case "submit_records":
+    case "therapist_matching":
+    case "review_care_plan":
+    case "insurance_approval":
+    case "ongoing_care":
+    case "complete_assessment":
       return (
         <Button
           href={url}
