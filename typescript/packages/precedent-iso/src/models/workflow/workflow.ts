@@ -2,7 +2,14 @@ import { z } from "zod";
 
 import type { BlockingTask, Stage, StagesWithSlug } from "./stages";
 
-export const ZWorkflowSlug = z.enum(["onboarding", "care_plan", "care_team"]);
+export const ALL_WORKFLOW_SLUGS = [
+  "onboarding",
+  "care_plan",
+  "care_team",
+] as const;
+
+export const ALL_WORKFLOW_SLUGS_SET = new Set(ALL_WORKFLOW_SLUGS);
+export const ZWorkflowSlug = z.enum(ALL_WORKFLOW_SLUGS);
 export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
 export interface WorkflowModel {

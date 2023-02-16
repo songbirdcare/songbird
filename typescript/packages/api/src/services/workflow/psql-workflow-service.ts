@@ -1,7 +1,9 @@
 import {
+  ALL_WORKFLOW_SLUGS,
   assertNever,
   OnboardingStage,
   WorkflowModel,
+  WorkflowSlug,
   ZCarePlanStage,
   ZCareTeamStage,
   ZOnboardingStage,
@@ -13,10 +15,10 @@ import { z } from "zod";
 import {
   CreateInitialWorkflow,
   CURRENT_VERSION,
-  INITIAL_SLUG,
 } from "./create-initial-workflow";
 import type {
-  GetOrCreateWorkflowArguments,
+  GetAllArguments,
+  GetBySlugArguments,
   WorkflowService,
 } from "./workflow-service";
 
@@ -56,21 +58,62 @@ WHERE
     });
   }
 
-  async getOrCreateInitial(
-    args: GetOrCreateWorkflowArguments
-  ): Promise<WorkflowModel> {
+  getBySlug = async (args: GetBySlugArguments): Promise<WorkflowModel> => {
+    const all = await this.getAll(args);
+    return all[args.slug];
+  };
+
+  async getAll(
+    args: GetAllArguments
+  ): Promise<Record<WorkflowSlug, WorkflowModel>> {
     return this.pool.connect(async (cnx) =>
-      cnx.transaction(async (trx) =>
-        fromSQL(await this.#getOrCreateSql(trx, args))
-      )
+      cnx.transaction((trx) => this.#getAll(trx, args))
     );
   }
 
-  async #getOrCreateSql(
+  async #getAll(
     trx: DatabaseTransactionConnection,
+    { userId, childId }: GetAllArguments
+  ): Promise<Record<WorkflowSlug, WorkflowModel>> {
+    const slugs = await trx.query(
+      sql.type(ZWorkflowSlugFromSql)`
+SELECT
+    workflow_slug
+FROM
+    workflow
+WHERE
+    sb_user_id = ${userId}
+    AND child_id = ${childId}
+`
+    );
 
-    { userId, childId, slug }: GetOrCreateWorkflowArguments
-  ): Promise<WorkflowFromSql> {
+    const { missing } = processSlugs(
+      childId,
+      slugs.rows.map((row) => row.workflow_slug)
+    );
+
+    if (missing.length) {
+      await trx.query(
+        sql.type(ZWorkflowFromSql)`
+INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
+SELECT
+    *
+FROM
+    ${sql.unnest(
+      missing.map((slug) => [
+        userId,
+        childId,
+        slug,
+        CURRENT_VERSION,
+        JSON.stringify(CreateInitialWorkflow.forSlug(slug)),
+        0,
+      ]),
+      ["uuid", "uuid", "text", "int4", "jsonb", "int4"]
+    )}
+`
+      );
+    }
+
     const workflows = await trx.query(
       sql.type(ZWorkflowFromSql)`
 SELECT
@@ -80,30 +123,15 @@ FROM
 WHERE
     sb_user_id = ${userId}
     AND child_id = ${childId}
-    AND workflow_slug = ${slug}
 `
     );
 
-    const [workflow] = workflows.rows;
+    const acc: Partial<Record<WorkflowSlug, WorkflowModel>> = {};
 
-    if (workflow === undefined) {
-      return trx.one(
-        sql.type(ZWorkflowFromSql)`
-INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
-    VALUES (${userId}, ${childId}, ${slug}, ${CURRENT_VERSION}, ${JSON.stringify(
-          CreateInitialWorkflow.forSlug(slug)
-        )}, 0)
-RETURNING
-    ${FIELDS}
-`
-      );
-    } else if (workflows.rows.length > 1) {
-      throw new Error(
-        `Multiple workflows found for user=${userId} child=${childId} slug=${INITIAL_SLUG}`
-      );
+    for (const workflow of workflows.rows) {
+      acc[workflow.workflow_slug] = fromSQL(workflow);
     }
-
-    return workflow;
+    return acc as Record<WorkflowSlug, WorkflowModel>;
   }
 
   update = async (args: UpdateWorkflow): Promise<WorkflowModel> => {
@@ -194,6 +222,10 @@ export type WorkflowStatus = z.infer<typeof ZWorkflowStatus>;
 
 const ZWorkflowStatus = z.union([z.literal("pending"), z.literal("completed")]);
 
+const ZWorkflowSlugFromSql = z.object({
+  workflow_slug: ZWorkflowSlug,
+});
+
 const ZWorkflowFromSql = z.object({
   id: z.string(),
   sb_user_id: z.string(),
@@ -204,3 +236,27 @@ const ZWorkflowFromSql = z.object({
   current_stage_idx: z.number(),
   status: ZWorkflowStatus,
 });
+
+function processSlugs(childId: string, slugs: WorkflowSlug[]) {
+  const seen = new Set<WorkflowSlug>();
+  for (const slug of slugs) {
+    if (seen.has(slug)) {
+      throw new Error(
+        `Multiple workflows found for child=${childId} slug=${slug}`
+      );
+    }
+
+    seen.add(slug);
+  }
+
+  const all = new Set(ALL_WORKFLOW_SLUGS);
+
+  for (const slug of seen) {
+    all.delete(slug);
+  }
+
+  return {
+    present: [...seen],
+    missing: [...all],
+  };
+}

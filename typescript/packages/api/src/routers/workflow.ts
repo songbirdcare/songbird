@@ -31,7 +31,29 @@ export class WorkflowRouter {
       async (req: express.Request, res: express.Response) => {
         const slug = ZWorkflowSlug.optional().parse(req.params.slug);
         const child = await this.childService.get(req.user.id);
-        const workflow = await this.workflowService.getOrCreateInitial({
+        const workflow = await this.workflowService.getBySlug({
+          userId: req.user.id,
+          childId: child.id,
+          slug: slug ?? child.workflowSlug,
+        });
+
+        const advancedWorkflow = await this.workflowActionService.tryAdvance(
+          { userId: req.user.id },
+          workflow
+        );
+
+        res.json({
+          data: advancedWorkflow,
+        });
+      }
+    );
+
+    router.get(
+      "/get-all",
+      async (req: express.Request, res: express.Response) => {
+        const slug = ZWorkflowSlug.optional().parse(req.params.slug);
+        const child = await this.childService.get(req.user.id);
+        const workflow = await this.workflowService.getBySlug({
           userId: req.user.id,
           childId: child.id,
           slug: slug ?? child.workflowSlug,
@@ -52,7 +74,7 @@ export class WorkflowRouter {
       "/start",
       async (req: express.Request, res: express.Response) => {
         const child = await this.childService.get(req.user.id);
-        const workflow = await this.workflowService.getOrCreateInitial({
+        const workflow = await this.workflowService.getBySlug({
           userId: req.user.id,
           childId: child.id,
           slug: INITIAL_SLUG,
