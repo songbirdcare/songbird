@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import type { OnboardingStage } from "@songbird/precedent-iso";
+import type { OnboardingStage,WorkflowSlug } from "@songbird/precedent-iso";
 
 import { STAGE_DISPLAY_INFO_LOOKUP } from "../stage-display-information-lookup";
 import { DisplayCompletedStages } from "./display-completed-stages";
@@ -7,10 +7,11 @@ import { DisplayStage } from "./display-stage";
 import type { StageWithIndex } from "./stage-display-information";
 
 export const DisplayStages: React.FC<{
+  workflowSlug: WorkflowSlug;
   currentStageIndex: number;
   stages: OnboardingStage[];
   isCompleted: boolean;
-}> = ({ stages, currentStageIndex, isCompleted }) => {
+}> = ({ stages, currentStageIndex, isCompleted, workflowSlug }) => {
   const { completed, nonCompleted } = processStages(
     isCompleted,
     currentStageIndex,
@@ -37,6 +38,7 @@ export const DisplayStages: React.FC<{
               index={index}
               key={stage.type}
               currentStageIndex={currentStageIndex}
+              workflowSlug={workflowSlug}
             />
           );
         })}
