@@ -1,6 +1,6 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
-import { assertNever, OnboardingStage } from "@songbird/precedent-iso";
+import { assertNever, Stage } from "@songbird/precedent-iso";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { z } from "zod";
@@ -22,9 +22,9 @@ const CompleteStage: React.FC = () => {
   useRedirectIfNotEligible();
   const stageTypeFromUrl = useGetStageType();
 
-  const [stageType, setStageType] = React.useState<
-    OnboardingStage["type"] | undefined
-  >(stageTypeFromUrl);
+  const [stageType, setStageType] = React.useState<Stage["type"] | undefined>(
+    stageTypeFromUrl
+  );
 
   useTrackOnce("page_accessed", { page: "complete-stage" });
   React.useEffect(() => {
@@ -38,7 +38,7 @@ const CompleteStage: React.FC = () => {
     }
 
     // todo remove this cast
-    setStageType(stage["type"] as OnboardingStage["type"]);
+    setStageType(stage["type"]);
   }, [stageType, workflow]);
 
   const userId = user?.id;
@@ -71,7 +71,7 @@ const ZStageType = z.union([
   z.literal("commitment_to_care"),
 ]);
 
-function useGetStageType(): OnboardingStage["type"] | undefined {
+function useGetStageType(): Stage["type"] | undefined {
   const router = useRouter();
 
   try {
@@ -84,17 +84,18 @@ function useGetStageType(): OnboardingStage["type"] | undefined {
   }
 }
 
-function shouldRenderAppBar(
-  stageType: OnboardingStage["type"] | undefined
-): boolean {
+function shouldRenderAppBar(stageType: Stage["type"] | undefined): boolean {
   switch (stageType) {
     case undefined:
-      return true;
     case "create_account":
     case "commitment_to_care":
       return true;
     case "check_insurance_coverage":
     case "submit_records":
+    case "insurance_approval":
+    case "therapist_matching":
+    case "complete_assessment":
+    case "review_care_plan":
       return false;
     default:
       assertNever(stageType);
