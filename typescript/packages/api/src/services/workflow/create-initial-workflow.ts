@@ -49,6 +49,17 @@ export class CreateInitialWorkflow {
           },
         ],
       },
+      {
+        id: randomUUID(),
+        type: "ongoing_care",
+        blockingTasks: [
+          {
+            id: randomUUID(),
+            status: "pending",
+            type: "dummy",
+          },
+        ],
+      },
     ];
   }
 

@@ -4,9 +4,7 @@ import * as T from "./task";
 
 export type OnboardingStageType = OnboardingStage["type"];
 
-type Unarray<T> = T extends Array<infer U> ? U : T;
-
-export type OnboardingTask = Unarray<OnboardingStage["blockingTasks"]>;
+export type OnboardingTask = OnboardingStage["blockingTasks"][number];
 
 export const ZCreateAccount = z.object({
   id: z.string(),

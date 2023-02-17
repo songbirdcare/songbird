@@ -137,6 +137,7 @@ export class WorkflowActionService {
       case "insurance_approval":
       case "review_care_plan":
       case "complete_assessment":
+      case "ongoing_care":
         //  TODO do something eventually
         break;
       default:

@@ -1,9 +1,14 @@
 import { z } from "zod";
 
-import type { OnboardingTask } from "./onboarding";
-import type { Stage, StagesWithSlug } from "./stages";
+import type { BlockingTask, Stage, StagesWithSlug } from "./stages";
 
-export const ZWorkflowSlug = z.enum(["onboarding", "care_plan", "care_team"]);
+export const ALL_WORKFLOW_SLUGS = [
+  "onboarding",
+  "care_plan",
+  "care_team",
+] as const;
+
+export const ZWorkflowSlug = z.enum(ALL_WORKFLOW_SLUGS);
 export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
 export interface WorkflowModel {
@@ -53,7 +58,7 @@ export class WorkflowWrapper {
     if (!stage) {
       throw new Error("stage does not exist");
     }
-    const task = (stage.blockingTasks as OnboardingTask[]).find(
+    const task = (stage.blockingTasks as BlockingTask[]).find(
       (task) => task.id === taskId
     );
 
@@ -68,9 +73,9 @@ export class WorkflowWrapper {
 
     this.#hasChanged = true;
 
-    const firstPendingTaskIndex = (
-      stage.blockingTasks as OnboardingTask[]
-    ).findIndex((t) => t.status === "pending");
+    const firstPendingTaskIndex = stage.blockingTasks.findIndex(
+      (t) => t.status === "pending"
+    );
 
     if (firstPendingTaskIndex === -1) {
       throw new Error("no pending tasks available");

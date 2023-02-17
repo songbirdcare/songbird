@@ -1,9 +1,9 @@
-import type { OnboardingStageType } from "@songbird/precedent-iso";
+import type { Stage } from "@songbird/precedent-iso";
 
 import type { StageDisplayInformation } from "./stage/stage-display-information";
 
 export const STAGE_DISPLAY_INFO_LOOKUP: Record<
-  OnboardingStageType,
+  Stage["type"],
   StageDisplayInformation
 > = {
   create_account: {
@@ -47,7 +47,62 @@ export const STAGE_DISPLAY_INFO_LOOKUP: Record<
       path: "/onboarding/heart.svg",
       width: 39,
       height: 31,
-      alt: "Care team",
+      alt: "Commitment to care",
+    },
+  },
+  therapist_matching: {
+    title: "Therapist matching",
+    byline:
+      "We’ll let you know as soon as we find the best therapist for your family. We’re working hard.",
+    asset: {
+      path: "/onboarding/hands.svg",
+      width: 64,
+      height: 60,
+      alt: "Insurance coverage",
+    },
+  },
+  complete_assessment: {
+    title: "Complete assessment",
+    byline:
+      "Meet with a member of your Songbird Care Team to collaborate on your child’s care plan.",
+    asset: {
+      path: "/onboarding/calendar.svg",
+      width: 48,
+      height: 42,
+      alt: "Create account and book time",
+    },
+  },
+  review_care_plan: {
+    title: "Review your child’s care plan",
+    byline:
+      "You’ll review your child’s care plan with your Songbird Care Team.",
+    asset: {
+      path: "/onboarding/heart.svg",
+      width: 39,
+      height: 31,
+      alt: "Child care plan",
+    },
+  },
+  insurance_approval: {
+    title: "Insurance approval",
+    byline:
+      "We’ll let you know as soon as insurance approves your family’s ongoing care.",
+    asset: {
+      path: "/onboarding/flag.svg",
+      width: 65,
+      height: 59,
+      alt: "Insurance approval",
+    },
+  },
+  ongoing_care: {
+    title: "Ongoing care",
+    byline:
+      "You’ll have your first day of in-home care with your Songbird Care Team.",
+    asset: {
+      path: "/onboarding/blocks.svg",
+      width: 37,
+      height: 42,
+      alt: "Ongoing care",
     },
   },
 };
