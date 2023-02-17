@@ -28,3 +28,8 @@ export const ZCarePlanStage = z.discriminatedUnion("type", [
 ]);
 
 export type CarePlanStage = z.infer<typeof ZCarePlanStage>;
+
+export const ZCarePlanStageType = z.union([
+  z.literal("complete_assessment"),
+  z.literal("review_care_plan"),
+]);

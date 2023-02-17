@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
-import type { StagesWithSlug } from "@songbird/precedent-iso";
+import type { Stage } from "@songbird/precedent-iso";
 import type { WorkflowSlug } from "@songbird/precedent-iso";
 import React from "react";
 
@@ -14,7 +14,7 @@ interface RenderWorkflowProps {
   firstName: string | undefined;
   isCompleted: boolean;
   currentStageIndex: number;
-  stagesWithSlug: StagesWithSlug;
+  stages: Stage[];
   extendedOnboarding: boolean;
   workflowSlug: WorkflowSlug;
   setWorkflowSlug: (workflowSlug: WorkflowSlug) => void;
@@ -45,14 +45,11 @@ export const DisplayWorkflowStagesV1: React.FC<
     RenderWorkflowProps,
     | "extendedOnboarding"
     | "workflowSlug"
-    | "workflowSlug"
     | "setWorkflowSlug"
     | "isWorkflowEnabled"
   >
-> = ({ isCompleted, currentStageIndex, stagesWithSlug, firstName }) => {
+> = ({ isCompleted, currentStageIndex, stages, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
-
-  const stages = stagesWithSlug.stages;
 
   return (
     <Box
@@ -85,7 +82,7 @@ export const DisplayWorkflowStagesV1: React.FC<
       </Box>
 
       <DisplayStages
-        workflowSlug={stagesWithSlug.slug}
+        workflowSlug={"onboarding"}
         isCompleted={isCompleted}
         currentStageIndex={currentStageIndex}
         stages={stages}
@@ -100,14 +97,13 @@ export const DisplayWorkflowStagesV2: React.FC<
 > = ({
   isCompleted,
   currentStageIndex,
-  stagesWithSlug,
   workflowSlug,
   setWorkflowSlug,
   isWorkflowEnabled,
+  stages,
 }) => {
   const copy = StatusMessageCopy.forV2(workflowSlug);
 
-  const stages = stagesWithSlug.stages;
   return (
     <Box
       display="flex"

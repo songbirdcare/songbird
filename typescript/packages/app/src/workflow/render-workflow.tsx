@@ -94,7 +94,7 @@ const RenderSignature: React.FC<{
   stageId: string;
 }> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
-  const { mutate } = useFetchWorkflow();
+  const { mutate } = useFetchWorkflow(undefined);
 
   const { enableAdminDebugging } = useImpersonateContext();
 

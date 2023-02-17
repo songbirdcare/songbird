@@ -98,7 +98,6 @@ WHERE
     if (missing.length) {
       await trx.query(
         sql.type(ZWorkflowFromSql)`
-
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
 SELECT
     *
@@ -175,15 +174,13 @@ RETURNING
 
 function fromSQL({
   id,
-  sb_user_id,
-  child_id,
   workflow_slug,
   version,
   stages,
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
-  const stagesWithSlug = (): StagesWithSlug => {
+  const stagesWithSlug = ((): StagesWithSlug => {
     switch (workflow_slug) {
       case "onboarding":
         return {
@@ -203,18 +200,15 @@ function fromSQL({
       default:
         assertNever(workflow_slug);
     }
-  };
+  })();
 
   return {
     id,
-    userId: sb_user_id,
-    childId: child_id,
     slug: workflow_slug,
     version,
-    stages,
+    stages: stagesWithSlug.stages,
     currentStageIndex: current_stage_idx,
     status,
-    stagesWithSlug: stagesWithSlug(),
   };
 }
 

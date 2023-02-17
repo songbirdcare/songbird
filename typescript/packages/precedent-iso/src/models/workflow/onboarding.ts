@@ -45,3 +45,10 @@ export const ZOnboardingStage = z.discriminatedUnion("type", [
 ]);
 
 export type OnboardingStage = z.infer<typeof ZOnboardingStage>;
+
+export const ZOnboardingStageType = z.union([
+  z.literal("create_account"),
+  z.literal("check_insurance_coverage"),
+  z.literal("submit_records"),
+  z.literal("commitment_to_care"),
+]);

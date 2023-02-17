@@ -37,3 +37,9 @@ export const ZCareTeamStage = z.discriminatedUnion("type", [
 ]);
 
 export type CareTeamStage = z.infer<typeof ZCareTeamStage>;
+
+export const ZCareTeamStageType = z.union([
+  z.literal("insurance_approval"),
+  z.literal("therapist_matching"),
+  z.literal("ongoing_care"),
+]);
