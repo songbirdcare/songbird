@@ -32,28 +32,19 @@ WHERE
     return fromSql(child);
   }
 
-  async createOnlyIfNeeded(
+  async createIfNotExists(
     userId: string,
     qualified: QualificationStatus
-  ): Promise<"created" | "not_created"> {
-    return this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) => {
-        const exists = await trx.exists(
-          sql.unsafe` SELECT 1 FROM child WHERE sb_user_id = ${userId} `
-        );
-
-        if (exists) {
-          return "not_created";
-        }
-
-        await trx.query(
-          sql.type(ZChildFromSql)`
+  ): Promise<void> {
+    await this.pool.connect(async (connection) =>
+      connection.query(
+        sql.type(ZChildFromSql)`
 INSERT INTO child (sb_user_id, qualification_status)
     VALUES (${userId}, ${QualifiedSqlConverter.to(qualified)})
+ON CONFLICT (sb_user_id)
+    DO NOTHING
 `
-        );
-        return "created";
-      })
+      )
     );
   }
 }

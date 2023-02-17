@@ -29,13 +29,18 @@ test("create", async () => {
     email: "test@gmail.com",
   });
 
-  const resp = await Promise.all(
+  await childService.createIfNotExists(user.id, {
+    type: "qualified",
+  });
+
+  await Promise.all(
     new Array(20).fill(undefined).map(() =>
-      childService.createOnlyIfNeeded(user.id, {
+      childService.createIfNotExists(user.id, {
         type: "unknown",
       })
     )
   );
 
-  expect(resp.filter((r) => r === "created").length).toEqual(1);
+  const child = await childService.get(user.id);
+  expect(child.qualified.type).toEqual("qualified");
 });
