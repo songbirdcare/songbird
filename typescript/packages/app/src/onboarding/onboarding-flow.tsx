@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
@@ -51,6 +52,8 @@ export const DisplayWorkflowStagesV1: React.FC<
 > = ({ isCompleted, currentStageIndex, stages, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
 
+  const isSmallScreen = useMediaQuery("(max-width:670px)");
+
   return (
     <Box
       display="flex"
@@ -59,6 +62,7 @@ export const DisplayWorkflowStagesV1: React.FC<
       flexDirection="column"
       alignItems="center"
       marginX={2}
+      width={isSmallScreen ? "100%" : "725px"}
     >
       <Box display="flex" flexDirection="column" width="100%" gap={1}>
         <StatusMessage header={copy.header} byline={copy.byline} />
@@ -103,6 +107,7 @@ export const DisplayWorkflowStagesV2: React.FC<
   stages,
 }) => {
   const copy = StatusMessageCopy.forV2(workflowSlug);
+  const isSmallScreen = useMediaQuery("(max-width:670px)");
 
   return (
     <Box
@@ -112,6 +117,7 @@ export const DisplayWorkflowStagesV2: React.FC<
       flexDirection="column"
       alignItems="center"
       marginX={2}
+      width={isSmallScreen ? "100%" : "725px"}
     >
       <Box display="flex" flexDirection="column" width="100%" gap={1}>
         <StatusMessage header={copy.header} byline={copy.byline} />
