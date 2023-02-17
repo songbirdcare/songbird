@@ -1,13 +1,9 @@
 import {
   ALL_WORKFLOW_SLUGS,
-  assertNever,
   Stage,
-  StagesWithSlug,
   WorkflowModel,
   WorkflowSlug,
-  ZCarePlanStage,
-  ZCareTeamStage,
-  ZOnboardingStage,
+  ZStagesWithSlug,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
@@ -180,27 +176,10 @@ function fromSQL({
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
-  const stagesWithSlug = ((): StagesWithSlug => {
-    switch (workflow_slug) {
-      case "onboarding":
-        return {
-          slug: "onboarding",
-          stages: ZOnboardingStage.array().parse(stages),
-        };
-      case "care_plan":
-        return {
-          slug: "care_plan",
-          stages: ZCarePlanStage.array().parse(stages),
-        };
-      case "care_team":
-        return {
-          slug: "care_team",
-          stages: ZCareTeamStage.array().parse(stages),
-        };
-      default:
-        assertNever(workflow_slug);
-    }
-  })();
+  const stagesWithSlug = ZStagesWithSlug.parse({
+    slug: workflow_slug,
+    stages,
+  });
 
   return {
     id,
