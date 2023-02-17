@@ -89,6 +89,7 @@ export const DisplayWorkflowStagesV1: React.FC<
         isCompleted={isCompleted}
         currentStageIndex={currentStageIndex}
         stages={stages}
+        isWorkflowEnabled={true}
       />
     </Box>
   );

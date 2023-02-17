@@ -59,7 +59,7 @@ const Home: React.FC = () => {
             stagesWithSlug={workflow.stagesWithSlug}
             setWorkflowSlug={setWorkflowSlug}
             isWorkflowEnabled={
-              workflowSlug != undefined && workflowSlug === child.workflowSlug
+              workflowSlug === undefined || workflowSlug === child.workflowSlug
             }
           />
         )}
