@@ -58,6 +58,7 @@ const Home: React.FC = () => {
             workflowSlug={workflow.slug}
             stagesWithSlug={workflow.stagesWithSlug}
             setWorkflowSlug={setWorkflowSlug}
+            childWorkflowSlug={child.workflowSlug}
           />
         )}
       </BodyContainer>

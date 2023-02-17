@@ -18,17 +18,22 @@ interface RenderWorkflowProps {
   extendedOnboarding: boolean;
   workflowSlug: WorkflowSlug;
   setWorkflowSlug: (workflowSlug: WorkflowSlug) => void;
+  childWorkflowSlug: WorkflowSlug;
 }
 
 export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
   extendedOnboarding,
+  childWorkflowSlug,
+  workflowSlug,
+  setWorkflowSlug,
   ...rest
 }) => {
   return extendedOnboarding ? (
     <DisplayWorkflowStagesV2
       {...rest}
-      selectedWorkflowSlug={rest.workflowSlug}
-      setSelectedWorkflowSlug={rest.setWorkflowSlug}
+      workflowSlug={workflowSlug}
+      setWorkflowSlug={setWorkflowSlug}
+      childWorkflowSlug={childWorkflowSlug}
     />
   ) : (
     <DisplayWorkflowStagesV1 {...rest} />
@@ -36,12 +41,16 @@ export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
 };
 
 export const DisplayWorkflowStagesV1: React.FC<
-  Omit<RenderWorkflowProps, "extendedOnboarding" | "workflowSlug">
+  Omit<
+    RenderWorkflowProps,
+    | "extendedOnboarding"
+    | "workflowSlug"
+    | "childWorkflowSlug"
+    | "workflowSlug"
+    | "setWorkflowSlug"
+  >
 > = ({ isCompleted, currentStageIndex, stagesWithSlug, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
-  if (stagesWithSlug.slug !== "onboarding") {
-    throw new Error("not supported");
-  }
 
   const stages = stagesWithSlug.stages;
 
@@ -86,19 +95,15 @@ export const DisplayWorkflowStagesV1: React.FC<
 };
 
 export const DisplayWorkflowStagesV2: React.FC<
-  Omit<RenderWorkflowProps, "extendedOnboarding" | "firstName"> & {
-    selectedWorkflowSlug: WorkflowSlug;
-    setSelectedWorkflowSlug: (slug: WorkflowSlug) => void;
-  }
+  Omit<RenderWorkflowProps, "extendedOnboarding" | "firstName">
 > = ({
   isCompleted,
   currentStageIndex,
   stagesWithSlug,
-  selectedWorkflowSlug,
-  setSelectedWorkflowSlug,
   workflowSlug,
+  setWorkflowSlug,
 }) => {
-  const copy = StatusMessageCopy.forV2(selectedWorkflowSlug);
+  const copy = StatusMessageCopy.forV2(workflowSlug);
 
   const stages = stagesWithSlug.stages;
   return (
@@ -115,8 +120,8 @@ export const DisplayWorkflowStagesV2: React.FC<
       </Box>
       <Box width="100%" marginTop={7}>
         <WorkflowSelector
-          selectedWorkflowSlug={selectedWorkflowSlug}
-          setSelectedWorkflowSlug={setSelectedWorkflowSlug}
+          selectedWorkflowSlug={workflowSlug}
+          setSelectedWorkflowSlug={setWorkflowSlug}
         />
       </Box>
 
