@@ -1,6 +1,5 @@
 import {
   assertNever,
-  Stage,
   WorkflowSlug,
   ZCarePlanStageType,
   ZCareTeamStageType,
@@ -15,38 +14,33 @@ export const useGetWorkflowSlugAndStageType = (
 ) => {
   const router = useRouter();
 
-  const [data, setData] = React.useState<
-    | {
-        workflowSlug: WorkflowSlug;
-        stageType: Stage["type"] | undefined;
-      }
-    | undefined
-  >(() => {
-    const workflowSlug = ZWorkflowSlug.safeParse(router.query.workflow);
+  const workflow = router.query.workflow;
+  const stage = router.query.stage;
+
+  const computedStuff = React.useMemo(() => {
+    const workflowSlug = ZWorkflowSlug.safeParse(workflow);
 
     if (!workflowSlug.success) {
       return undefined;
     }
-    const stageType = getStageType(workflowSlug.data, router.query.stage);
+    const stageType = getStageType(workflowSlug.data, stage);
 
     return {
       workflowSlug: workflowSlug.data,
       stageType: stageType.success ? stageType.data : undefined,
     };
-  });
+  }, [workflow, stage]);
 
-  React.useEffect(() => {
-    if (data || !childWorkflowSlug) {
-      return;
-    }
+  if (computedStuff) {
+    return computedStuff;
+  }
 
-    setData({
-      workflowSlug: childWorkflowSlug,
-      stageType: undefined,
-    });
-  }, [data, childWorkflowSlug]);
-
-  return data;
+  return childWorkflowSlug
+    ? {
+        workflowSlug: childWorkflowSlug,
+        stageType: undefined,
+      }
+    : undefined;
 };
 
 function getStageType(workflowSlug: WorkflowSlug, stageType: unknown) {

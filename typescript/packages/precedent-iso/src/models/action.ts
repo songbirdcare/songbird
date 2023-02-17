@@ -18,10 +18,17 @@ export const ZSignatureAction = z.object({
   taskId: z.string(),
 });
 
+export const ZDummyAction = z.object({
+  type: z.literal("dummy"),
+  stageId: z.string(),
+  taskId: z.string(),
+});
+
 export const ZAction = z.discriminatedUnion("type", [
   ZFormAction,
   ZSignatureAction,
   ZScheduleAction,
+  ZDummyAction,
 ]);
 
 export type FormAction = z.infer<typeof ZFormAction>;
