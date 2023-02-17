@@ -17,7 +17,7 @@ export const useGetWorkflowSlugAndStageType = (
   const workflow = router.query.workflow;
   const stage = router.query.stage;
 
-  const computedStuff = React.useMemo(() => {
+  const fromQueryParams = React.useMemo(() => {
     const workflowSlug = ZWorkflowSlug.safeParse(workflow);
 
     if (!workflowSlug.success) {
@@ -31,8 +31,8 @@ export const useGetWorkflowSlugAndStageType = (
     };
   }, [workflow, stage]);
 
-  if (computedStuff) {
-    return computedStuff;
+  if (fromQueryParams) {
+    return fromQueryParams;
   }
 
   return childWorkflowSlug
