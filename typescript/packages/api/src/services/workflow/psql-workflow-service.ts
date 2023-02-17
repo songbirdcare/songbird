@@ -1,13 +1,9 @@
 import {
   ALL_WORKFLOW_SLUGS,
-  assertNever,
   Stage,
-  StagesWithSlug,
   WorkflowModel,
   WorkflowSlug,
-  ZCarePlanStage,
-  ZCareTeamStage,
-  ZOnboardingStage,
+  ZStagesWithSlug,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, DatabaseTransactionConnection, sql } from "slonik";
@@ -98,7 +94,6 @@ WHERE
     if (missing.length) {
       await trx.query(
         sql.type(ZWorkflowFromSql)`
-
 INSERT INTO workflow (sb_user_id, child_id, workflow_slug, version, stages, current_stage_idx)
 SELECT
     *
@@ -175,46 +170,24 @@ RETURNING
 
 function fromSQL({
   id,
-  sb_user_id,
-  child_id,
   workflow_slug,
   version,
   stages,
   current_stage_idx,
   status,
 }: WorkflowFromSql): WorkflowModel {
-  const stagesWithSlug = (): StagesWithSlug => {
-    switch (workflow_slug) {
-      case "onboarding":
-        return {
-          slug: "onboarding",
-          stages: ZOnboardingStage.array().parse(stages),
-        };
-      case "care_plan":
-        return {
-          slug: "care_plan",
-          stages: ZCarePlanStage.array().parse(stages),
-        };
-      case "care_team":
-        return {
-          slug: "care_team",
-          stages: ZCareTeamStage.array().parse(stages),
-        };
-      default:
-        assertNever(workflow_slug);
-    }
-  };
+  const stagesWithSlug = ZStagesWithSlug.parse({
+    slug: workflow_slug,
+    stages,
+  });
 
   return {
     id,
-    userId: sb_user_id,
-    childId: child_id,
     slug: workflow_slug,
     version,
-    stages,
+    stages: stagesWithSlug.stages,
     currentStageIndex: current_stage_idx,
     status,
-    stagesWithSlug: stagesWithSlug(),
   };
 }
 

@@ -1,21 +1,30 @@
-import type { CarePlanStage, CarePlanTask } from "./care-plan";
-import type { CareTeamStage, CareTeamTask } from "./care-team";
-import type { OnboardingStage, OnboardingTask } from "./onboarding";
+import { z } from "zod";
 
-export type Stage = OnboardingStage | CarePlanStage | CareTeamStage;
+import { CarePlanTask, ZCarePlanStage } from "./care-plan";
+import { CareTeamTask, ZCareTeamStage } from "./care-team";
+import { OnboardingTask, ZOnboardingStage } from "./onboarding";
 
-export type StagesWithSlug =
-  | {
-      slug: "onboarding";
-      stages: OnboardingStage[];
-    }
-  | {
-      slug: "care_plan";
-      stages: CarePlanStage[];
-    }
-  | {
-      slug: "care_team";
-      stages: CareTeamStage[];
-    };
+const ZOnboardingWithSlug = z.object({
+  slug: z.literal("onboarding"),
+  stages: ZOnboardingStage.array(),
+});
 
+const ZCarePlanWithSlug = z.object({
+  slug: z.literal("care_plan"),
+  stages: ZCarePlanStage.array(),
+});
+
+const ZCareTeamWithSlug = z.object({
+  slug: z.literal("care_team"),
+  stages: ZCareTeamStage.array(),
+});
+
+export const ZStagesWithSlug = z.discriminatedUnion("slug", [
+  ZOnboardingWithSlug,
+  ZCarePlanWithSlug,
+  ZCareTeamWithSlug,
+]);
+
+export type StagesWithSlug = z.infer<typeof ZStagesWithSlug>;
+export type Stage = StagesWithSlug["stages"][number];
 export type BlockingTask = CarePlanTask | CareTeamTask | OnboardingTask;

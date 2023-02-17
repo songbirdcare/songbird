@@ -20,7 +20,7 @@ export const RenderForm: React.FC<{
   userId: string;
 }> = ({ workflowId, task, userId, stageId }) => {
   const router = useRouter();
-  const { mutate } = useFetchWorkflow();
+  const { mutate } = useFetchWorkflow(undefined);
   const { data: formData, isLoading } = useFetchFormConfig(task.slug);
 
   const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);

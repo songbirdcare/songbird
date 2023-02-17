@@ -21,7 +21,7 @@ export const RenderSchedule: React.FC<{
   const router = useRouter();
   const { data: user, isLoading: userIsLoading } = useFetchUser();
 
-  const { mutate } = useFetchWorkflow();
+  const { mutate } = useFetchWorkflow(undefined);
 
   const { enableAdminDebugging } = useImpersonateContext();
 

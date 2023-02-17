@@ -124,7 +124,7 @@ const FadeMenu: React.FC<{ isAdmin: boolean }> = ({ isAdmin }) => {
 
   const { isOpen, hide, show, shutdown } = useIntercom();
   const deleteWorkflows = useDeleteWorkflows();
-  const { mutate } = useFetchWorkflow();
+  const { mutate } = useFetchWorkflow(undefined);
 
   const [resetWorkflowIsOpen, setResetWorkflowIsOpen] = React.useState(false);
 
