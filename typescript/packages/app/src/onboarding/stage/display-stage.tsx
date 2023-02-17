@@ -13,23 +13,22 @@ import styles from "./display-stage.module.css";
 import type { StageDisplayInformation } from "./stage-display-information";
 
 export const DisplayStage: React.FC<{
-  stage: Stage;
+  stageType: Stage["type"];
   stageDisplayInformation: StageDisplayInformation;
   index: number;
-  isCurrentStage: boolean;
-  currentStageIndex: number;
+  isStageEnabled: boolean;
   workflowSlug: WorkflowSlug;
 }> = ({
   stageDisplayInformation: { title, byline, asset },
   index,
-  isCurrentStage,
-  stage,
+  isStageEnabled,
+  stageType,
   workflowSlug,
 }) => {
   const copy = copyForStage({
-    isCurrentStage,
+    isStageEnabled,
     byline,
-    stage,
+    stageType,
   });
 
   const isSmallScreen = useMediaQuery("(max-width:670px)");
@@ -41,7 +40,7 @@ export const DisplayStage: React.FC<{
         gap: isSmallScreen ? 1 : 2,
         flexDirection: "column",
         minHeight: "132px",
-        backgroundColor: isCurrentStage ? undefined : SONG_BIRD_BIEGE2,
+        backgroundColor: isStageEnabled ? undefined : SONG_BIRD_BIEGE2,
       }}
       variant="outlined"
       className={styles["paper"] as string}
@@ -57,7 +56,7 @@ export const DisplayStage: React.FC<{
           width={asset.width}
           height={asset.height}
           alt={asset.alt}
-          className={isCurrentStage ? undefined : (styles["image"] as string)}
+          className={isStageEnabled ? undefined : (styles["image"] as string)}
         />
       </Box>
       <Box
@@ -85,8 +84,8 @@ export const DisplayStage: React.FC<{
         alignItems="center"
       >
         <StageButton
-          stage={stage}
-          isCurrentStage={isCurrentStage}
+          stageType={stageType}
+          isStageEnabled={isStageEnabled}
           workflowSlug={workflowSlug}
         />
       </Box>
@@ -95,13 +94,13 @@ export const DisplayStage: React.FC<{
 };
 
 interface CopyForStageArgs {
-  stage: Stage;
-  isCurrentStage: boolean;
+  stageType: Stage["type"];
+  isStageEnabled: boolean;
   byline: string;
 }
 
-function copyForStage({ stage, isCurrentStage, byline }: CopyForStageArgs) {
-  switch (stage.type) {
+function copyForStage({ stageType, isStageEnabled, byline }: CopyForStageArgs) {
+  switch (stageType) {
     case "create_account":
     case "check_insurance_coverage":
     case "submit_records":
@@ -113,33 +112,33 @@ function copyForStage({ stage, isCurrentStage, byline }: CopyForStageArgs) {
       return byline;
 
     case "commitment_to_care": {
-      return isCurrentStage
+      return isStageEnabled
         ? "A signature agreement will be sent out. Please look for it in your email and sign it"
         : byline;
     }
     default:
-      assertNever(stage);
+      assertNever(stageType);
   }
 }
 
 const StageButton: React.FC<{
-  stage: Stage;
-  isCurrentStage: boolean;
+  stageType: Stage["type"];
+  isStageEnabled: boolean;
   workflowSlug: WorkflowSlug;
-}> = ({ stage, isCurrentStage, workflowSlug }) => {
+}> = ({ stageType, isStageEnabled, workflowSlug }) => {
   const onClick = () =>
-    TRACKER.track("clicked_stage_button", { type: stage.type });
+    TRACKER.track("clicked_stage_button", { type: stageType });
 
   const url = (() => {
     const params = new URLSearchParams();
     params.set("workflow", workflowSlug);
-    params.set("stage", stage.type);
+    params.set("stage", stageType);
     return `/complete-stage?${params}`;
   })();
 
   const { enableAdminDebugging } = useImpersonateContext();
 
-  switch (stage.type) {
+  switch (stageType) {
     case "create_account":
     case "check_insurance_coverage":
     case "submit_records":
@@ -153,7 +152,7 @@ const StageButton: React.FC<{
           href={url}
           variant="contained"
           onClick={onClick}
-          disabled={!isCurrentStage}
+          disabled={!isStageEnabled}
         >
           Start
         </Button>
@@ -165,13 +164,13 @@ const StageButton: React.FC<{
           href={url}
           variant="contained"
           onClick={onClick}
-          disabled={!isCurrentStage || !enableAdminDebugging}
+          disabled={!isStageEnabled || !enableAdminDebugging}
         >
-          {isCurrentStage ? "Pending" : "Start"}
+          {isStageEnabled ? "Pending" : "Start"}
         </Button>
       );
     }
     default:
-      assertNever(stage);
+      assertNever(stageType);
   }
 };

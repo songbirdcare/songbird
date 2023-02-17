@@ -32,12 +32,11 @@ export const DisplayStages: React.FC<{
           const stageDisplayInformation = STAGE_DISPLAY_INFO_LOOKUP[stage.type];
           return (
             <DisplayStage
-              stage={stage}
+              stageType={stage.type}
               stageDisplayInformation={stageDisplayInformation}
-              isCurrentStage={index === currentStageIndex}
+              isStageEnabled={index === currentStageIndex}
               index={index}
               key={stage.type}
-              currentStageIndex={currentStageIndex}
               workflowSlug={workflowSlug}
             />
           );
