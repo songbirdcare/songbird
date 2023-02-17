@@ -18,14 +18,14 @@ interface RenderWorkflowProps {
   extendedOnboarding: boolean;
   workflowSlug: WorkflowSlug;
   setWorkflowSlug: (workflowSlug: WorkflowSlug) => void;
-  childWorkflowSlug: WorkflowSlug;
+  isWorkflowEnabled: boolean;
 }
 
 export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
   extendedOnboarding,
-  childWorkflowSlug,
   workflowSlug,
   setWorkflowSlug,
+  isWorkflowEnabled,
   ...rest
 }) => {
   return extendedOnboarding ? (
@@ -33,7 +33,7 @@ export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
       {...rest}
       workflowSlug={workflowSlug}
       setWorkflowSlug={setWorkflowSlug}
-      childWorkflowSlug={childWorkflowSlug}
+      isWorkflowEnabled={isWorkflowEnabled}
     />
   ) : (
     <DisplayWorkflowStagesV1 {...rest} />
@@ -45,9 +45,9 @@ export const DisplayWorkflowStagesV1: React.FC<
     RenderWorkflowProps,
     | "extendedOnboarding"
     | "workflowSlug"
-    | "childWorkflowSlug"
     | "workflowSlug"
     | "setWorkflowSlug"
+    | "isWorkflowEnabled"
   >
 > = ({ isCompleted, currentStageIndex, stagesWithSlug, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
@@ -102,6 +102,7 @@ export const DisplayWorkflowStagesV2: React.FC<
   stagesWithSlug,
   workflowSlug,
   setWorkflowSlug,
+  isWorkflowEnabled,
 }) => {
   const copy = StatusMessageCopy.forV2(workflowSlug);
 
@@ -130,6 +131,7 @@ export const DisplayWorkflowStagesV2: React.FC<
         currentStageIndex={currentStageIndex}
         stages={stages}
         workflowSlug={workflowSlug}
+        isWorkflowEnabled={isWorkflowEnabled}
       />
       <Box
         display="flex"

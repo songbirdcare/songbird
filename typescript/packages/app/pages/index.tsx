@@ -58,7 +58,9 @@ const Home: React.FC = () => {
             workflowSlug={workflow.slug}
             stagesWithSlug={workflow.stagesWithSlug}
             setWorkflowSlug={setWorkflowSlug}
-            childWorkflowSlug={child.workflowSlug}
+            isWorkflowEnabled={
+              workflowSlug != undefined && workflowSlug === child.workflowSlug
+            }
           />
         )}
       </BodyContainer>
