@@ -27,10 +27,12 @@ test("getSignupForm", async () => {
   }
 
   const { impl } = await setup();
-  const ids = getIds();
+  const ids = getIds().slice(1, 3);
   console.log(`Total: ${ids.length}`);
 
   const data = await impl.getStageData(ids);
+
+  await impl.export({ path: "mydata.xlsx", stageData: data.stageData });
 
   writeFileSync("greenhouse-activity-feed.json", JSON.stringify(data));
 }, 60_000_000);
