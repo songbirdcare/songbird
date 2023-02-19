@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { test } from "vitest";
 
 import { GreenhouseServiceImpl } from "../../services/greenhouse/greenhouse-service";
@@ -30,9 +30,12 @@ test("getSignupForm", async () => {
   const ids = getIds().slice(1, 3);
   console.log(`Total: ${ids.length}`);
 
-  const data = await impl.getStageData(ids);
+  //const data = await impl.getStageData(ids);
 
-  await impl.export({ path: "mydata.xlsx", stageData: data.stageData });
+  //await impl.export({ path: "mydata.xlsx", stageData: data.stageData });
 
-  writeFileSync("greenhouse-activity-feed.json", JSON.stringify(data));
+  //writeFileSync("greenhouse-activity-feed.json", JSON.stringify(data));
+  //
+  const foo = await impl.getCanditateIds();
+  console.log(foo);
 }, 60_000_000);

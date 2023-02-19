@@ -3,8 +3,10 @@ import ExcelJS from "exceljs";
 import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
-const TIMEOUT = 1_000;
+const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
+const CANIDATE_PAGE_SIZE = 100;
+const CANIDATE_MAX_ATTEMPTS = 10;
 
 const COLUMNS: (keyof StageData)[] = [
   "applied",
@@ -25,14 +27,48 @@ const COLUMNS_FOR_SHEET: Partial<ExcelJS.Column>[] = [
     width: 25,
   })),
 ];
+
 export class GreenhouseServiceImpl implements GreenhouseService {
   #client: AxiosInstance;
   constructor(key: string) {
     this.#client = axios.create({
       baseURL: "https://harvest.greenhouse.io/v1/",
-      timeout: 10_0000,
+      timeout: 30_000,
       headers: { Authorization: `Basic ${key}` },
     });
+  }
+
+  async getCanditateIds(): Promise<string[]> {
+    const acc: string[] = [];
+    for (let page = 1; ; page++) {
+      const ids = await this.#getCanditatePage(page);
+
+      if (ids.length === 0) {
+        return acc;
+      }
+
+      acc.push(...ids);
+    }
+  }
+
+  async #getCanditatePage(page: number): Promise<string[]> {
+    for (let attempt = 0; attempt < CANIDATE_MAX_ATTEMPTS; attempt++) {
+      console.log(`Page: ${page} Attempt: ${attempt}`);
+      try {
+        const resp = await this.#client.get(
+          `/candidates?page=${page}&per_page=${CANIDATE_PAGE_SIZE}`
+        );
+
+        return ZCanditateListResponse.array()
+          .parse(resp.data)
+          .map((v) => `${v.id}`);
+      } catch (e) {
+        console.log("Get candidate page error");
+        console.error(e);
+        await setTimeout(TIMEOUT);
+      }
+    }
+    throw new Error(`could not fetch data after 3 attempts`);
   }
 
   async export({ stageData, path }: ExportArguments): Promise<void> {
@@ -206,6 +242,10 @@ const ZRawActivity = z.object({
   created_at: z.string(),
   subject: z.string().nullable(),
   body: z.string(),
+});
+
+const ZCanditateListResponse = z.object({
+  id: z.number(),
 });
 
 interface StageData {
