@@ -1,10 +1,30 @@
 import axios, { AxiosInstance } from "axios";
+import ExcelJS from "exceljs";
 import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
-const TIMEOUT = 5_000;
+const TIMEOUT = 1_000;
 const CHUNK_SIZE = 10;
 
+const COLUMNS: (keyof StageData)[] = [
+  "applied",
+  "applicationReview",
+  "rejected",
+  "recruiterScreen",
+  "unresponsive",
+  "createdOffer",
+  "accepted",
+  "unrejected",
+];
+
+const COLUMNS_FOR_SHEET: Partial<ExcelJS.Column>[] = [
+  { header: "Id", key: "id", width: 25 },
+  ...COLUMNS.map((col) => ({
+    header: col,
+    key: col,
+    width: 25,
+  })),
+];
 export class GreenhouseServiceImpl implements GreenhouseService {
   #client: AxiosInstance;
   constructor(key: string) {
@@ -13,6 +33,35 @@ export class GreenhouseServiceImpl implements GreenhouseService {
       timeout: 10_0000,
       headers: { Authorization: `Basic ${key}` },
     });
+  }
+
+  async export({ stageData, path }: ExportArguments): Promise<void> {
+    if (!path.endsWith(".xlsx")) {
+      throw new Error("path must end with xlsx");
+    }
+
+    if (Object.keys(stageData).length === 0) {
+      throw new Error("No data to export");
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Harvest Stage Data");
+
+    sheet.columns = COLUMNS_FOR_SHEET;
+
+    for (const [id, data] of Object.entries(stageData)) {
+      const row = sheet.addRow({
+        id,
+        ...data,
+      });
+
+      for (const col of COLUMNS) {
+        if (data[col]) {
+          row.getCell(col).numFmt = "mm/dd/yyyy";
+        }
+      }
+    }
+    await workbook.xlsx.writeFile(path);
   }
 
   async getStageData(ids: string[]): Promise<Report> {
@@ -139,6 +188,11 @@ export class GreenhouseServiceImpl implements GreenhouseService {
 
 interface GreenhouseService {
   getStageData(ids: string[]): Promise<Report>;
+  export(args: ExportArguments): Promise<void>;
+}
+interface ExportArguments {
+  path: string;
+  stageData: Record<string, StageData>;
 }
 
 interface ActivityItem {
