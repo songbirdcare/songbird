@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import ExcelJS from "exceljs";
-import { setTimeout } from "timers/promises";
 import { promises } from "fs";
+import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
 const TIMEOUT = 5_000;
