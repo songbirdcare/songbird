@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { test } from "vitest";
 
 import { GreenhouseServiceImpl } from "../../services/greenhouse/greenhouse-service";
@@ -20,19 +20,14 @@ export function getIds(): string[] {
   return ids.map((id) => id.trim()).filter((id) => id.length > 0);
 }
 
-test("getSignupForm", async () => {
+test("writeReport", async () => {
   if (!TEST_SETTINGS.greenhouseApiKey || !TEST_SETTINGS.enableGreenhouseTest) {
     console.info("Skipping greenhouse test");
     return;
   }
 
   const { impl } = await setup();
-  const ids = getIds().slice(1, 3);
-  console.log(`Total: ${ids.length}`);
 
-  const data = await impl.getStageData(ids);
-
-  await impl.export({ path: "mydata.xlsx", stageData: data.stageData });
-
-  writeFileSync("greenhouse-activity-feed.json", JSON.stringify(data));
+  console.log("Writing report");
+  await impl.writeReport();
 }, 60_000_000);
