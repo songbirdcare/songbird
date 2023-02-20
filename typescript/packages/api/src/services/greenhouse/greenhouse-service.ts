@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
-const CANIDATE_PAGE_SIZE = 100;
+const CANIDATE_PAGE_SIZE = 500;
 const CANIDATE_MAX_ATTEMPTS = 10;
 
 const COLUMNS: (keyof StageData)[] = [
@@ -64,11 +64,12 @@ export class GreenhouseServiceImpl implements GreenhouseService {
           .map((v) => `${v.id}`);
       } catch (e) {
         console.log("Get candidate page error");
-        console.error(e);
         await setTimeout(TIMEOUT);
       }
     }
-    throw new Error(`could not fetch data after 3 attempts`);
+    throw new Error(
+      `could not fetch data after ${CANIDATE_MAX_ATTEMPTS} attempts`
+    );
   }
 
   async export({ stageData, path }: ExportArguments): Promise<void> {
