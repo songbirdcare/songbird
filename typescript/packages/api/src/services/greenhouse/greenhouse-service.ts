@@ -1,12 +1,14 @@
 import axios, { AxiosInstance } from "axios";
 import ExcelJS from "exceljs";
 import { setTimeout } from "timers/promises";
+import { promises } from "fs";
 import { z } from "zod";
 
 const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
 const CANIDATE_PAGE_SIZE = 500;
 const CANIDATE_MAX_ATTEMPTS = 10;
+const CIRCUIT_BREAKER_MAX = 1000;
 
 const COLUMNS: (keyof StageData)[] = [
   "applied",
@@ -38,22 +40,39 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     });
   }
 
-  async getCanditateIds(): Promise<string[]> {
-    const acc: string[] = [];
-    for (let page = 1; ; page++) {
+  async writeReport(): Promise<void> {
+    const ids = Array.from(await this.getCanditateIds());
+    const feedData = await this.getStageData(ids);
+
+    await this.export({
+      path: "./greenhouse-report.xlsx",
+      stageData: feedData.stageData,
+    });
+
+    await promises.writeFile(
+      "./output-data.json",
+      JSON.stringify({ ids, feedData })
+    );
+  }
+
+  async getCanditateIds(): Promise<Set<string>> {
+    const acc: Set<string> = new Set();
+    for (let page = 1; page < CIRCUIT_BREAKER_MAX; page++) {
       const ids = await this.#getCanditatePage(page);
+
+      for (const id of ids) {
+        acc.add(id);
+      }
 
       if (ids.length === 0) {
         return acc;
       }
-
-      acc.push(...ids);
     }
+    throw new Error("Too many iterations getting ids");
   }
 
   async #getCanditatePage(page: number): Promise<string[]> {
     for (let attempt = 0; attempt < CANIDATE_MAX_ATTEMPTS; attempt++) {
-      console.log(`Page: ${page} Attempt: ${attempt}`);
       try {
         const resp = await this.#client.get(
           `/candidates?page=${page}&per_page=${CANIDATE_PAGE_SIZE}`
@@ -204,26 +223,36 @@ export class GreenhouseServiceImpl implements GreenhouseService {
   }
 
   #getActivityFeed = async (id: string): Promise<ActivityItem[]> => {
-    try {
-      const resp = await this.#client.get(`/candidates/${id}/activity_feed`);
-      return ZRawActivity.transform((val) => ({
-        createdAt: new Date(val.created_at),
-        subject: val.subject?.toLowerCase() ?? undefined,
-        body: val.body?.toLowerCase() ?? undefined,
-      }))
-        .array()
-        .parse(resp.data.activities)
-        .reverse();
-    } catch (e: any) {
-      if (e.message === "Request failed with status code 404") {
-        return [];
+    for (let attempt = 0; attempt <= CANIDATE_MAX_ATTEMPTS; attempt++) {
+      try {
+        if (attempt != 0) {
+          console.log(`Get get actvity feed attempt: ${attempt}`);
+        }
+        const resp = await this.#client.get(`/candidates/${id}/activity_feed`);
+        return ZRawActivity.transform((val) => ({
+          createdAt: new Date(val.created_at),
+          subject: val.subject?.toLowerCase() ?? undefined,
+          body: val.body?.toLowerCase() ?? undefined,
+        }))
+          .array()
+          .parse(resp.data.activities)
+          .reverse();
+      } catch (e: any) {
+        if (e.message === "Request failed with status code 404") {
+          return [];
+        }
+
+        console.log("Get activity feed error");
+        await setTimeout(TIMEOUT);
       }
-      throw e;
     }
+    throw new Error("could not fetch activity feed");
   };
 }
 
 interface GreenhouseService {
+  writeReport(): Promise<void>;
+  getCanditateIds(): Promise<Set<string>>;
   getStageData(ids: string[]): Promise<Report>;
   export(args: ExportArguments): Promise<void>;
 }
