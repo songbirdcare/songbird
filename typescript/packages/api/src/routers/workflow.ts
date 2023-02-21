@@ -3,7 +3,6 @@ import express from "express";
 
 import { LOGGER } from "../logger";
 import type { ChildService } from "../services/child/child-service";
-import { INITIAL_SLUG } from "../services/workflow/create-initial-workflow";
 import type { WorkflowActionService } from "../services/workflow/workflow-action-service";
 import type { WorkflowService } from "../services/workflow/workflow-service";
 
@@ -47,27 +46,6 @@ export class WorkflowRouter {
             userId: req.user.id,
             childId: child.id,
           }),
-        });
-      }
-    );
-
-    router.get(
-      "/start",
-      async (req: express.Request, res: express.Response) => {
-        const child = await this.childService.get(req.user.id);
-        const workflow = await this.workflowService.getBySlug({
-          userId: req.user.id,
-          childId: child.id,
-          slug: INITIAL_SLUG,
-        });
-
-        const advancedWorkflow = await this.workflowActionService.tryAdvance(
-          { userId: req.user.id },
-          workflow
-        );
-
-        res.json({
-          data: advancedWorkflow,
         });
       }
     );
