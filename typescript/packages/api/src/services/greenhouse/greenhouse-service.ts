@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import type { ObjectWriter } from "../object-writer";
 
-const TIMEOUT = 5_000;
+const ERROR_TIMEOUT = 5_000;
 const RATE_LIMIT_PERIOD = 10_000 + 2_000;
 const CHUNK_SIZE = 50;
 const CANIDATE_PAGE_SIZE = 500;
@@ -103,7 +103,7 @@ export class GreenhouseServiceImpl implements GreenhouseService {
           .map((v) => `${v.id}`);
       } catch (e) {
         console.log("Get candidate page error");
-        await setTimeout(TIMEOUT);
+        await setTimeout(ERROR_TIMEOUT);
       }
     }
     throw new Error(
@@ -259,7 +259,7 @@ export class GreenhouseServiceImpl implements GreenhouseService {
         }
 
         console.log("Get activity feed error");
-        await setTimeout(TIMEOUT);
+        await setTimeout(ERROR_TIMEOUT);
       }
     }
     throw new Error("could not fetch activity feed");
