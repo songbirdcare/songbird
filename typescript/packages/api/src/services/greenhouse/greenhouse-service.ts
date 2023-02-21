@@ -4,6 +4,8 @@ import { promises } from "fs";
 import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
+import type { ObjectWriter } from "../object-writer";
+
 const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
 const CANIDATE_PAGE_SIZE = 500;
@@ -32,11 +34,11 @@ const COLUMNS_FOR_SHEET: Partial<ExcelJS.Column>[] = [
 
 export class GreenhouseServiceImpl implements GreenhouseService {
   #client: AxiosInstance;
-  constructor(key: string) {
+  constructor(private readonly objectWriter: ObjectWriter, apiKey: string) {
     this.#client = axios.create({
       baseURL: "https://harvest.greenhouse.io/v1/",
       timeout: 30_000,
-      headers: { Authorization: `Basic ${key}` },
+      headers: { Authorization: `Basic ${apiKey}` },
     });
   }
 
@@ -44,8 +46,18 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     console.log("Fetching candidate ids");
     const ids = Array.from(await this.getCanditateIds());
 
+    await this.objectWriter.writeFromMemory({
+      contents: JSON.stringify(ids),
+      destination: "greenhouse/ids.json",
+    });
+
     console.log("Fetching stage data");
     const feedData = await this.getStageData(ids);
+
+    await this.objectWriter.writeFromMemory({
+      contents: JSON.stringify(feedData),
+      destination: "greenhouse/feed-data.json",
+    });
 
     console.log("Preparing output");
     await this.export({
@@ -53,10 +65,12 @@ export class GreenhouseServiceImpl implements GreenhouseService {
       stageData: feedData.stageData,
     });
 
-    await promises.writeFile(
-      "./output-data.json",
-      JSON.stringify({ ids, feedData })
-    );
+    await this.objectWriter.writeFromDisk({
+      src: "./greenhouse-report.xlsx",
+      destination: "greenhouse/report.xlsx",
+    });
+
+    await promises.rm("./greenhouse-report.xlsx");
   }
 
   async getCanditateIds(): Promise<Set<string>> {

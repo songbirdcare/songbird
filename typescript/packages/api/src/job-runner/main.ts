@@ -6,6 +6,7 @@ dotenv.config({
 import { assertNever } from "@songbird/precedent-iso";
 
 import { GreenhouseServiceImpl } from "../services/greenhouse/greenhouse-service";
+import { GCSObjectWriter } from "../services/object-writer";
 import { JOB_RUNNER_SETTINGS } from "./job-runner-settings";
 
 async function main() {
@@ -15,9 +16,13 @@ async function main() {
 
   switch (JOB_RUNNER_SETTINGS.jobType) {
     case "greenhouse":
-      await new GreenhouseServiceImpl(
-        JOB_RUNNER_SETTINGS.greenhouse
-      ).writeReport();
+      {
+        const objectWriter = new GCSObjectWriter(JOB_RUNNER_SETTINGS.bucket);
+        await new GreenhouseServiceImpl(
+          objectWriter,
+          JOB_RUNNER_SETTINGS.greenhouse
+        ).writeReport();
+      }
       break;
     default:
       assertNever(JOB_RUNNER_SETTINGS.jobType);
