@@ -7,7 +7,8 @@ import { z } from "zod";
 import type { ObjectWriter } from "../object-writer";
 
 const TIMEOUT = 5_000;
-const CHUNK_SIZE = 10;
+const RATE_LIMIT_PERIOD = 10_000 + 2_000;
+const CHUNK_SIZE = 50;
 const CANIDATE_PAGE_SIZE = 500;
 const CANIDATE_MAX_ATTEMPTS = 10;
 const CIRCUIT_BREAKER_MAX = 1000;
@@ -231,8 +232,8 @@ export class GreenhouseServiceImpl implements GreenhouseService {
       }
 
       if (i + CHUNK_SIZE < ids.length) {
-        console.log(`Sleeping for ${TIMEOUT}ms`);
-        await setTimeout(TIMEOUT);
+        console.log(`Sleeping for ${RATE_LIMIT_PERIOD}ms`);
+        await setTimeout(RATE_LIMIT_PERIOD);
       }
     }
 
