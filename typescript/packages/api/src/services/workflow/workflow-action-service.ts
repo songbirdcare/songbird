@@ -61,7 +61,7 @@ export class WorkflowActionService {
   async tryAdvance(
     context: Context,
     workflow: WorkflowModel
-  ): Promise<{ workflow: WorkflowModel; hasChanged: boolean }> {
+  ): Promise<WorkflowModel> {
     const wrapper = new WorkflowWrapper(workflow);
     const result = await this.#tryAdvance(context, wrapper);
 
@@ -73,10 +73,7 @@ export class WorkflowActionService {
       await this.childService.advanceWorkflow(workflow.childId, workflow.slug);
     }
 
-    return {
-      workflow: result.workflow,
-      hasChanged: result.hasChanged,
-    };
+    return result.workflow;
   }
 
   async #tryAdvance(
