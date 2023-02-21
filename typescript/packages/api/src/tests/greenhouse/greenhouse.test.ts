@@ -31,11 +31,12 @@ test("writeReport", async () => {
     return;
   }
 
-  const ids = getIds();
+  //const ids = getIds();
 
   const { impl } = await setup();
 
   console.log("Writing report");
   //await impl.writeReport();
-  await impl.getStageData(ids);
+  const foo = await impl.getJobs();
+  console.log({ foo });
 }, 60_000_000);

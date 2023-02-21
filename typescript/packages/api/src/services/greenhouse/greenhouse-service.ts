@@ -5,13 +5,16 @@ import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
 import type { ObjectWriter } from "../object-writer";
+import { SUPPLEMENTAL_IDS } from "./supplemental-ids";
 
 const ERROR_TIMEOUT = 5_000;
 const RATE_LIMIT_PERIOD = 10_000 + 2_000;
-const CHUNK_SIZE = 50;
+const ACTIVITY_FEED_CHUNK_SIZE = 50;
 const CANIDATE_PAGE_SIZE = 500;
 const CANIDATE_MAX_ATTEMPTS = 10;
 const CIRCUIT_BREAKER_MAX = 1000;
+const RBT_DEPARTMENT_ID = 4023806003;
+const CREATED_AFTER_DATE = new Date("2022-01-01").toISOString();
 
 const COLUMNS: (keyof StageData)[] = [
   "applied",
@@ -44,20 +47,47 @@ export class GreenhouseServiceImpl implements GreenhouseService {
   }
 
   async writeReport(): Promise<void> {
-    console.log("Fetching candidate ids");
-    const ids = Array.from(await this.getCanditateIds());
+    const today = new Date().toISOString().split("T")[0];
+    const filePathFor = (name: string) => `greenhouse/${today}/${name}`;
+
+    console.log("Fetching jobs");
+
+    const jobs = await this.getJobs();
+
+    await this.objectWriter.writeFromMemory({
+      contents: JSON.stringify(jobs),
+      destination: filePathFor("jobs.json"),
+    });
+
+    const jobIds = jobs.map((job) => job.id);
+
+    console.log(`Fetching candidate ids for ${jobIds.length} jobs`);
+    const ids = Array.from(await this.getCanditateIds(jobIds));
 
     await this.objectWriter.writeFromMemory({
       contents: JSON.stringify(ids),
-      destination: "greenhouse/ids.json",
+      destination: filePathFor("candidate-ids.json"),
     });
 
-    console.log("Fetching stage data");
-    const feedData = await this.getStageData(ids);
+    const allIds = (() => {
+      const set = new Set(ids);
+
+      for (const id of SUPPLEMENTAL_IDS) {
+        set.add(id);
+      }
+
+      return Array.from(set);
+    })();
+
+    console.log(
+      `Fetching stage data for ${ids.length} candidates ${allIds.length} total`
+    );
+
+    const feedData = await this.getStageData(allIds);
 
     await this.objectWriter.writeFromMemory({
       contents: JSON.stringify(feedData),
-      destination: "greenhouse/feed-data.json",
+      destination: filePathFor("feed-data.json"),
     });
 
     console.log("Preparing output");
@@ -68,34 +98,46 @@ export class GreenhouseServiceImpl implements GreenhouseService {
 
     await this.objectWriter.writeFromDisk({
       src: "./greenhouse-report.xlsx",
-      destination: "greenhouse/report.xlsx",
+      destination: filePathFor("report.xlsx"),
     });
 
     await promises.rm("./greenhouse-report.xlsx");
   }
 
-  async getCanditateIds(): Promise<Set<string>> {
+  async getCanditateIds(jobIds: number[]): Promise<Set<string>> {
     const acc: Set<string> = new Set();
+
+    for (const jobId of jobIds) {
+      await this.#getCandidatesForJob(acc, jobId);
+      console.log(`Acc size: ${acc.size}`);
+    }
+    return acc;
+  }
+
+  async #getCandidatesForJob(acc: Set<string>, jobId: number): Promise<void> {
     for (let page = 1; page < CIRCUIT_BREAKER_MAX; page++) {
-      const ids = await this.#getCanditatePage(page);
+      const ids = await this.#getCanditatePage(jobId, page);
 
       for (const id of ids) {
         acc.add(id);
       }
 
       if (ids.length === 0) {
-        return acc;
+        return;
       }
     }
+
     throw new Error("Too many iterations getting ids");
   }
 
-  async #getCanditatePage(page: number): Promise<string[]> {
+  async #getCanditatePage(jobId: number, page: number): Promise<string[]> {
     for (let attempt = 0; attempt < CANIDATE_MAX_ATTEMPTS; attempt++) {
-      console.log(`Fetching page ${page} attempt ${attempt}`);
+      console.log(
+        `Fetching candidtate: jobId:${jobId} page:${page} attempt:${attempt}`
+      );
       try {
         const resp = await this.#client.get(
-          `/candidates?page=${page}&per_page=${CANIDATE_PAGE_SIZE}`
+          `/candidates?page=${page}&per_page=${CANIDATE_PAGE_SIZE}&job_id=${jobId}&created_after=${CREATED_AFTER_DATE}`
         );
 
         return ZCanditateListResponse.array()
@@ -209,9 +251,11 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     ids: string[]
   ): Promise<Record<string, ActivityItem[]>> {
     const acc: Record<string, ActivityItem[]> = {};
-    for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
-      console.log(`Fetching ${i} to ${i + CHUNK_SIZE}`);
-      const chunk = ids.slice(i, i + CHUNK_SIZE);
+    for (let i = 0; i < ids.length; i += ACTIVITY_FEED_CHUNK_SIZE) {
+      console.log(
+        `Fetching ${i} to ${i + ACTIVITY_FEED_CHUNK_SIZE} of ${ids.length}`
+      );
+      const chunk = ids.slice(i, i + ACTIVITY_FEED_CHUNK_SIZE);
       if (chunk.length === 0) {
         continue;
       }
@@ -231,7 +275,7 @@ export class GreenhouseServiceImpl implements GreenhouseService {
         acc[id] = activityFeed;
       }
 
-      if (i + CHUNK_SIZE < ids.length) {
+      if (i + ACTIVITY_FEED_CHUNK_SIZE < ids.length) {
         console.log(`Sleeping for ${RATE_LIMIT_PERIOD}ms`);
         await setTimeout(RATE_LIMIT_PERIOD);
       }
@@ -264,13 +308,39 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     }
     throw new Error("could not fetch activity feed");
   };
+
+  getJobs = async () => {
+    const acc: JobResponse[] = [];
+    for (let page = 1; page <= CIRCUIT_BREAKER_MAX; page++) {
+      const resp = await this.#client.get(
+        `/jobs?page=${page}&per_page=${CANIDATE_PAGE_SIZE}&department_id=${RBT_DEPARTMENT_ID}`
+      );
+
+      console.log(`Fetched ${page} pages of jobs`);
+
+      const jobs = ZJobResponse.array().parse(resp.data);
+
+      if (jobs.length === 0) {
+        return acc;
+      }
+
+      acc.push(...jobs);
+
+      if (page % 10 === 0) {
+        await setTimeout(RATE_LIMIT_PERIOD);
+      }
+    }
+
+    throw new Error("could not fetch all jobs");
+  };
 }
 
 interface GreenhouseService {
   writeReport(): Promise<void>;
-  getCanditateIds(): Promise<Set<string>>;
+  getCanditateIds(jobIds: number[]): Promise<Set<string>>;
   getStageData(ids: string[]): Promise<Report>;
   export(args: ExportArguments): Promise<void>;
+  getJobs(): Promise<JobResponse[]>;
 }
 interface ExportArguments {
   path: string;
@@ -309,3 +379,11 @@ interface Report {
   feeds: Record<string, ActivityItem[]>;
   stageData: Record<string, StageData>;
 }
+
+const ZJobResponse = z.object({
+  id: z.number(),
+  name: z.string(),
+  status: z.enum(["open", "closed", "draft"]),
+});
+
+type JobResponse = z.infer<typeof ZJobResponse>;
