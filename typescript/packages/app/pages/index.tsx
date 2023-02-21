@@ -13,6 +13,7 @@ import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligi
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
 import { DisplayWorkflowStages } from "../src/onboarding/onboarding-flow";
+import { SETTINGS } from "../src/settings";
 
 const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
@@ -31,13 +32,10 @@ const Home: React.FC = () => {
     WorkflowSlug | undefined
   >(undefined);
 
-  const workflow = (function () {
-    if (!child || !workflows) {
-      return undefined;
-    }
-    const slug = workflowSlug ?? child.workflowSlug;
-    return workflows[slug];
-  })();
+  const workflow =
+    !child || !workflows
+      ? undefined
+      : workflows[workflowSlug ?? child.workflowSlug];
 
   return (
     <>
@@ -56,8 +54,13 @@ const Home: React.FC = () => {
             currentStageIndex={workflow.currentStageIndex}
             extendedOnboarding={flags.flags.extendedOnboarding}
             workflowSlug={workflow.slug}
-            stagesWithSlug={workflow.stagesWithSlug}
+            stages={workflow.stages}
             setWorkflowSlug={setWorkflowSlug}
+            isWorkflowEnabled={
+              SETTINGS.testAnyWorkflowStage ||
+              workflowSlug === undefined ||
+              workflowSlug === child.workflowSlug
+            }
           />
         )}
       </BodyContainer>

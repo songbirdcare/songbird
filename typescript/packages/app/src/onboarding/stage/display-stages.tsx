@@ -11,7 +11,14 @@ export const DisplayStages: React.FC<{
   currentStageIndex: number;
   stages: Stage[];
   isCompleted: boolean;
-}> = ({ stages, currentStageIndex, isCompleted, workflowSlug }) => {
+  isWorkflowEnabled: boolean;
+}> = ({
+  stages,
+  currentStageIndex,
+  isCompleted,
+  workflowSlug,
+  isWorkflowEnabled,
+}) => {
   const { completed, nonCompleted } = processStages(
     isCompleted,
     currentStageIndex,
@@ -32,12 +39,11 @@ export const DisplayStages: React.FC<{
           const stageDisplayInformation = STAGE_DISPLAY_INFO_LOOKUP[stage.type];
           return (
             <DisplayStage
-              stage={stage}
+              stageType={stage.type}
               stageDisplayInformation={stageDisplayInformation}
-              isCurrentStage={index === currentStageIndex}
+              isStageEnabled={isWorkflowEnabled && index === currentStageIndex}
               index={index}
               key={stage.type}
-              currentStageIndex={currentStageIndex}
               workflowSlug={workflowSlug}
             />
           );

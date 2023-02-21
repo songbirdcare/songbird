@@ -69,16 +69,9 @@ export class UserInformationMiddleware {
         ? await this.#upsertUser(sub)
         : fromSub;
 
-    if (fromSub) {
-      // there is an edge case where a user gets created w/o a child
-      // this should in theory never happen
-      const resp = await this.childService.createOnlyIfNeeded(user.id, {
-        type: "unknown",
-      });
-      if (resp === "created") {
-        LOGGER.warn("User created without child", { userId: user.id });
-      }
-    }
+    await this.childService.createIfNotExists(user.id, {
+      type: "unknown",
+    });
 
     return { user, isNewUser: fromSub === undefined };
   };
@@ -91,7 +84,7 @@ export class UserInformationMiddleware {
       fromAuth0.email
     );
 
-    await this.childService.createOnlyIfNeeded(
+    await this.childService.createIfNotExists(
       user.id,
       qualifiedStatusFromForm(signupForm)
     );

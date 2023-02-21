@@ -1,11 +1,16 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { test } from "vitest";
 
 import { GreenhouseServiceImpl } from "../../services/greenhouse/greenhouse-service";
+import { LocalObjectWriter } from "../../services/object-writer";
 import { TEST_SETTINGS } from "../test-settings";
 
 async function setup() {
-  const impl = new GreenhouseServiceImpl(TEST_SETTINGS.greenhouseApiKey!);
+  const objectWriter = new LocalObjectWriter();
+  const impl = new GreenhouseServiceImpl(
+    objectWriter,
+    TEST_SETTINGS.greenhouseApiKey!
+  );
   return {
     impl,
   };
@@ -20,17 +25,18 @@ export function getIds(): string[] {
   return ids.map((id) => id.trim()).filter((id) => id.length > 0);
 }
 
-test("getSignupForm", async () => {
+test("writeReport", async () => {
   if (!TEST_SETTINGS.greenhouseApiKey || !TEST_SETTINGS.enableGreenhouseTest) {
     console.info("Skipping greenhouse test");
     return;
   }
 
+  //const ids = getIds();
+
   const { impl } = await setup();
-  const ids = getIds();
-  console.log(`Total: ${ids.length}`);
 
-  const data = await impl.getStageData(ids);
-
-  writeFileSync("greenhouse-activity-feed.json", JSON.stringify(data));
+  console.log("Writing report");
+  //await impl.writeReport();
+  const foo = await impl.getJobs();
+  console.log({ foo });
 }, 60_000_000);

@@ -1,7 +1,8 @@
+import { useMediaQuery } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
-import type { StagesWithSlug } from "@songbird/precedent-iso";
+import type { Stage } from "@songbird/precedent-iso";
 import type { WorkflowSlug } from "@songbird/precedent-iso";
 import React from "react";
 
@@ -14,21 +15,26 @@ interface RenderWorkflowProps {
   firstName: string | undefined;
   isCompleted: boolean;
   currentStageIndex: number;
-  stagesWithSlug: StagesWithSlug;
+  stages: Stage[];
   extendedOnboarding: boolean;
   workflowSlug: WorkflowSlug;
   setWorkflowSlug: (workflowSlug: WorkflowSlug) => void;
+  isWorkflowEnabled: boolean;
 }
 
 export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
   extendedOnboarding,
+  workflowSlug,
+  setWorkflowSlug,
+  isWorkflowEnabled,
   ...rest
 }) => {
   return extendedOnboarding ? (
     <DisplayWorkflowStagesV2
       {...rest}
-      selectedWorkflowSlug={rest.workflowSlug}
-      setSelectedWorkflowSlug={rest.setWorkflowSlug}
+      workflowSlug={workflowSlug}
+      setWorkflowSlug={setWorkflowSlug}
+      isWorkflowEnabled={isWorkflowEnabled}
     />
   ) : (
     <DisplayWorkflowStagesV1 {...rest} />
@@ -36,14 +42,17 @@ export const DisplayWorkflowStages: React.FC<RenderWorkflowProps> = ({
 };
 
 export const DisplayWorkflowStagesV1: React.FC<
-  Omit<RenderWorkflowProps, "extendedOnboarding" | "workflowSlug">
-> = ({ isCompleted, currentStageIndex, stagesWithSlug, firstName }) => {
+  Omit<
+    RenderWorkflowProps,
+    | "extendedOnboarding"
+    | "workflowSlug"
+    | "setWorkflowSlug"
+    | "isWorkflowEnabled"
+  >
+> = ({ isCompleted, currentStageIndex, stages, firstName }) => {
   const copy = StatusMessageCopy.forV1(isCompleted, firstName);
-  if (stagesWithSlug.slug !== "onboarding") {
-    throw new Error("not supported");
-  }
 
-  const stages = stagesWithSlug.stages;
+  const isSmallScreen = useMediaQuery("(max-width:670px)");
 
   return (
     <Box
@@ -53,6 +62,7 @@ export const DisplayWorkflowStagesV1: React.FC<
       flexDirection="column"
       alignItems="center"
       marginX={2}
+      width={isSmallScreen ? "100%" : "725px"}
     >
       <Box display="flex" flexDirection="column" width="100%" gap={1}>
         <StatusMessage header={copy.header} byline={copy.byline} />
@@ -76,31 +86,29 @@ export const DisplayWorkflowStagesV1: React.FC<
       </Box>
 
       <DisplayStages
-        workflowSlug={stagesWithSlug.slug}
+        workflowSlug={"onboarding"}
         isCompleted={isCompleted}
         currentStageIndex={currentStageIndex}
         stages={stages}
+        isWorkflowEnabled={true}
       />
     </Box>
   );
 };
 
 export const DisplayWorkflowStagesV2: React.FC<
-  Omit<RenderWorkflowProps, "extendedOnboarding" | "firstName"> & {
-    selectedWorkflowSlug: WorkflowSlug;
-    setSelectedWorkflowSlug: (slug: WorkflowSlug) => void;
-  }
+  Omit<RenderWorkflowProps, "extendedOnboarding" | "firstName">
 > = ({
   isCompleted,
   currentStageIndex,
-  stagesWithSlug,
-  selectedWorkflowSlug,
-  setSelectedWorkflowSlug,
   workflowSlug,
+  setWorkflowSlug,
+  isWorkflowEnabled,
+  stages,
 }) => {
-  const copy = StatusMessageCopy.forV2(selectedWorkflowSlug);
+  const copy = StatusMessageCopy.forV2(workflowSlug);
+  const isSmallScreen = useMediaQuery("(max-width:670px)");
 
-  const stages = stagesWithSlug.stages;
   return (
     <Box
       display="flex"
@@ -109,14 +117,15 @@ export const DisplayWorkflowStagesV2: React.FC<
       flexDirection="column"
       alignItems="center"
       marginX={2}
+      width={isSmallScreen ? "100%" : "725px"}
     >
       <Box display="flex" flexDirection="column" width="100%" gap={1}>
         <StatusMessage header={copy.header} byline={copy.byline} />
       </Box>
       <Box width="100%" marginTop={7}>
         <WorkflowSelector
-          selectedWorkflowSlug={selectedWorkflowSlug}
-          setSelectedWorkflowSlug={setSelectedWorkflowSlug}
+          selectedWorkflowSlug={workflowSlug}
+          setSelectedWorkflowSlug={setWorkflowSlug}
         />
       </Box>
 
@@ -125,6 +134,7 @@ export const DisplayWorkflowStagesV2: React.FC<
         currentStageIndex={currentStageIndex}
         stages={stages}
         workflowSlug={workflowSlug}
+        isWorkflowEnabled={isWorkflowEnabled}
       />
       <Box
         display="flex"

@@ -18,7 +18,7 @@ async function setup() {
     email: "test@gmail.com",
   });
 
-  await childService.createOnlyIfNeeded(user.id, {
+  await childService.createIfNotExists(user.id, {
     type: "unknown",
   });
 

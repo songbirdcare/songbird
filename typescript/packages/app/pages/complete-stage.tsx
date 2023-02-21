@@ -1,14 +1,14 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
 import { assertNever, Stage } from "@songbird/precedent-iso";
-import { useRouter } from "next/router";
 import * as React from "react";
-import { z } from "zod";
 
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
+import { useFetchChild } from "../src/hooks/use-fetch-child";
 import { useFetchUser } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
+import { useGetWorkflowSlugAndStageType } from "../src/hooks/use-get-workflow-and-stage";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
 import { useRedirectIfNotVerified } from "../src/hooks/use-redirect-if-not-verified";
 import { useTrackOnce } from "../src/hooks/use-track-once";
@@ -16,30 +16,31 @@ import { RenderWorkflow } from "../src/workflow/render-workflow";
 
 const CompleteStage: React.FC = () => {
   useRedirectIfNotVerified();
-  const { data: workflow } = useFetchWorkflow();
-  const { data: user } = useFetchUser();
 
   useRedirectIfNotEligible();
-  const stageTypeFromUrl = useGetStageType();
+  const { data: user } = useFetchUser();
+  const { data: child } = useFetchChild();
+  const processData = useGetWorkflowSlugAndStageType(child?.workflowSlug);
 
-  const [stageType, setStageType] = React.useState<Stage["type"] | undefined>(
-    stageTypeFromUrl
-  );
+  const stageType = processData?.stageType;
+  const { data: workflow } = useFetchWorkflow(processData?.workflowSlug);
 
   useTrackOnce("page_accessed", { page: "complete-stage" });
-  React.useEffect(() => {
-    if (stageType || !workflow) {
-      return;
+
+  const finalStageType = React.useMemo((): Stage["type"] | undefined => {
+    if (stageType) {
+      return stageType;
+    }
+    if (!workflow) {
+      return undefined;
     }
 
     const stage = workflow.stages[workflow.currentStageIndex];
     if (stage === undefined) {
       throw new Error("undefined");
     }
-
-    // todo remove this cast
-    setStageType(stage["type"]);
-  }, [stageType, workflow]);
+    return stage["type"];
+  }, [workflow, stageType]);
 
   const userId = user?.id;
   return (
@@ -52,7 +53,7 @@ const CompleteStage: React.FC = () => {
             <LinearProgress />
           </Box>
         )}
-        {workflow && userId && stageType && (
+        {workflow && userId && finalStageType && (
           <RenderWorkflow
             userId={userId}
             workflow={workflow}
@@ -63,26 +64,6 @@ const CompleteStage: React.FC = () => {
     </>
   );
 };
-
-const ZStageType = z.union([
-  z.literal("create_account"),
-  z.literal("check_insurance_coverage"),
-  z.literal("submit_records"),
-  z.literal("commitment_to_care"),
-]);
-
-function useGetStageType(): Stage["type"] | undefined {
-  const router = useRouter();
-
-  try {
-    return ZStageType.parse(router.query.stage);
-  } catch (e) {
-    if (e instanceof z.ZodError) {
-      return undefined;
-    }
-    throw e;
-  }
-}
 
 function shouldRenderAppBar(stageType: Stage["type"] | undefined): boolean {
   switch (stageType) {

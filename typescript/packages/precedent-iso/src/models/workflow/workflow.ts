@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { BlockingTask, Stage, StagesWithSlug } from "./stages";
+import type { BlockingTask, Stage } from "./stages";
 
 export const ALL_WORKFLOW_SLUGS = [
   "onboarding",
@@ -13,12 +13,9 @@ export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
 export interface WorkflowModel {
   id: string;
-  userId: string;
-  childId: string;
   slug: WorkflowSlug;
   version: 1;
   stages: Stage[];
-  stagesWithSlug: StagesWithSlug;
   currentStageIndex: number;
   status: "pending" | "completed";
 }

@@ -1,9 +1,14 @@
-import type { Child, QualificationStatus } from "@songbird/precedent-iso";
+import type {
+  Child,
+  QualificationStatus,
+  WorkflowSlug,
+} from "@songbird/precedent-iso";
 
 export interface ChildService {
+  advanceWorkflow(childId: string, workflowSlug: WorkflowSlug): Promise<void>;
   get(userId: string): Promise<Child>;
-  createOnlyIfNeeded(
+  createIfNotExists(
     userId: string,
     qualified: QualificationStatus
-  ): Promise<"created" | "not_created">;
+  ): Promise<void>;
 }

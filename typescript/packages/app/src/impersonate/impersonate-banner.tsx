@@ -22,10 +22,10 @@ export const ImpersonateBanner: React.FC = () => {
           color="secondary"
           onClick={() => {
             ImpersonateService.clear();
-            location.reload();
+            location.replace("/admin");
           }}
         >
-          STOP
+          Stop
         </Button>
       </Alert>
     </Box>

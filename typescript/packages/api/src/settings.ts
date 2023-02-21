@@ -32,6 +32,7 @@ const ZSettings = z.object({
     env: z.string(),
   }),
   amplitudeKey: z.string().optional(),
+  bucket: z.string().min(1),
 });
 
 const domain = process.env["AUTH0_DOMAIN"];
@@ -78,4 +79,5 @@ export const SETTINGS = ZSettings.parse({
     apiKey: process.env["DD_API_KEY"],
   },
   amplitudeKey: process.env["AMPLITUDE_KEY"],
+  bucket: process.env["BUCKET"],
 });

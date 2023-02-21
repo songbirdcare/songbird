@@ -9,6 +9,7 @@ import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { CompletedStage } from "./completed-stage";
+import { RenderDummy } from "./render-dummy";
 import { RenderForm } from "./render-form";
 import { RenderSchedule } from "./render-schedule";
 
@@ -82,7 +83,13 @@ export const RenderStage: React.FC<{
         />
       );
     case "dummy":
-      throw new Error("not implemented");
+      return (
+        <RenderDummy
+          stageId={stage.id}
+          taskId={task.id}
+          workflowId={workflowId}
+        />
+      );
     default:
       assertNever(task);
   }
@@ -94,7 +101,7 @@ const RenderSignature: React.FC<{
   stageId: string;
 }> = ({ workflowId, taskId, stageId }) => {
   const router = useRouter();
-  const { mutate } = useFetchWorkflow();
+  const { mutate } = useFetchWorkflow(undefined);
 
   const { enableAdminDebugging } = useImpersonateContext();
 

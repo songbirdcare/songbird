@@ -67,6 +67,15 @@ export class WorkflowActionService {
         return this.workflowService.update(wrapper.workflow);
       }
 
+      case "dummy": {
+        if (info.task.type !== "dummy") {
+          throw new Error("task is not a dummy task");
+        }
+
+        wrapper.advance();
+        return this.workflowService.update(wrapper.workflow);
+      }
+
       default:
         assertNever(action);
     }

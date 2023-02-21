@@ -1,5 +1,5 @@
 import { createPool, sql } from "slonik";
-import { beforeEach, expect, test } from "vitest";
+import { beforeEach, expect, it, test } from "vitest";
 
 import { PsqlChildService } from "../../services/child/psql-child-service";
 import { PsqlUserService } from "../../services/psql-user-service";
@@ -29,13 +29,47 @@ test("create", async () => {
     email: "test@gmail.com",
   });
 
-  const resp = await Promise.all(
+  await childService.createIfNotExists(user.id, {
+    type: "qualified",
+  });
+
+  await Promise.all(
     new Array(20).fill(undefined).map(() =>
-      childService.createOnlyIfNeeded(user.id, {
+      childService.createIfNotExists(user.id, {
         type: "unknown",
       })
     )
   );
 
-  expect(resp.filter((r) => r === "created").length).toEqual(1);
+  const child = await childService.get(user.id);
+  expect(child.qualified.type).toEqual("qualified");
+});
+
+test("advanceWorkflow", async () => {
+  const { childService, userService } = await setup();
+  const user = await userService.upsert({
+    sub: "test",
+    email: "test@gmail.com",
+  });
+
+  await childService.createIfNotExists(user.id, {
+    type: "qualified",
+  });
+
+  const child = await childService.get(user.id);
+
+  it("does nothing if from does not match", async () => {
+    expect(child.workflowSlug).toEqual("onboarding");
+    await childService.advanceWorkflow(child.id, "care_plan");
+
+    expect((await childService.get(user.id)).workflowSlug).toEqual(
+      "onboarding"
+    );
+  });
+
+  it("should advance workflow", async () => {
+    expect(child.workflowSlug).toEqual("onboarding");
+    await childService.advanceWorkflow(child.id, "onboarding");
+    expect((await childService.get(user.id)).workflowSlug).toEqual("care_plan");
+  });
 });
