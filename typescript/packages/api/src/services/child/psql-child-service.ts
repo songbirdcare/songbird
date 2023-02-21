@@ -38,13 +38,14 @@ export class PsqlChildService implements ChildService {
       connection.transaction(async (trx) =>
         trx.query(
           sql.type(ZChildFromSql)`
+
 UPDATE
     child
 SET
-    workflowSlug = ${to}
+    workflow_slug = ${to}
 WHERE
     id = ${childId}
-    AND workflowSlug = ${from}
+    AND workflow_slug = ${from}
 `
         )
       )

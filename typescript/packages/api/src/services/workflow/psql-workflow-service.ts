@@ -175,6 +175,7 @@ function fromSQL({
   stages,
   current_stage_idx,
   status,
+  child_id,
 }: WorkflowFromSql): WorkflowModel {
   const stagesWithSlug = ZStagesWithSlug.parse({
     slug: workflow_slug,
@@ -184,6 +185,7 @@ function fromSQL({
   return {
     id,
     slug: workflow_slug,
+    childId: child_id,
     version,
     stages: stagesWithSlug.stages,
     currentStageIndex: current_stage_idx,
