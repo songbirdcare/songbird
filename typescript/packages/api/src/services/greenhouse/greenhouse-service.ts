@@ -60,7 +60,7 @@ export class GreenhouseServiceImpl implements GreenhouseService {
       .filter((job) => job.status === "open")
       .map((job) => job.id);
 
-    console.log("Fetching candidate ids");
+    console.log(`Fetching candidate ids for ${openJobIds.length} jobs`);
     const ids = Array.from(await this.getCanditateIds(openJobIds));
 
     await this.objectWriter.writeFromMemory({
@@ -235,7 +235,9 @@ export class GreenhouseServiceImpl implements GreenhouseService {
   ): Promise<Record<string, ActivityItem[]>> {
     const acc: Record<string, ActivityItem[]> = {};
     for (let i = 0; i < ids.length; i += ACTIVITY_FEED_CHUNK_SIZE) {
-      console.log(`Fetching ${i} to ${i + ACTIVITY_FEED_CHUNK_SIZE}`);
+      console.log(
+        `Fetching ${i} to ${i + ACTIVITY_FEED_CHUNK_SIZE} of ${ids.length}`
+      );
       const chunk = ids.slice(i, i + ACTIVITY_FEED_CHUNK_SIZE);
       if (chunk.length === 0) {
         continue;
