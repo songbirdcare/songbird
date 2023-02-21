@@ -2,17 +2,54 @@ import {
   assertNever,
   Child,
   QualificationStatus,
+  WorkflowSlug,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
 import type { ChildService } from "./child-service";
+import { workflowOrder } from "./workflow-order";
 
 const FIELDS = sql.fragment`id, qualification_status, workflow_slug`;
 
+interface AdvanceWorkflowArguments {
+  childId: string;
+  from: WorkflowSlug;
+  to: WorkflowSlug;
+}
+
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
+
+  async advanceWorkflow(childId: string, from: WorkflowSlug) {
+    const to = workflowOrder(from);
+    if (to) {
+      await this.#advanceWorkflow({ childId, from, to });
+    }
+  }
+
+  async #advanceWorkflow({
+    childId,
+    from,
+    to,
+  }: AdvanceWorkflowArguments): Promise<void> {
+    await this.pool.connect(async (connection) =>
+      connection.transaction(async (trx) =>
+        trx.query(
+          sql.type(ZChildFromSql)`
+UPDATE
+    child
+SET
+    workflowSlug = ${to}
+WHERE
+    id = ${childId}
+    AND workflowSlug = ${from}
+`
+        )
+      )
+    );
+  }
 
   async get(userId: string): Promise<Child> {
     const child = await this.pool.connect(async (connection) =>
