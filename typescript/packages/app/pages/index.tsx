@@ -44,13 +44,21 @@ const Home: React.FC = () => {
     return workflows[workflowSlug ?? child.workflowSlug];
   })();
 
+  const hasRefetchedChild = React.useRef(false);
   React.useEffect(() => {
-    if (!child || !workflow || workflowSlug || !extendedOnboarding) {
+    if (
+      !child ||
+      !workflow ||
+      workflowSlug ||
+      !extendedOnboarding ||
+      hasRefetchedChild.current
+    ) {
       return;
     }
     if (child.workflowSlug !== workflow.slug) {
       console.log("Refetch child in case of a race");
       mutate();
+      hasRefetchedChild.current = true;
     }
   }, [child, workflow, workflowSlug, mutate, extendedOnboarding]);
 
