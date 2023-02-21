@@ -19,7 +19,7 @@ const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
   const { data: workflows, isLoading: workflowsIsLoading } =
     useFetchWorkflows();
-  const { data: child } = useFetchChild();
+  const { data: child, mutate } = useFetchChild();
   const { isLoading: childIsLoading } = useRedirectIfNotEligible();
 
   useRedirectIfNotVerified();
@@ -43,6 +43,16 @@ const Home: React.FC = () => {
     }
     return workflows[workflowSlug ?? child.workflowSlug];
   })();
+
+  React.useEffect(() => {
+    if (!child || !workflow || workflowSlug || !extendedOnboarding) {
+      return;
+    }
+    if (child.workflowSlug !== workflow.slug) {
+      console.log("Refetch child in case of a race");
+      mutate();
+    }
+  }, [child, workflow, workflowSlug, mutate, extendedOnboarding]);
 
   return (
     <>
