@@ -14,7 +14,7 @@ async function setup() {
 test("writeFile", async () => {
   const { impl } = await setup();
 
-  await impl.writeFile({
+  await impl.writeFromMemory({
     contents: "foo",
     destination: "nasr.txt",
   });
