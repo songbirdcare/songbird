@@ -2,10 +2,15 @@ import { readFileSync } from "fs";
 import { test } from "vitest";
 
 import { GreenhouseServiceImpl } from "../../services/greenhouse/greenhouse-service";
+import { LocalObjectWriter } from "../../services/object-writer";
 import { TEST_SETTINGS } from "../test-settings";
 
 async function setup() {
-  const impl = new GreenhouseServiceImpl(TEST_SETTINGS.greenhouseApiKey!);
+  const objectWriter = new LocalObjectWriter();
+  const impl = new GreenhouseServiceImpl(
+    objectWriter,
+    TEST_SETTINGS.greenhouseApiKey!
+  );
   return {
     impl,
   };
