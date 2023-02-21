@@ -32,11 +32,11 @@ const COLUMNS_FOR_SHEET: Partial<ExcelJS.Column>[] = [
 
 export class GreenhouseServiceImpl implements GreenhouseService {
   #client: AxiosInstance;
-  constructor(key: string) {
+  constructor(apiKey: string) {
     this.#client = axios.create({
       baseURL: "https://harvest.greenhouse.io/v1/",
       timeout: 30_000,
-      headers: { Authorization: `Basic ${key}` },
+      headers: { Authorization: `Basic ${apiKey}` },
     });
   }
 

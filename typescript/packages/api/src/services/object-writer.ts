@@ -1,27 +1,26 @@
 import { Bucket, Storage } from "@google-cloud/storage";
 import { promises } from "fs";
+import { join } from "path";
 
 export class GCSObjectWriter implements ObjectWriter {
   #bucket: Bucket;
 
-  constructor(bucketName: string) {
+  constructor(private readonly prefix: string, bucketName: string) {
     const storage = new Storage();
     this.#bucket = storage.bucket(bucketName);
   }
 
   async writeFile({
-    pathToFile,
     destination,
+    contents,
   }: WriteFileArguments): Promise<void> {
-    await this.#bucket.upload(pathToFile, {
-      destination,
-    });
+    await this.#bucket.file(join(this.prefix, destination)).save(contents);
   }
 }
 
 export class LocalObjectWriter implements ObjectWriter {
-  writeFile({ pathToFile, destination }: WriteFileArguments): Promise<void> {
-    return promises.writeFile(pathToFile, destination);
+  writeFile({ destination, contents }: WriteFileArguments): Promise<void> {
+    return promises.writeFile(destination, contents);
   }
 }
 
@@ -30,6 +29,6 @@ export interface ObjectWriter {
 }
 
 export interface WriteFileArguments {
-  pathToFile: string;
+  contents: string;
   destination: string;
 }
