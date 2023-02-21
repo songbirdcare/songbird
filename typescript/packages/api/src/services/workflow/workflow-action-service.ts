@@ -7,6 +7,7 @@ import {
 
 import { LOGGER } from "../../logger";
 import type { CalendarSubmissionService } from "../calendar-submissions-service";
+import type { ChildService } from "../child/child-service";
 import type { SignatureSubmissionService } from "../signature-submission-service";
 import type { UserService } from "../user-service";
 import type { WorkflowService } from "./workflow-service";
@@ -18,7 +19,8 @@ export class WorkflowActionService {
     private readonly calendarSubmissionService: CalendarSubmissionService,
     private readonly userService: UserService,
     private readonly workflowService: WorkflowService,
-    private readonly signatureSubmissionService: SignatureSubmissionService
+    private readonly signatureSubmissionService: SignatureSubmissionService,
+    private readonly childService: ChildService
   ) {}
 
   async processAction(
@@ -39,46 +41,21 @@ export class WorkflowActionService {
       return workflow;
     }
 
-    switch (action.type) {
-      case "form": {
-        if (info.task.type !== "form") {
-          throw new Error("task is not a form");
-        }
-
-        wrapper.advance();
-
-        return this.workflowService.update(wrapper.workflow);
-      }
-
-      case "signature": {
-        if (info.task.type !== "signature") {
-          throw new Error("task is not a schedule");
-        }
-        wrapper.advance();
-        return this.workflowService.update(wrapper.workflow);
-      }
-
-      case "schedule": {
-        if (info.task.type !== "schedule") {
-          throw new Error("task is not a schedule");
-        }
-
-        wrapper.advance();
-        return this.workflowService.update(wrapper.workflow);
-      }
-
-      case "dummy": {
-        if (info.task.type !== "dummy") {
-          throw new Error("task is not a dummy task");
-        }
-
-        wrapper.advance();
-        return this.workflowService.update(wrapper.workflow);
-      }
-
-      default:
-        assertNever(action);
+    if (action.type !== info.task.type) {
+      throw new Error(
+        `task ${action.type} does not match action ${info.task.type}`
+      );
     }
+
+    wrapper.advance();
+
+    const newWorkflow = await this.workflowService.update(wrapper.workflow);
+
+    if (wrapper.isCompleted) {
+      await this.childService.advanceWorkflow(workflow.childId, workflow.slug);
+    }
+
+    return newWorkflow;
   }
 
   async tryAdvance(
@@ -89,7 +66,11 @@ export class WorkflowActionService {
     const result = await this.#tryAdvance(context, wrapper);
 
     if (result.hasChanged) {
-      return await this.workflowService.update(result.workflow);
+      await this.workflowService.update(result.workflow);
+    }
+
+    if (result.isCompleted) {
+      await this.childService.advanceWorkflow(workflow.childId, workflow.slug);
     }
 
     return result.workflow;

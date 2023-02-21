@@ -19,7 +19,7 @@ const Home: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
   const { data: workflows, isLoading: workflowsIsLoading } =
     useFetchWorkflows();
-  const { data: child } = useFetchChild();
+  const { data: child, mutate } = useFetchChild();
   const { isLoading: childIsLoading } = useRedirectIfNotEligible();
 
   useRedirectIfNotVerified();
@@ -27,15 +27,40 @@ const Home: React.FC = () => {
   useTrackOnce("page_accessed", { page: "home" });
   const isLoading = userIsLoading || workflowsIsLoading || childIsLoading;
   const flags = useSBFlags();
+  const extendedOnboarding = flags.flags.extendedOnboarding;
 
   const [workflowSlug, setWorkflowSlug] = React.useState<
     WorkflowSlug | undefined
   >(undefined);
 
-  const workflow =
-    !child || !workflows
-      ? undefined
-      : workflows[workflowSlug ?? child.workflowSlug];
+  const workflow = (() => {
+    if (!child || !workflows) {
+      return undefined;
+    }
+
+    if (!extendedOnboarding) {
+      return workflows["onboarding"];
+    }
+    return workflows[workflowSlug ?? child.workflowSlug];
+  })();
+
+  const hasRefetchedChild = React.useRef(false);
+  React.useEffect(() => {
+    if (
+      !child ||
+      !workflow ||
+      workflowSlug ||
+      !extendedOnboarding ||
+      hasRefetchedChild.current
+    ) {
+      return;
+    }
+    if (child.workflowSlug !== workflow.slug) {
+      console.log("Refetch child in case of a race");
+      mutate();
+      hasRefetchedChild.current = true;
+    }
+  }, [child, workflow, workflowSlug, mutate, extendedOnboarding]);
 
   return (
     <>
@@ -52,7 +77,7 @@ const Home: React.FC = () => {
             firstName={user.givenName?.trim()}
             isCompleted={workflow.status === "completed"}
             currentStageIndex={workflow.currentStageIndex}
-            extendedOnboarding={flags.flags.extendedOnboarding}
+            extendedOnboarding={extendedOnboarding}
             workflowSlug={workflow.slug}
             stages={workflow.stages}
             setWorkflowSlug={setWorkflowSlug}

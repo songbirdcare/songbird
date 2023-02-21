@@ -7,7 +7,6 @@ import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchUser } from "../hooks/use-fetch-user";
-import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { SETTINGS } from "../settings";
 
@@ -17,11 +16,10 @@ export const RenderSchedule: React.FC<{
   workflowId: string;
   taskId: string;
   stageId: string;
-}> = ({ workflowId, taskId, stageId }) => {
+  mutate: () => void;
+}> = ({ workflowId, taskId, stageId, mutate }) => {
   const router = useRouter();
   const { data: user, isLoading: userIsLoading } = useFetchUser();
-
-  const { mutate } = useFetchWorkflow(undefined);
 
   const { enableAdminDebugging } = useImpersonateContext();
 

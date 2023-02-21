@@ -13,6 +13,7 @@ export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
 export interface WorkflowModel {
   id: string;
+  childId: string;
   slug: WorkflowSlug;
   version: 1;
   stages: Stage[];
