@@ -43,7 +43,10 @@ export class WorkflowRouter {
         );
 
         res.json({
-          data: workflows,
+          data: await this.workflowService.getAll({
+            userId: req.user.id,
+            childId: child.id,
+          }),
         });
       }
     );

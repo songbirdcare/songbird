@@ -1,5 +1,5 @@
 import { createPool, sql } from "slonik";
-import { beforeEach, expect, test, it } from "vitest";
+import { beforeEach, expect, it, test } from "vitest";
 
 import { PsqlChildService } from "../../services/child/psql-child-service";
 import { PsqlUserService } from "../../services/psql-user-service";
