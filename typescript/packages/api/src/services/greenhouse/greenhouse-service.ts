@@ -14,7 +14,9 @@ const CANIDATE_PAGE_SIZE = 500;
 const CANIDATE_MAX_ATTEMPTS = 10;
 const CIRCUIT_BREAKER_MAX = 1000;
 const RBT_DEPARTMENT_ID = 4023806003;
-const CREATED_AFTER_DATE = new Date("2022-01-01").toISOString();
+// we are technically tracking from the beginning of 2022
+// but we give it a 6 month grace period so we don't miss anything
+const CREATED_AFTER_DATE = new Date("2021-06-01").toISOString();
 
 const COLUMNS: (keyof StageData)[] = [
   "applied",
