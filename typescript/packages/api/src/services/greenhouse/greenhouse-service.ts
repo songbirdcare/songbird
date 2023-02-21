@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import ExcelJS from "exceljs";
-import { setTimeout } from "timers/promises";
 import { promises } from "fs";
+import { setTimeout } from "timers/promises";
 import { z } from "zod";
 
 const TIMEOUT = 5_000;
@@ -41,9 +41,13 @@ export class GreenhouseServiceImpl implements GreenhouseService {
   }
 
   async writeReport(): Promise<void> {
+    console.log("Fetching candidate ids");
     const ids = Array.from(await this.getCanditateIds());
+
+    console.log("Fetching stage data");
     const feedData = await this.getStageData(ids);
 
+    console.log("Preparing output");
     await this.export({
       path: "./greenhouse-report.xlsx",
       stageData: feedData.stageData,
@@ -73,6 +77,7 @@ export class GreenhouseServiceImpl implements GreenhouseService {
 
   async #getCanditatePage(page: number): Promise<string[]> {
     for (let attempt = 0; attempt < CANIDATE_MAX_ATTEMPTS; attempt++) {
+      console.log(`Fetching page ${page} attempt ${attempt}`);
       try {
         const resp = await this.#client.get(
           `/candidates?page=${page}&per_page=${CANIDATE_PAGE_SIZE}`
@@ -189,8 +194,6 @@ export class GreenhouseServiceImpl implements GreenhouseService {
     ids: string[]
   ): Promise<Record<string, ActivityItem[]>> {
     const acc: Record<string, ActivityItem[]> = {};
-
-    console.log("Start fetching activity feed data");
     for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
       console.log(`Fetching ${i} to ${i + CHUNK_SIZE}`);
       const chunk = ids.slice(i, i + CHUNK_SIZE);
@@ -225,9 +228,7 @@ export class GreenhouseServiceImpl implements GreenhouseService {
   #getActivityFeed = async (id: string): Promise<ActivityItem[]> => {
     for (let attempt = 0; attempt <= CANIDATE_MAX_ATTEMPTS; attempt++) {
       try {
-        if (attempt != 0) {
-          console.log(`Get get actvity feed attempt: ${attempt}`);
-        }
+        console.log(`Get get actvity feed id ${id} attempt: ${attempt}`);
         const resp = await this.#client.get(`/candidates/${id}/activity_feed`);
         return ZRawActivity.transform((val) => ({
           createdAt: new Date(val.created_at),
