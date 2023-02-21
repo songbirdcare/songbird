@@ -8,7 +8,7 @@ import type { ObjectWriter } from "../object-writer";
 
 const TIMEOUT = 5_000;
 const CHUNK_SIZE = 10;
-const CANIDATE_PAGE_SIZE = 1 || 500;
+const CANIDATE_PAGE_SIZE = 500;
 const CANIDATE_MAX_ATTEMPTS = 10;
 const CIRCUIT_BREAKER_MAX = 1000;
 
