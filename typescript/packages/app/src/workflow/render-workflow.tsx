@@ -6,6 +6,7 @@ import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
+import { useFetchChild } from "../hooks/use-fetch-child";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { CompletedStage } from "./completed-stage";
@@ -45,6 +46,15 @@ export const RenderStage: React.FC<{
   workflowId: string;
 }> = ({ stage, userId, workflowId }) => {
   const [task] = stage.blockingTasks;
+
+  const { mutate: mutateChild } = useFetchChild();
+  const { mutate: mutateWorkflow } = useFetchWorkflow(undefined);
+
+  const mutate = React.useCallback(() => {
+    mutateChild();
+    mutateWorkflow();
+  }, [mutateChild, mutateWorkflow]);
+
   if (task === undefined) {
     throw new Error("illegal state");
   }
@@ -63,6 +73,7 @@ export const RenderStage: React.FC<{
           userId={userId}
           stageId={stage.id}
           workflowId={workflowId}
+          mutate={mutate}
         />
       );
     case "signature":
@@ -71,6 +82,7 @@ export const RenderStage: React.FC<{
           workflowId={workflowId}
           stageId={stage.id}
           taskId={task.id}
+          mutate={mutate}
         />
       );
 
@@ -80,6 +92,7 @@ export const RenderStage: React.FC<{
           stageId={stage.id}
           taskId={task.id}
           workflowId={workflowId}
+          mutate={mutate}
         />
       );
     case "dummy":
@@ -88,6 +101,7 @@ export const RenderStage: React.FC<{
           stageId={stage.id}
           taskId={task.id}
           workflowId={workflowId}
+          mutate={mutate}
         />
       );
     default:
@@ -99,9 +113,9 @@ const RenderSignature: React.FC<{
   workflowId: string;
   taskId: string;
   stageId: string;
-}> = ({ workflowId, taskId, stageId }) => {
+  mutate: () => void;
+}> = ({ workflowId, taskId, stageId, mutate }) => {
   const router = useRouter();
-  const { mutate } = useFetchWorkflow(undefined);
 
   const { enableAdminDebugging } = useImpersonateContext();
 
