@@ -23,7 +23,7 @@ afterEach(async () => {
   await promises.rm(DIR, { recursive: true });
 });
 
-test.only("writeFile", async () => {
+test("writeFile", async () => {
   const { impl, fileName } = await setup();
 
   await impl.writeFile({
