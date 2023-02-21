@@ -31,7 +31,7 @@
     "run-job-runner": "node dist/job-runner/main.js",
     "run-server::develop": "node --inspect=9331 --watch dist/index.js | pino-pretty",
     "test:sql": "docker compose run --build db_test_migration",
-    "test": "yarn vitest src/tests",
+    "test": "yarn vitest --threads=false src/tests",
     "lint": "eslint . --ext .ts",
     "fix": "yarn fix::lint; yarn fix::format",
     "fix::lint": "eslint . --ext .ts --fix",
