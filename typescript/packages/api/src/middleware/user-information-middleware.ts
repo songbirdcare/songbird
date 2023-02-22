@@ -54,6 +54,9 @@ export class UserInformationMiddleware {
         }
         req.impersonatingUser = user;
         req.user = await this.userService.getById(impersonate);
+        await this.childService.createIfNotExists(req.user.id, {
+          type: "unknown",
+        });
       } else {
         req.user = user;
       }

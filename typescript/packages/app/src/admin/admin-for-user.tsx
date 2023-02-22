@@ -10,6 +10,8 @@ import {
 import type { Child, Provider, UserModel } from "@songbird/precedent-iso";
 import React from "react";
 
+import { Schedule } from "./schedule";
+
 export const AdminForUser: React.FC<{
   providers: Provider[];
   child: Child;
@@ -30,6 +32,7 @@ export const AdminForUser: React.FC<{
       <Box marginBottom={2}>
         <Typography>{user.email}</Typography>
       </Box>
+      <Schedule rows={[]} />
       <FormControl fullWidth>
         <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
         <Select

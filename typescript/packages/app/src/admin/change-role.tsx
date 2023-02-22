@@ -19,7 +19,7 @@ export const ChangeRole: React.FC<{
         onChange={(e) => {
           setRole(e.target.value as UserRole);
         }}
-        disabled={isMutating}
+        disabled={!params.isEligibleForAdmin || isMutating}
       >
         {params.isEligibleForAdmin && (
           <MenuItem value={"admin"}>Admin</MenuItem>
@@ -27,14 +27,16 @@ export const ChangeRole: React.FC<{
         <MenuItem value={"user"}>User</MenuItem>
       </Select>
 
-      <Button
-        disabled={isMutating}
-        onClick={() => {
-          trigger({ userId: params.id, role });
-        }}
-      >
-        Save Change
-      </Button>
+      {params.isEligibleForAdmin && (
+        <Button
+          disabled={isMutating}
+          onClick={() => {
+            trigger({ userId: params.id, role });
+          }}
+        >
+          Save Change
+        </Button>
+      )}
     </Box>
   );
 };
