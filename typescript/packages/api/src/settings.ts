@@ -33,6 +33,7 @@ const ZSettings = z.object({
   }),
   amplitudeKey: z.string().optional(),
   bucket: z.string().min(1),
+  sendgridApiKey: z.string().min(1),
 });
 
 const domain = process.env["AUTH0_DOMAIN"];
@@ -80,4 +81,5 @@ export const SETTINGS = ZSettings.parse({
   },
   amplitudeKey: process.env["AMPLITUDE_KEY"],
   bucket: process.env["BUCKET"],
+  sendgridApiKey: process.env["SENDGRID_API_KEY"],
 });
