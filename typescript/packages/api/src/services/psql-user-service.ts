@@ -17,8 +17,8 @@ name,
 given_name,
 family_name,
 phone,
-role,
-created_at
+created_at,
+role
 `;
 
 export class PsqlUserService implements UserService {

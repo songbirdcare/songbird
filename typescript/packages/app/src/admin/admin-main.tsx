@@ -12,7 +12,7 @@ import { ChangeRole } from "./change-role";
 import { DeleteUser } from "./delete-user";
 
 const columns: GridColDef[] = [
-  { field: "id", headerName: "Id", width: 150 },
+  { field: "id", headerName: "Id", width: 300 },
   {
     field: "email",
     headerName: "Email",
@@ -21,6 +21,17 @@ const columns: GridColDef[] = [
   {
     field: "role",
     headerName: "Role",
+    width: 75,
+  },
+  {
+    field: "createdAt",
+    headerName: "Created at",
+    width: 150,
+    valueFormatter: (params) => params.value.toISOString().split("T")[0],
+  },
+  {
+    field: "lastLogin",
+    headerName: "Last Login at",
     width: 150,
   },
   {
@@ -38,11 +49,19 @@ const columns: GridColDef[] = [
     headerName: "Change Role",
     flex: 1,
     renderCell: (params) => {
-      return params.row.selfId === params.row.id ? null : (
+      const isEligibleForAdmin_ = isEligibleForAdmin(params.row);
+      if (params.row.selfId === params.row.id) {
+        return null;
+      }
+      if (params.row.role !== "admin" && !isEligibleForAdmin_) {
+        return null;
+      }
+
+      return (
         <ChangeRole
           id={params.row.id}
           role={params.row.role}
-          isEligibleForAdmin={isEligibleForAdmin(params.row)}
+          isEligibleForAdmin={isEligibleForAdmin_}
         />
       );
     },
@@ -104,15 +123,23 @@ export const AdminMain: React.FC<{ selfId: string; users: UserModel[] }> = ({
   selfId,
   users,
 }) => {
-  const rows: GridRowsProp = users.map(({ id, email, role, emailVerified }) => {
-    return {
-      id,
-      selfId,
-      email,
-      role,
-      emailVerified,
-    };
-  });
+  const rows: GridRowsProp = users
+    .map(({ id, email, role, emailVerified, createdAt }) => {
+      return {
+        id,
+        selfId,
+        email,
+        role,
+        emailVerified,
+        createdAt: new Date(createdAt),
+        lastLogin: undefined,
+      };
+    })
+    .sort(function (a, b) {
+      // Turn your strings into dates, and then subtract them
+      // to get a value that is either negative, positive, or zero.
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
 
   return <DataGrid rows={rows} columns={columns} />;
 };

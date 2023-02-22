@@ -1,16 +1,14 @@
-import type React from "react";
-
 import {
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
-
 import type { Block, Slot } from "@songbird/precedent-iso";
+import type React from "react";
 
 type Row = {
   block: Block;
