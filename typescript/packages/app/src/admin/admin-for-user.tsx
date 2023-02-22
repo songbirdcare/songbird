@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import type { Child, Provider, UserModel } from "@songbird/precedent-iso";
 import React from "react";
+import { Schedule } from "./schedule";
 
 export const AdminForUser: React.FC<{
   providers: Provider[];
@@ -30,6 +31,7 @@ export const AdminForUser: React.FC<{
       <Box marginBottom={2}>
         <Typography>{user.email}</Typography>
       </Box>
+      <Schedule />
       <FormControl fullWidth>
         <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
         <Select
