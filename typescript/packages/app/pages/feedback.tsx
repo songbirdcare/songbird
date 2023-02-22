@@ -4,14 +4,14 @@ import { LinearProgress, Snackbar } from "@mui/material";
 import { useRouter } from "next/router";
 import * as React from "react";
 
-import { useFetchUser } from "../src/hooks/use-fetch-user";
+import { useFetchMe } from "../src/hooks/use-fetch-user";
 import { useTrackOnce } from "../src/hooks/use-track-once";
 import { SETTINGS } from "../src/settings";
 
 const REDIRECT_WAIT_TIME = 5_000;
 
 const Feedback: React.FC = () => {
-  const { data: user } = useFetchUser();
+  const { data: user } = useFetchMe();
   const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);
 
   const router = useRouter();

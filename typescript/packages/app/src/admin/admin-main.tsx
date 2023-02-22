@@ -5,7 +5,7 @@ import { useFlagsmith } from "flagsmith/react";
 import { useRouter } from "next/router";
 import * as React from "react";
 
-import { useFetchUser } from "../hooks/use-fetch-user";
+import { useFetchMe } from "../hooks/use-fetch-user";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
 import { ChangeRole } from "./change-role";
@@ -66,7 +66,7 @@ const Impersonate: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();
   const { setId } = useImpersonateContext();
   const flagsmith = useFlagsmith();
-  const { mutate } = useFetchUser();
+  const { mutate } = useFetchMe();
   return (
     <Button
       onClick={() => {

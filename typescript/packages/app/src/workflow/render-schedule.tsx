@@ -6,7 +6,7 @@ import { InlineWidget, useCalendlyEventListener } from "react-calendly";
 import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
-import { useFetchUser } from "../hooks/use-fetch-user";
+import { useFetchMe } from "../hooks/use-fetch-user";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { SETTINGS } from "../settings";
 
@@ -19,7 +19,7 @@ export const RenderSchedule: React.FC<{
   mutate: () => void;
 }> = ({ workflowId, taskId, stageId, mutate }) => {
   const router = useRouter();
-  const { data: user, isLoading: userIsLoading } = useFetchUser();
+  const { data: user, isLoading: userIsLoading } = useFetchMe();
 
   const { enableAdminDebugging } = useImpersonateContext();
 

@@ -6,7 +6,7 @@ import * as React from "react";
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchChild } from "../src/hooks/use-fetch-child";
-import { useFetchUser } from "../src/hooks/use-fetch-user";
+import { useFetchMe } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflow } from "../src/hooks/use-fetch-workflow";
 import { useGetWorkflowSlugAndStageType } from "../src/hooks/use-get-workflow-and-stage";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
@@ -18,7 +18,7 @@ const CompleteStage: React.FC = () => {
   useRedirectIfNotVerified();
 
   useRedirectIfNotEligible();
-  const { data: user } = useFetchUser();
+  const { data: user } = useFetchMe();
   const { data: child } = useFetchChild();
   const processData = useGetWorkflowSlugAndStageType(child?.workflowSlug);
 

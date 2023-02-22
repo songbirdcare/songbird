@@ -5,7 +5,7 @@ import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
-import { useFetchUser } from "../hooks/use-fetch-user";
+import { useFetchMe } from "../hooks/use-fetch-user";
 
 export const RenderDummy: React.FC<{
   workflowId: string;
@@ -13,7 +13,7 @@ export const RenderDummy: React.FC<{
   stageId: string;
   mutate: () => void;
 }> = ({ workflowId, taskId, stageId, mutate }) => {
-  const { data: user, isLoading: userIsLoading } = useFetchUser();
+  const { data: user, isLoading: userIsLoading } = useFetchMe();
 
   const router = useRouter();
 

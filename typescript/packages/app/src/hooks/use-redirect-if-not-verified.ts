@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import React from "react";
 
-import { useFetchUser } from "./use-fetch-user";
+import { useFetchMe } from "./use-fetch-user";
 
 export const useRedirectIfNotVerified = () => {
   const router = useRouter();
 
-  const { data: user } = useFetchUser();
+  const { data: user } = useFetchMe();
   const isEmailVerified = user?.emailVerified;
 
   React.useEffect(() => {
