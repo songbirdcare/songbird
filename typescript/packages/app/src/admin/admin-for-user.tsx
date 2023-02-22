@@ -31,7 +31,7 @@ export const AdminForUser: React.FC<{
       <Box marginBottom={2}>
         <Typography>{user.email}</Typography>
       </Box>
-      <Schedule />
+      <Schedule rows={[]} />
       <FormControl fullWidth>
         <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
         <Select

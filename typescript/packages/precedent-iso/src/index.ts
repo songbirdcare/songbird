@@ -14,3 +14,4 @@ export * from "./models/workflow/onboarding";
 export * from "./models/workflow/stages";
 export * from "./models/workflow/task";
 export * from "./models/workflow/workflow";
+export * from "./models/schedule";

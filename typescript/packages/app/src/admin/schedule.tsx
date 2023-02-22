@@ -10,7 +10,14 @@ import {
   Paper,
 } from "@mui/material";
 
-export const Schedule: React.FC = () => {
+import type { Block, Slot } from "@songbird/precedent-iso";
+
+type Row = {
+  block: Block;
+  availibility: boolean[];
+};
+
+export const Schedule: React.FC<{ rows: Row[] }> = ({ rows }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -25,20 +32,28 @@ export const Schedule: React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-            <TableCell component="th" scope="row">
-              Block
-            </TableCell>
-            <TableCell component="th" scope="row">
-              1
-            </TableCell>
-            <TableCell>2</TableCell>
-            <TableCell>3</TableCell>
-            <TableCell>4</TableCell>
-            <TableCell>5</TableCell>
-          </TableRow>
+          {rows.map((row, index) => (
+            <TableRow
+              key={index}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell>{formatBlock(row.block)}</TableCell>
+              <TableCell>1</TableCell>
+              <TableCell>2</TableCell>
+              <TableCell>3</TableCell>
+              <TableCell>4</TableCell>
+              <TableCell>5</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>
   );
 };
+
+function formatBlock({ start, end }: Block): string {
+  return `${formatSlot(start)} - ${formatSlot(end)}`;
+}
+function formatSlot({ hour, period }: Slot): string {
+  return `${hour} ${period}`;
+}
