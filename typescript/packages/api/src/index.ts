@@ -38,6 +38,7 @@ import pino from "pino-http";
 import { LOGGER } from "./logger";
 import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
 import { ChildRouter } from "./routers/child";
+import { PsqlProviderService } from "./services/provider/provider-service";
 
 LOGGER.info("Server starting ...");
 
@@ -92,6 +93,8 @@ async function start() {
   const userService = new PsqlUserService(pool);
   const calendarService = new PsqlCalendarSubmissionsService(pool);
   const signatureSubmissionService = new PsqlSignatureSubmissionService(pool);
+
+  const providerService = new PsqlProviderService(pool);
 
   const childService = new PsqlChildService(pool);
   const workflowService = new PsqlWorkflowService(pool);
@@ -162,7 +165,12 @@ async function start() {
     addUser,
     userIsVerified,
     ensureIsAdmin,
-    new AdminUserRouter(userService).init()
+    new AdminUserRouter(
+      userService,
+      providerService,
+      workflowService,
+      childService
+    ).init()
   );
 
   app.use("/api/v1/calendar", new CalendarRouter(calendarService).init());

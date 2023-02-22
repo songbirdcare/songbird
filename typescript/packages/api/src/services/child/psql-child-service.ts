@@ -35,10 +35,8 @@ export class PsqlChildService implements ChildService {
     to,
   }: AdvanceWorkflowArguments): Promise<void> {
     await this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) =>
-        trx.query(
-          sql.type(ZChildFromSql)`
-
+      connection.query(
+        sql.type(ZChildFromSql)`
 UPDATE
     child
 SET
@@ -47,16 +45,14 @@ WHERE
     id = ${childId}
     AND workflow_slug = ${from}
 `
-        )
       )
     );
   }
 
   async get(userId: string): Promise<Child> {
     const child = await this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) =>
-        trx.one(
-          sql.type(ZChildFromSql)`
+      connection.one(
+        sql.type(ZChildFromSql)`
 SELECT
     ${FIELDS}
 FROM
@@ -64,7 +60,6 @@ FROM
 WHERE
     sb_user_id = ${userId}
 `
-        )
       )
     );
     return fromSql(child);

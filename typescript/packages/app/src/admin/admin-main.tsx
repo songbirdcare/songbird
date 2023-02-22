@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Link } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { isEligibleForAdmin, UserModel } from "@songbird/precedent-iso";
 import { useFlagsmith } from "flagsmith/react";
@@ -22,6 +22,16 @@ const columns: GridColDef[] = [
     field: "role",
     headerName: "Role",
     width: 150,
+  },
+  {
+    field: "detailPage",
+    headerName: "Detail Page",
+    width: 150,
+    renderCell: (params) => {
+      return params.row.selfId === params.row.id ? null : (
+        <GoToDetailPage id={params.row.id} />
+      );
+    },
   },
   {
     field: "change_role",
@@ -61,6 +71,14 @@ const columns: GridColDef[] = [
     sortable: false,
   },
 ];
+
+const GoToDetailPage: React.FC<{ id: string }> = ({ id }) => {
+  return (
+    <Link href={`/admin-for-user/${id}`} color="inherit">
+      Detail Page
+    </Link>
+  );
+};
 
 const Impersonate: React.FC<{ id: string }> = ({ id }) => {
   const router = useRouter();

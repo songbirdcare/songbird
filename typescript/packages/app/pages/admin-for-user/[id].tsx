@@ -3,17 +3,15 @@ import { Box, LinearProgress } from "@mui/material";
 import { useRouter } from "next/router";
 import * as React from "react";
 
-import { AdminForUser } from "../src/admin/admin-for-user";
-import { AppBar } from "../src/app-bar/app-bar";
-import { BodyContainer } from "../src/body-container";
-import { useFetchMe } from "../src/hooks/use-fetch-user";
-import { useFetchUsers } from "../src/hooks/use-fetch-users";
+import { AdminForUser } from "../../src/admin/admin-for-user";
+import { AppBar } from "../../src/app-bar/app-bar";
+import { BodyContainer } from "../../src/body-container";
+import { useFetchMe } from "../../src/hooks/use-fetch-user";
+import { useFetchUsers } from "../../src/hooks/use-fetch-users";
 
-const Admin: React.FC = () => {
+const AdminForUserPage: React.FC = () => {
   const { data: user, isLoading: userIsLoading } = useFetchMe();
-
   const { data: users } = useFetchUsers();
-
   const router = useRouter();
 
   const role = user?.role;
@@ -22,6 +20,12 @@ const Admin: React.FC = () => {
       router.push("/");
     }
   }, [router, role]);
+
+  const { id } = router.query;
+  if (typeof id !== "string") {
+    throw new Error("invalid id");
+  }
+  console.log(id);
 
   return (
     <>
@@ -33,11 +37,11 @@ const Admin: React.FC = () => {
             <LinearProgress sx={{ width: "100%" }} />
           </Box>
         ) : (
-          <AdminForUser />
+          <AdminForUser id={id} />
         )}
       </BodyContainer>
     </>
   );
 };
 
-export default withPageAuthRequired(Admin);
+export default withPageAuthRequired(AdminForUserPage);
