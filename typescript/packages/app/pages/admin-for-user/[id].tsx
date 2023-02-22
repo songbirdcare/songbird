@@ -22,19 +22,20 @@ const AdminForUserPage: React.FC = () => {
   }, [router, role]);
 
   const { id } = router.query;
-  if (typeof id !== "string") {
-    throw new Error("invalid id");
+  if (Array.isArray(id)) {
+    throw new Error(`invalid id: ${id}`);
   }
+
   const { data: providers } = useFetchProviders();
   const { data: userData } = useFetchAdminUserData(id);
-  console.log(id);
+  console.log({ userData, providers });
 
   return (
     <>
       <AppBar />
 
       <BodyContainer>
-        {!providers || !userData ? (
+        {!providers || !userData || typeof id !== "string" ? (
           <Box display="flex" width="100%" height="100%">
             <LinearProgress sx={{ width: "100%" }} />
           </Box>

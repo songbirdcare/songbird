@@ -11,7 +11,7 @@ import { z } from "zod";
 import type { ChildService } from "./child-service";
 import { workflowOrder } from "./workflow-order";
 
-const FIELDS = sql.fragment`id, qualification_status, workflow_slug`;
+const FIELDS = sql.fragment`id, qualification_status, workflow_slug, assessor`;
 
 interface AdvanceWorkflowArguments {
   childId: string;
@@ -86,11 +86,15 @@ function fromSql({
   id,
   qualification_status,
   workflow_slug,
+  assessor,
 }: ChildFromSql): Child {
   return {
     id,
-    qualified: QualifiedSqlConverter.from(qualification_status),
+    qualified: qualification_status
+      ? QualifiedSqlConverter.from(qualification_status)
+      : { type: "unknown" },
     workflowSlug: workflow_slug,
+    assessorId: assessor ?? undefined,
   };
 }
 
@@ -110,8 +114,9 @@ type QualificationColumn = z.infer<typeof ZQualificationColumn>;
 
 const ZChildFromSql = z.object({
   id: z.string(),
-  qualification_status: ZQualificationColumn,
+  qualification_status: ZQualificationColumn.nullable(),
   workflow_slug: ZWorkflowSlug,
+  assessor: z.string().nullable(),
 });
 
 class QualifiedSqlConverter {

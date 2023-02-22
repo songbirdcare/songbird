@@ -1,11 +1,11 @@
-import { createPool } from "slonik";
 import { expect, test } from "vitest";
 
 import { PsqlProviderService } from "../../services/provider/provider-service";
+import { dataBasePool } from "../../sql";
 import { TEST_SETTINGS } from "../test-settings";
 
 async function setup() {
-  const pool = await createPool(TEST_SETTINGS.sqlUri);
+  const pool = await dataBasePool(TEST_SETTINGS.sqlUri);
   const providerService = new PsqlProviderService(pool);
 
   return {

@@ -20,7 +20,7 @@ import { Auth0Service } from "./services/auth0/auth0-service";
 import { PsqlFormSubmissionService } from "./services/form/form-submissions-service";
 import { HealthService } from "./services/health-service";
 import { PsqlUserService } from "./services/psql-user-service";
-import { POOL } from "./sql";
+import { dataBasePool } from "./sql";
 import { errorLogger } from "./middleware/error-logger";
 import { errorResponder } from "./middleware/error-responder";
 import { invalidPathHandler } from "./middleware/invalid-path-handler";
@@ -59,7 +59,7 @@ async function start() {
   const app = express();
   app.enable("trust proxy");
 
-  const pool = await POOL;
+  const pool = await dataBasePool(SETTINGS.sql.uri);
 
   app.use(
     pino({

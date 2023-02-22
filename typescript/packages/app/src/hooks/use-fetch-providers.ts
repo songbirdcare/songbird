@@ -6,7 +6,8 @@ export const useFetchProviders = () => {
     "/api/proxy/admin/providers",
     async (url) => {
       const response = await fetch(url);
-      return response.json();
+      const data = await response.json();
+      return data.providers;
     }
   );
 

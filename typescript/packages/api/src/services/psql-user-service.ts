@@ -148,14 +148,16 @@ function fromSQL({
   email_verified,
   family_name,
   given_name,
+  phone,
   ...rest
 }: UserFromSql): UserModel {
   return {
     ...rest,
-    emailVerified: email_verified,
-    familyName: family_name,
-    givenName: given_name,
-    name: rest.name,
+    phone: phone ?? undefined,
+    emailVerified: email_verified ?? false,
+    familyName: family_name ?? undefined,
+    givenName: given_name ?? undefined,
+    name: rest.name ?? undefined,
   };
 }
 
@@ -165,10 +167,10 @@ const ZUserFromSql = z.object({
   id: z.string(),
   sub: z.string(),
   email: z.string(),
-  email_verified: z.boolean(),
-  name: z.optional(z.string()),
-  family_name: z.optional(z.string()),
-  given_name: z.optional(z.string()),
-  phone: z.optional(z.string()),
+  email_verified: z.boolean().nullable(),
+  name: z.string().nullable(),
+  family_name: z.string().nullable(),
+  given_name: z.string().nullable(),
+  phone: z.string().nullable(),
   role: ZUserRole,
 });

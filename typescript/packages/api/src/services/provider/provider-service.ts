@@ -27,7 +27,7 @@ export interface ProviderService {
 
 const ZFromSqlProvider = z
   .object({
-    id: z.string().min(1),
+    id: z.string(),
     first_name: z.string().min(1),
     last_name: z.string().min(1),
   })

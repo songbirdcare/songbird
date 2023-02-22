@@ -1,25 +1,33 @@
-import { FormControl,InputLabel, MenuItem, Select } from "@mui/material";
-import type { Child, Provider,UserModel } from "@songbird/precedent-iso";
-import type React from "react";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import type { Child, Provider, UserModel } from "@songbird/precedent-iso";
+import React from "react";
 
 export const AdminForUser: React.FC<{
   providers: Provider[];
   child: Child;
   user: UserModel;
-  //}> = ({ providers, child, user }) => {
-}> = (_) => {
+}> = ({ providers, child, user }) => {
+  const [accessorId, setAccessorId] = React.useState<string | undefined>(
+    child.assessorId
+  );
   return (
     <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">Age</InputLabel>
+      <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
       <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={10}
-        label="Age"
+        labelId="accessor-bcba"
+        id="accessor-bcba"
+        value={accessorId ?? ""}
+        label="Accessor BCBA"
+        onChange={(e) => {
+          setAccessorId(e.target.value === "" ? undefined : e.target.value);
+        }}
       >
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
+        <MenuItem value={""}>No BCBA Accessor</MenuItem>
+        {providers.map((provider) => (
+          <MenuItem key={provider.id} value={provider.id}>
+            {provider.firstName} {provider.lastName}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );

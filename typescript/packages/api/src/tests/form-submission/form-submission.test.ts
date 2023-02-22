@@ -1,12 +1,13 @@
-import { createPool, sql } from "slonik";
+import { sql } from "slonik";
 import { beforeEach, expect, test } from "vitest";
 
 import { PsqlFormSubmissionService } from "../../services/form/form-submissions-service";
+import { dataBasePool } from "../../sql";
 import { TEST_SETTINGS } from "../test-settings";
 import { QUALIFIED, UNQUALIFIED } from "./dummy-data";
 
 async function setup() {
-  const pool = await createPool(TEST_SETTINGS.sqlUri);
+  const pool = await dataBasePool(TEST_SETTINGS.sqlUri);
   const formSubmissionService = new PsqlFormSubmissionService(pool);
   return {
     pool,
