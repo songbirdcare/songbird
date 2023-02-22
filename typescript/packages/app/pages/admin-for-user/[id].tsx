@@ -6,12 +6,12 @@ import * as React from "react";
 import { AdminForUser } from "../../src/admin/admin-for-user";
 import { AppBar } from "../../src/app-bar/app-bar";
 import { BodyContainer } from "../../src/body-container";
+import { useFetchAdminUserData } from "../../src/hooks/use-fetch-admin-user-data";
+import { useFetchProviders } from "../../src/hooks/use-fetch-providers";
 import { useFetchMe } from "../../src/hooks/use-fetch-user";
-import { useFetchUsers } from "../../src/hooks/use-fetch-users";
 
 const AdminForUserPage: React.FC = () => {
-  const { data: user, isLoading: userIsLoading } = useFetchMe();
-  const { data: users } = useFetchUsers();
+  const { data: user } = useFetchMe();
   const router = useRouter();
 
   const role = user?.role;
@@ -25,6 +25,8 @@ const AdminForUserPage: React.FC = () => {
   if (typeof id !== "string") {
     throw new Error("invalid id");
   }
+  const { data: providers } = useFetchProviders();
+  const { data: userData } = useFetchAdminUserData(id);
   console.log(id);
 
   return (
@@ -32,12 +34,16 @@ const AdminForUserPage: React.FC = () => {
       <AppBar />
 
       <BodyContainer>
-        {userIsLoading || !user || !users ? (
+        {!providers || !userData ? (
           <Box display="flex" width="100%" height="100%">
             <LinearProgress sx={{ width: "100%" }} />
           </Box>
         ) : (
-          <AdminForUser id={id} />
+          <AdminForUser
+            providers={providers}
+            child={userData.child}
+            user={userData.user}
+          />
         )}
       </BodyContainer>
     </>

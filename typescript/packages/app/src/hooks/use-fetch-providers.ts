@@ -1,5 +1,4 @@
 import type { Provider } from "@songbird/precedent-iso";
-
 import useSWR from "swr";
 
 export const useFetchProviders = () => {

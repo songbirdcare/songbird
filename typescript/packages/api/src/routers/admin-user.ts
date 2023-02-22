@@ -1,9 +1,9 @@
 import { ZChangeRoleRequest } from "@songbird/precedent-iso";
 import express from "express";
 
-import type { UserService } from "../services/user-service";
-import type { ProviderService } from "../services/provider/provider-service";
 import type { ChildService } from "../services/child/child-service";
+import type { ProviderService } from "../services/provider/provider-service";
+import type { UserService } from "../services/user-service";
 import type { WorkflowService } from "../services/workflow/workflow-service";
 
 export class AdminUserRouter {

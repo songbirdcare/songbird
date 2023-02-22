@@ -1,7 +1,7 @@
 import { createPool } from "slonik";
 import { expect, test } from "vitest";
-import { PsqlProviderService } from "../../services/provider/provider-service";
 
+import { PsqlProviderService } from "../../services/provider/provider-service";
 import { TEST_SETTINGS } from "../test-settings";
 
 async function setup() {

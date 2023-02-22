@@ -1,5 +1,4 @@
-import type { UserModel, Provider, Child } from "@songbird/precedent-iso";
-
+import type { Child,Provider, UserModel } from "@songbird/precedent-iso";
 import useSWR from "swr";
 
 export const useFetchAdminUserData = (userId: string) => {

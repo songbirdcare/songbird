@@ -1,6 +1,6 @@
+import type { Provider } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
-import type { Provider } from "@songbird/precedent-iso";
 
 export class PsqlProviderService implements ProviderService {
   constructor(private readonly pool: DatabasePool) {}
