@@ -115,7 +115,6 @@ export interface InsertFormSubmissionArgs {
 }
 
 const ZSqlForm = z.object({
-  id: z.string(),
   submission: z.record(z.string(), z.any()),
 });
 

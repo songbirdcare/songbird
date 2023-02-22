@@ -4,6 +4,7 @@ export interface Child {
   id: string;
   qualified: QualificationStatus;
   workflowSlug: WorkflowSlug;
+  assessorId: string | undefined;
 }
 
 export type DisqualificationReason = "location" | "age" | "insurance" | "other";

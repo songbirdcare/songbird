@@ -2,10 +2,10 @@ import { useFlagsmith } from "flagsmith/react";
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { useFetchUser } from "./use-fetch-user";
+import { useFetchMe } from "./use-fetch-user";
 
 export const useSBFlags = (): Flags => {
-  const { data } = useFetchUser();
+  const { data } = useFetchMe();
 
   const id = data?.id;
   const role = data?.role;

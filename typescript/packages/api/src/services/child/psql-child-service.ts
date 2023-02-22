@@ -11,7 +11,7 @@ import { z } from "zod";
 import type { ChildService } from "./child-service";
 import { workflowOrder } from "./workflow-order";
 
-const FIELDS = sql.fragment`id, qualification_status, workflow_slug`;
+const FIELDS = sql.fragment`id, qualification_status, workflow_slug, assessor`;
 
 interface AdvanceWorkflowArguments {
   childId: string;
@@ -35,10 +35,8 @@ export class PsqlChildService implements ChildService {
     to,
   }: AdvanceWorkflowArguments): Promise<void> {
     await this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) =>
-        trx.query(
-          sql.type(ZChildFromSql)`
-
+      connection.query(
+        sql.type(ZChildFromSql)`
 UPDATE
     child
 SET
@@ -47,16 +45,14 @@ WHERE
     id = ${childId}
     AND workflow_slug = ${from}
 `
-        )
       )
     );
   }
 
   async get(userId: string): Promise<Child> {
     const child = await this.pool.connect(async (connection) =>
-      connection.transaction(async (trx) =>
-        trx.one(
-          sql.type(ZChildFromSql)`
+      connection.one(
+        sql.type(ZChildFromSql)`
 SELECT
     ${FIELDS}
 FROM
@@ -64,7 +60,6 @@ FROM
 WHERE
     sb_user_id = ${userId}
 `
-        )
       )
     );
     return fromSql(child);
@@ -91,11 +86,15 @@ function fromSql({
   id,
   qualification_status,
   workflow_slug,
+  assessor,
 }: ChildFromSql): Child {
   return {
     id,
-    qualified: QualifiedSqlConverter.from(qualification_status),
+    qualified: qualification_status
+      ? QualifiedSqlConverter.from(qualification_status)
+      : { type: "unknown" },
     workflowSlug: workflow_slug,
+    assessorId: assessor ?? undefined,
   };
 }
 
@@ -115,8 +114,9 @@ type QualificationColumn = z.infer<typeof ZQualificationColumn>;
 
 const ZChildFromSql = z.object({
   id: z.string(),
-  qualification_status: ZQualificationColumn,
+  qualification_status: ZQualificationColumn.nullable(),
   workflow_slug: ZWorkflowSlug,
+  assessor: z.string().nullable(),
 });
 
 class QualifiedSqlConverter {

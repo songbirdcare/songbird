@@ -6,7 +6,7 @@ import * as React from "react";
 import { AppBar } from "../src/app-bar/app-bar";
 import { BodyContainer } from "../src/body-container";
 import { useFetchChild } from "../src/hooks/use-fetch-child";
-import { useFetchUser } from "../src/hooks/use-fetch-user";
+import { useFetchMe } from "../src/hooks/use-fetch-user";
 import { useFetchWorkflows } from "../src/hooks/use-fetch-workflows";
 import { useSBFlags } from "../src/hooks/use-flags";
 import { useRedirectIfNotEligible } from "../src/hooks/use-redirect-if-not-eligible";
@@ -16,7 +16,7 @@ import { DisplayWorkflowStages } from "../src/onboarding/onboarding-flow";
 import { SETTINGS } from "../src/settings";
 
 const Home: React.FC = () => {
-  const { data: user, isLoading: userIsLoading } = useFetchUser();
+  const { data: user, isLoading: userIsLoading } = useFetchMe();
   const { data: workflows, isLoading: workflowsIsLoading } =
     useFetchWorkflows();
   const { data: child, mutate } = useFetchChild();

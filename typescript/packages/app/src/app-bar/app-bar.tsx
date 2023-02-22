@@ -17,7 +17,7 @@ import * as React from "react";
 import { useIntercom } from "react-use-intercom";
 
 import { useDeleteWorkflows } from "../hooks/use-delete-workflows";
-import { useFetchUser } from "../hooks/use-fetch-user";
+import { useFetchMe } from "../hooks/use-fetch-user";
 import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { ImpersonateService } from "../impersonate/impersonate-service";
@@ -25,7 +25,7 @@ import { SONG_BIRD_GREEN_LIGHT } from "../style/colors";
 import styles from "./app-bar.module.css";
 
 export const AppBar: React.FC = () => {
-  const { data: user } = useFetchUser();
+  const { data: user } = useFetchMe();
 
   const avatarDisplayName = getAvatarDisplayName(user);
   const { boot } = useIntercom();
