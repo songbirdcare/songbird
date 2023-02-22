@@ -17,7 +17,8 @@ name,
 given_name,
 family_name,
 phone,
-role
+role,
+created_at
 `;
 
 export class PsqlUserService implements UserService {
@@ -45,7 +46,7 @@ export class PsqlUserService implements UserService {
       }
     }
 
-    const user = await this.pool.connect(async (connection) =>
+    return this.pool.connect(async (connection) =>
       connection.one(
         sql.type(ZUserFromSql)`
 UPDATE
@@ -59,7 +60,6 @@ RETURNING
 `
       )
     );
-    return fromSQL(user);
   }
 
   async list(): Promise<UserModel[]> {
@@ -72,17 +72,15 @@ RETURNING
     if (users.length > 10_000) {
       throw new Error("too many users being pulled. time to paginate");
     }
-
-    return users.map(fromSQL);
+    return users as UserModel[];
   }
 
   async getById(id: string): Promise<UserModel> {
-    const user = await this.pool.connect(async (connection) =>
+    return this.pool.connect(async (connection) =>
       connection.one(
         sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE id= ${id}`
       )
     );
-    return fromSQL(user);
   }
 
   async getBySub(sub: string): Promise<UserModel | undefined> {
@@ -93,7 +91,7 @@ RETURNING
         )`SELECT ${FIELDS} FROM sb_user WHERE sub = ${sub} LIMIT 1`
       )
     );
-    return user ? fromSQL(user) : undefined;
+    return user ?? undefined;
   }
 
   async upsert({
@@ -137,40 +135,41 @@ FROM
 WHERE
     sub = ${sub}
 `);
-
-        return fromSQL(user);
+        return user;
       })
     );
   }
 }
 
-function fromSQL({
-  email_verified,
-  family_name,
-  given_name,
-  phone,
-  ...rest
-}: UserFromSql): UserModel {
-  return {
-    ...rest,
-    phone: phone ?? undefined,
-    emailVerified: email_verified ?? false,
-    familyName: family_name ?? undefined,
-    givenName: given_name ?? undefined,
-    name: rest.name ?? undefined,
-  };
-}
-
 export type UserFromSql = z.infer<typeof ZUserFromSql>;
 
-const ZUserFromSql = z.object({
-  id: z.string(),
-  sub: z.string(),
-  email: z.string(),
-  email_verified: z.boolean().nullable(),
-  name: z.string().nullable(),
-  family_name: z.string().nullable(),
-  given_name: z.string().nullable(),
-  phone: z.string().nullable(),
-  role: ZUserRole,
-});
+const ZUserFromSql = z
+  .object({
+    id: z.string(),
+    sub: z.string(),
+    email: z.string(),
+    email_verified: z.boolean().nullable(),
+    name: z.string().nullable(),
+    family_name: z.string().nullable(),
+    given_name: z.string().nullable(),
+    phone: z.string().nullable(),
+    role: ZUserRole,
+    created_at: z.number(),
+  })
+  .transform(function ({
+    email_verified,
+    family_name,
+    given_name,
+    phone,
+    ...rest
+  }): UserModel {
+    return {
+      ...rest,
+      createdAt: new Date(rest.created_at),
+      phone: phone ?? undefined,
+      emailVerified: email_verified ?? false,
+      familyName: family_name ?? undefined,
+      givenName: given_name ?? undefined,
+      name: rest.name ?? undefined,
+    };
+  });
