@@ -5,7 +5,7 @@ import type {
 } from "@songbird/precedent-iso";
 
 export interface ChildService {
-  advanceWorkflow(childId: string, workflowSlug: WorkflowSlug): Promise<void>;
+  advanceWorkflow(childId: string, from: WorkflowSlug): Promise<void>;
   get(userId: string): Promise<Child>;
   createIfNotExists(
     userId: string,

@@ -6,15 +6,14 @@ import useSWRMutation from "swr/mutation";
 
 import { AdvanceToNextStep } from "../advance-to-next-step";
 import { useFetchUser } from "../hooks/use-fetch-user";
-import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 
 export const RenderDummy: React.FC<{
   workflowId: string;
   taskId: string;
   stageId: string;
-}> = ({ workflowId, taskId, stageId }) => {
+  mutate: () => void;
+}> = ({ workflowId, taskId, stageId, mutate }) => {
   const { data: user, isLoading: userIsLoading } = useFetchUser();
-  const { mutate } = useFetchWorkflow(undefined);
 
   const router = useRouter();
 

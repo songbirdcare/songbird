@@ -7,7 +7,6 @@ import * as React from "react";
 import useSWRMutation from "swr/mutation";
 
 import { useFetchFormConfig } from "../hooks/use-fetch-form-config";
-import { useFetchWorkflow } from "../hooks/use-fetch-workflow";
 import { useImpersonateContext } from "../impersonate/impersonate-context";
 import { SETTINGS } from "../settings";
 
@@ -18,9 +17,9 @@ export const RenderForm: React.FC<{
   task: FormTask;
   stageId: string;
   userId: string;
-}> = ({ workflowId, task, userId, stageId }) => {
+  mutate: () => void;
+}> = ({ workflowId, task, userId, stageId, mutate }) => {
   const router = useRouter();
-  const { mutate } = useFetchWorkflow(undefined);
   const { data: formData, isLoading } = useFetchFormConfig(task.slug);
 
   const [hasSubmittedForm, setHasSubmittedForm] = React.useState(false);

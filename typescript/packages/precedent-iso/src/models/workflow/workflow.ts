@@ -13,6 +13,7 @@ export type WorkflowSlug = z.infer<typeof ZWorkflowSlug>;
 
 export interface WorkflowModel {
   id: string;
+  childId: string;
   slug: WorkflowSlug;
   version: 1;
   stages: Stage[];
@@ -20,12 +21,26 @@ export interface WorkflowModel {
   status: "pending" | "completed";
 }
 
+type Change =
+  | {
+      type: "task_complete";
+      taskId: string;
+    }
+  | {
+      type: "workflow_complete";
+    }
+  | {
+      type: "stage_complete";
+      stageId: string;
+      stageType: Stage["type"];
+    };
+
 export class WorkflowWrapper {
   #hasChanged: boolean;
+  changes: Change[] = [];
   #copy: WorkflowModel;
   constructor(original: WorkflowModel) {
     this.#copy = JSON.parse(JSON.stringify(original)) as WorkflowModel;
-
     this.#hasChanged = false;
   }
 
@@ -83,13 +98,33 @@ export class WorkflowWrapper {
       throw new Error("illegal state");
     }
 
+    this.changes.push({
+      type: "task_complete",
+      taskId: task.id,
+    });
+
     task.status = "complete";
 
     const isLastTask = firstPendingTaskIndex === stage.blockingTasks.length - 1;
+
     if (isLastTask && this.isLastStage) {
+      this.changes.push({
+        type: "workflow_complete",
+      });
+
+      this.changes.push({
+        type: "stage_complete",
+        stageId: stage.id,
+        stageType: stage.type,
+      });
       this.#copy.status = "completed";
     } else if (isLastTask) {
       this.#copy.currentStageIndex++;
+      this.changes.push({
+        type: "stage_complete",
+        stageId: stage.id,
+        stageType: stage.type,
+      });
     }
   }
 

@@ -99,7 +99,8 @@ async function start() {
     calendarService,
     userService,
     workflowService,
-    signatureSubmissionService
+    signatureSubmissionService,
+    childService
   );
 
   const healthRouter = new HealthRouter(healthService).init();
