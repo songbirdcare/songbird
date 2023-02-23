@@ -1,3 +1,4 @@
+-- migrate:up
 ALTER TABLE child
 ADD COLUMN IF NOT EXISTS schedule jsonb;
 
