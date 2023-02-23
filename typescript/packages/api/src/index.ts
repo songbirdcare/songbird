@@ -39,6 +39,7 @@ import { LOGGER } from "./logger";
 import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
 import { ChildRouter } from "./routers/child";
 import { PsqlProviderService } from "./services/provider/provider-service";
+import { Auth0Router } from "./routers/auth0-router";
 
 LOGGER.info("Server starting ...");
 
@@ -111,8 +112,11 @@ async function start() {
     formSubmissionService
   ).init();
 
+  const auth0Router = new Auth0Router(userService).init();
+
   app.use("/api/v1/health", healthRouter);
   app.use("/api/v1/form-submission", formSubmissionRouter);
+  app.use("/api/v1/auth0", auth0Router);
 
   const userInformationMiddleware = new UserInformationMiddleware(
     userService,

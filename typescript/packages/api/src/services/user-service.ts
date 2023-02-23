@@ -1,12 +1,18 @@
 import type { UserModel, UserRole } from "@songbird/precedent-iso";
 
 export interface UserService {
+  updateLastLogin(updates: LastLoginUpdate[]): Promise<void>;
   delete(id: string): Promise<void>;
   getById(id: string): Promise<UserModel>;
   getBySub(email: string): Promise<UserModel | undefined>;
   upsert(args: UpsertUserArgs): Promise<UserModel>;
   list(): Promise<UserModel[]>;
   changeRole(userId: string, role: UserRole): Promise<UserModel>;
+}
+
+export interface LastLoginUpdate {
+  email: string;
+  date: Date;
 }
 
 export interface CreateUserArgs {

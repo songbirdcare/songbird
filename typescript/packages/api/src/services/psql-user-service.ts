@@ -6,7 +6,11 @@ import {
 import { DatabasePool, sql } from "slonik";
 import { z } from "zod";
 
-import type { UpsertUserArgs, UserService } from "./user-service";
+import type {
+  LastLoginUpdate,
+  UpsertUserArgs,
+  UserService,
+} from "./user-service";
 
 const FIELDS = sql.fragment`
 id,
@@ -18,22 +22,45 @@ given_name,
 family_name,
 phone,
 created_at,
-role
+role,
+last_login_date
 `;
 
 export class PsqlUserService implements UserService {
   constructor(private readonly pool: DatabasePool) {}
 
+  async updateLastLogin(updates: LastLoginUpdate[]): Promise<void> {
+    await this.pool.connect(async (connection) =>
+      connection.query(
+        sql.type(ZUserFromSql)`
+UPDATE
+    sb_user
+SET
+    last_login_date = c.last_login_date
+FROM (
+    VALUES (${sql.join(
+      updates.map(({ date, email }) =>
+        sql.join([email, sql.date(date)], sql.fragment`, `)
+      ),
+      sql.fragment`), (`
+    )})) c (email, last_login_date)
+WHERE
+    sb_user.email = c.email
+`
+      )
+    );
+  }
+
   async delete(id: string): Promise<void> {
     this.pool.connect((connection) =>
       connection.transaction(async (trx) => {
         await trx.query(
-          sql.unsafe` DELETE FROM workflow WHERE sb_user_id = ${id}; `
+          sql.unsafe`DELETE FROM workflow WHERE sb_user_id = ${id};`
         );
         await trx.query(
-          sql.unsafe` DELETE FROM child WHERE sb_user_id = ${id}; `
+          sql.unsafe`DELETE FROM child WHERE sb_user_id = ${id};`
         );
-        await trx.query(sql.unsafe` DELETE FROM sb_user WHERE id = ${id}; `);
+        await trx.query(sql.unsafe`DELETE FROM sb_user WHERE id = ${id};`);
       })
     );
   }
@@ -78,7 +105,7 @@ RETURNING
   async getById(id: string): Promise<UserModel> {
     return this.pool.connect(async (connection) =>
       connection.one(
-        sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE id= ${id}`
+        sql.type(ZUserFromSql)`SELECT ${FIELDS} FROM sb_user WHERE id = ${id}`
       )
     );
   }
@@ -104,39 +131,25 @@ RETURNING
     phone,
   }: UpsertUserArgs): Promise<UserModel> {
     return this.pool.connect((connection) =>
-      connection.transaction(async (trx) => {
-        await trx.query(
-          sql.unsafe`
-INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name, phone)
+      connection.one(sql.type(ZUserFromSql)`
+INSERT INTO sb_user (sub, email, email_verified, name, family_name, given_name, phone, last_login_date)
     VALUES (${sub}, ${email}, ${emailVerified ?? null}, ${name ?? null}, ${
-            familyName ?? null
-          }, ${givenName ?? null}, ${phone ?? null})
+        familyName ?? null
+      }, ${givenName ?? null}, ${phone ?? null}, NOW())
 ON CONFLICT (sub)
     DO UPDATE SET
         email_verified = COALESCE(${
           emailVerified ?? null
         }, sb_user.email_verified), name = COALESCE(${
-            name ?? null
-          }, sb_user.name), family_name = COALESCE(${
-            familyName ?? null
-          }, sb_user.family_name), given_name = COALESCE(${
-            givenName ?? null
-          }, sb_user.given_name), phone = COALESCE(${
-            phone ?? null
-          }, sb_user.phone)
-`
-        );
-
-        const user = await trx.one(sql.type(ZUserFromSql)`
-SELECT
-    ${FIELDS}
-FROM
-    sb_user
-WHERE
-    sub = ${sub}
-`);
-        return user;
-      })
+        name ?? null
+      }, sb_user.name), family_name = COALESCE(${
+        familyName ?? null
+      }, sb_user.family_name), given_name = COALESCE(${
+        givenName ?? null
+      }, sb_user.given_name), phone = COALESCE(${phone ?? null}, sb_user.phone)
+    RETURNING
+        ${FIELDS}
+`)
     );
   }
 }
@@ -155,6 +168,7 @@ const ZUserFromSql = z
     phone: z.string().nullable(),
     role: ZUserRole,
     created_at: z.number(),
+    last_login_date: z.number().nullable(),
   })
   .transform(function ({
     email_verified,
@@ -171,5 +185,8 @@ const ZUserFromSql = z
       familyName: family_name ?? undefined,
       givenName: given_name ?? undefined,
       name: rest.name ?? undefined,
+      lastLogin: rest.last_login_date
+        ? new Date(rest.last_login_date)
+        : undefined,
     };
   });

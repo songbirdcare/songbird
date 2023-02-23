@@ -16,4 +16,5 @@ export const ZUserModel = z.object({
   givenName: z.optional(z.string()),
   phone: z.optional(z.string()),
   role: ZUserRole,
+  lastLogin: z.date().optional(),
 });
