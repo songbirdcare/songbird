@@ -33,6 +33,9 @@ const columns: GridColDef[] = [
     field: "lastLogin",
     headerName: "Last Login at",
     width: 150,
+    valueFormatter: ({ value }) => {
+      return value ? value.toISOString().split("T")[0] : undefined;
+    },
   },
   {
     field: "detailPage",
@@ -124,7 +127,7 @@ export const AdminMain: React.FC<{ selfId: string; users: UserModel[] }> = ({
   users,
 }) => {
   const rows: GridRowsProp = users
-    .map(({ id, email, role, emailVerified, createdAt }) => {
+    .map(({ id, email, role, emailVerified, createdAt, lastLogin }) => {
       return {
         id,
         selfId,
@@ -132,7 +135,7 @@ export const AdminMain: React.FC<{ selfId: string; users: UserModel[] }> = ({
         role,
         emailVerified,
         createdAt: new Date(createdAt),
-        lastLogin: undefined,
+        lastLogin: lastLogin ? new Date(lastLogin) : undefined,
       };
     })
     .sort(function (a, b) {
