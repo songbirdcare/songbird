@@ -59,7 +59,9 @@ test("updates to last login are correct", async () => {
     },
   ]);
 
-  //const userAgainAgain = await userService.getById(user.id);
+  const userAgainAgain = await userService.getById(user.id);
 
-  //expect(userAgainAgain.lastLogin).toEqual(date);
+  expect(userAgainAgain.lastLogin!.toISOString().split("T")[0]).toEqual(
+    date.toISOString().split("T")[0]
+  );
 });
