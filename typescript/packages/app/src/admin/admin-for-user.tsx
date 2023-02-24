@@ -1,4 +1,4 @@
-import { Tab, Tabs, Box, Typography, TabPanel } from "@mui/material";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
 import type {
   Child,
   Provider,
@@ -6,10 +6,10 @@ import type {
   UserModel,
 } from "@songbird/precedent-iso";
 import React from "react";
-import Grid2 from "@mui/material/Unstable_Grid2"; // Grid2 version 2
 
 import { DisplayBCBA } from "./display-bcba";
 import { DisplaySchedule } from "./schedule";
+import { SendEmail } from "./send-emails";
 import { ViewProfileData } from "./view-profile-data";
 
 export const AdminForUser: React.FC<{
@@ -17,7 +17,8 @@ export const AdminForUser: React.FC<{
   child: Child;
   user: UserModel;
   schedule: Schedule;
-}> = ({ providers, child, user, schedule }) => {
+  mutate: () => void;
+}> = ({ providers, child, user, schedule, mutate }) => {
   const [tabIndex, setTabIndex] = React.useState(0);
 
   return (
@@ -44,6 +45,7 @@ export const AdminForUser: React.FC<{
             <Tab label="View Profile" />
             <Tab label="Edit Schedule" />
             <Tab label="Edit Assessor BCBA" />
+            <Tab label="Send emails" />
           </Tabs>
         </Box>
         {tabIndex === 0 && (
@@ -55,15 +57,21 @@ export const AdminForUser: React.FC<{
           />
         )}
         {tabIndex === 1 && (
-          <DisplaySchedule childId={child.id} schedule={schedule} />
+          <DisplaySchedule
+            childId={child.id}
+            schedule={schedule}
+            mutate={mutate}
+          />
         )}
         {tabIndex === 2 && (
           <DisplayBCBA
             childId={child.id}
             initialAssessorId={child.assessorId}
             providers={providers}
+            mutate={mutate}
           />
         )}
+        {tabIndex === 3 && <SendEmail />}
       </Box>
     </Box>
   );

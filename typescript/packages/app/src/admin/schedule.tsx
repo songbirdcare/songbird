@@ -1,8 +1,10 @@
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -24,10 +26,15 @@ type Row = {
 export const DisplaySchedule: React.FC<{
   childId: string;
   schedule: Schedule;
-}> = ({ childId, schedule }) => {
+  mutate: () => void;
+}> = ({ childId, schedule, mutate }) => {
   const [rows, setRows] = React.useState<Row[]>(() =>
     SchedulerConverter.toRows(schedule)
   );
+
+  React.useEffect(() => {
+    setRows(SchedulerConverter.toRows(schedule));
+  }, [schedule]);
 
   const setCell = (blockIndex: number, dayIndex: number) => {
     const copy: Row[] = JSON.parse(JSON.stringify(rows));
@@ -43,15 +50,27 @@ export const DisplaySchedule: React.FC<{
     setRows(copy);
   };
 
-  return <RenderSchedule childId={childId} rows={rows} setCell={setCell} />;
+  return (
+    <RenderSchedule
+      childId={childId}
+      rows={rows}
+      setCell={setCell}
+      mutate={mutate}
+    />
+  );
 };
 
 const RenderSchedule: React.FC<{
   rows: Row[];
   childId: string;
   setCell: (blockIndex: number, dayIndex: number) => void;
-}> = ({ rows, childId, setCell }) => {
+  mutate: () => void;
+}> = ({ rows, childId, setCell, mutate }) => {
   const { trigger, isMutating } = useUpdateChild();
+
+  const [open, setOpen] = React.useState(false);
+  const showSuccess = () => setOpen(true);
+  const onClose = () => setOpen(false);
 
   return (
     <Box display="flex" gap={3} flexDirection="column">
@@ -94,12 +113,31 @@ const RenderSchedule: React.FC<{
 
       <Button
         disabled={isMutating}
-        onClick={() => {
-          trigger({ schedule: SchedulerConverter.fromRows(rows), childId });
+        onClick={async () => {
+          await trigger({
+            schedule: SchedulerConverter.fromRows(rows),
+            childId,
+          });
+          mutate();
+          showSuccess();
         }}
       >
         Save Schedule
       </Button>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={onClose}
+        sx={{ width: "100%" }}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <Alert onClose={onClose} severity="success" sx={{ width: "500px" }}>
+          Schedule Saved
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

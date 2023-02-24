@@ -1,4 +1,4 @@
-import { Button, Link, Box, Typography } from "@mui/material";
+import { Box, Button, Link, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { isEligibleForAdmin, UserModel } from "@songbird/precedent-iso";
 import { useFlagsmith } from "flagsmith/react";

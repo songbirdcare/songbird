@@ -1,5 +1,5 @@
-import { Tab, Tabs, Box, Typography, Paper } from "@mui/material";
-
+import { Box, Paper, Typography } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2";
 import type {
   Child,
   Provider,
@@ -7,14 +7,12 @@ import type {
   UserModel,
 } from "@songbird/precedent-iso";
 
-import Grid2 from "@mui/material/Unstable_Grid2";
-
 export const ViewProfileData: React.FC<{
   providers: Provider[];
   child: Child;
   user: UserModel;
   schedule: Schedule;
-}> = ({ providers, child, user, schedule }) => {
+}> = ({ providers, child, user }) => {
   const provider = providers.find((p) => p.id === child.assessorId);
   return (
     <Paper>

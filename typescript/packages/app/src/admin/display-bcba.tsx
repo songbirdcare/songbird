@@ -1,5 +1,6 @@
 import {
   Alert,
+  Box,
   Button,
   FormControl,
   InputLabel,
@@ -16,7 +17,8 @@ export const DisplayBCBA: React.FC<{
   childId: string;
   initialAssessorId: string | undefined;
   providers: Provider[];
-}> = ({ childId, initialAssessorId, providers }) => {
+  mutate: () => void;
+}> = ({ childId, initialAssessorId, providers, mutate }) => {
   const [assessorId, setAssessorId] = React.useState<string | undefined>(
     initialAssessorId
   );
@@ -24,11 +26,12 @@ export const DisplayBCBA: React.FC<{
   const { trigger, isMutating } = useUpdateChild();
 
   const [open, setOpen] = React.useState(false);
+  const showSuccess = () => setOpen(true);
   const onClose = () => setOpen(false);
 
   return (
     <>
-      <FormControl fullWidth>
+      <FormControl sx={{ width: "auto" }}>
         <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
         <Select
           labelId="accessor-bcba"
@@ -47,15 +50,18 @@ export const DisplayBCBA: React.FC<{
           ))}
         </Select>
 
-        <Button
-          disabled={isMutating}
-          onClick={async () => {
-            await trigger({ assessorId, childId });
-            setOpen(true);
-          }}
-        >
-          Save BCBA Selection
-        </Button>
+        <Box marginTop={3}>
+          <Button
+            disabled={isMutating}
+            onClick={async () => {
+              await trigger({ assessorId, childId });
+              mutate();
+              showSuccess();
+            }}
+          >
+            Save BCBA Selection
+          </Button>
+        </Box>
       </FormControl>
       <Snackbar
         open={open}
