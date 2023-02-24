@@ -34,7 +34,7 @@ import { PsqlCalendarSubmissionsService } from "./services/calendar-submissions-
 import { PsqlSignatureSubmissionService } from "./services/signature-submission-service";
 import { WorkflowActionService } from "./services/workflow/workflow-action-service";
 import { AdminUserRouter } from "./routers/admin-user";
-import pino from "pino-http";
+//import pino from "pino-http";
 import { LOGGER } from "./logger";
 import { DeviceTrackingMiddleware } from "./middleware/device-tracking-middleware";
 import { ChildRouter } from "./routers/child";
@@ -62,11 +62,9 @@ async function start() {
 
   const pool = await dataBasePool(SETTINGS.sql.uri);
 
-  app.use(
-    pino({
-      redact: ["req.headers.authorization"],
-    })
-  );
+  LOGGER.info({ test: 1 }, "info test");
+  LOGGER.warn({ test: 1 }, "warning test");
+  LOGGER.error({ test: 1 }, "error test");
 
   app.use(DeviceTrackingMiddleware.setMiddleware);
 

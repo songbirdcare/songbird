@@ -34,15 +34,9 @@ const ZAuth0Payload = z
     data: z.object({
       date: z.string(),
       user_name: z.string(),
-      details: z.object({
-        stats: z.object({
-          loginsCount: z.number().min(0),
-        }),
-      }),
     }),
   })
   .transform((val) => ({
     date: new Date(val.data.date),
     email: val.data.user_name,
-    loginCount: val.data.details.stats.loginsCount,
   }));
