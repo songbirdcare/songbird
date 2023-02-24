@@ -7,16 +7,22 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import type { Child, Provider, UserModel } from "@songbird/precedent-iso";
+import type {
+  Child,
+  Provider,
+  Schedule,
+  UserModel,
+} from "@songbird/precedent-iso";
 import React from "react";
 
-import { Schedule } from "./schedule";
+import { DisplaySchedule } from "./schedule";
 
 export const AdminForUser: React.FC<{
   providers: Provider[];
   child: Child;
   user: UserModel;
-}> = ({ providers, child, user }) => {
+  schedule: Schedule;
+}> = ({ providers, child, user, schedule }) => {
   const [accessorId, setAccessorId] = React.useState<string | undefined>(
     child.assessorId
   );
@@ -32,7 +38,7 @@ export const AdminForUser: React.FC<{
       <Box marginBottom={2}>
         <Typography>{user.email}</Typography>
       </Box>
-      <Schedule rows={[]} />
+      <DisplaySchedule schedule={schedule} />
       <FormControl fullWidth>
         <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
         <Select

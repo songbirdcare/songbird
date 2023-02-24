@@ -88,7 +88,9 @@ export class AdminUserRouter {
           childId: child.id,
         });
 
-        res.json({ user, child, workflows });
+        const schedule = await this.childService.getSchedule(child.id);
+
+        res.json({ user, child, workflows, schedule });
       }
     );
     return router;

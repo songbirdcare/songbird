@@ -1,8 +1,11 @@
 import {
   assertNever,
   Child,
+  CreateEmpty,
   QualificationStatus,
+  Schedule,
   WorkflowSlug,
+  ZSchedule,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
@@ -21,6 +24,37 @@ interface AdvanceWorkflowArguments {
 
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
+
+  async getSchedule(childId: string): Promise<Schedule> {
+    const schedule = await this.pool.connect(async (connection) =>
+      connection.maybeOne(
+        sql.type(ZFetchSchedule)`
+SELECT
+    schedule
+FROM
+    child
+WHERE
+    id = ${childId}
+`
+      )
+    );
+
+    return schedule ?? CreateEmpty.schedule();
+  }
+  async updateSchedule(childId: string, schedule: Schedule): Promise<void> {
+    await this.pool.connect(async (connection) =>
+      connection.query(
+        sql.unsafe`
+UPDATE
+    child
+SET
+    schedule = ${JSON.stringify(schedule)}
+WHERE
+    id = ${childId}
+`
+      )
+    );
+  }
 
   async advanceWorkflow(childId: string, from: WorkflowSlug) {
     const to = workflowOrder(from);
@@ -155,3 +189,9 @@ class QualifiedSqlConverter {
     }
   };
 }
+
+const ZFetchSchedule = z
+  .object({
+    schedule: ZSchedule.nullable(),
+  })
+  .transform((val) => val?.schedule ?? undefined);

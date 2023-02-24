@@ -42,9 +42,7 @@ const columns: GridColDef[] = [
     headerName: "Detail Page",
     width: 150,
     renderCell: (params) => {
-      return params.row.selfId === params.row.id ? null : (
-        <GoToDetailPage id={params.row.id} />
-      );
+      return <GoToDetailPage id={params.row.id} />;
     },
   },
   {

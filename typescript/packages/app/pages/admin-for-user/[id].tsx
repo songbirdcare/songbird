@@ -44,6 +44,7 @@ const AdminForUserPage: React.FC = () => {
             providers={providers}
             child={userData.child}
             user={userData.user}
+            schedule={userData.schedule}
           />
         )}
       </BodyContainer>

@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Paper,
   Table,
   TableBody,
@@ -7,15 +8,44 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import type { Block, Slot } from "@songbird/precedent-iso";
-import type React from "react";
+import type { Block, Schedule, Slot } from "@songbird/precedent-iso";
+import React from "react";
+
+import { SchedulerConverter } from "./schedule-converter";
 
 type Row = {
   block: Block;
   availibility: boolean[];
 };
 
-export const Schedule: React.FC<{ rows: Row[] }> = ({ rows }) => {
+export const DisplaySchedule: React.FC<{ schedule: Schedule }> = ({
+  schedule,
+}) => {
+  const [rows, setRows] = React.useState<Row[]>(() =>
+    SchedulerConverter.toRows(schedule)
+  );
+
+  const setCell = (blockIndex: number, dayIndex: number) => {
+    const copy: Row[] = JSON.parse(JSON.stringify(rows));
+    if (copy[blockIndex] === undefined) {
+      throw new Error("illegal state");
+    }
+    const valueAt = copy[blockIndex]!.availibility[dayIndex];
+    if (valueAt === undefined) {
+      throw new Error("illegal state");
+    }
+    copy[blockIndex]!.availibility[dayIndex] = !valueAt;
+
+    setRows(copy);
+  };
+
+  return <RenderSchedule rows={rows} setCell={setCell} />;
+};
+
+const RenderSchedule: React.FC<{
+  rows: Row[];
+  setCell: (blockIndex: number, dayIndex: number) => void;
+}> = ({ rows, setCell }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -30,19 +60,26 @@ export const Schedule: React.FC<{ rows: Row[] }> = ({ rows }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
-            <TableRow
-              key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell>{formatBlock(row.block)}</TableCell>
-              <TableCell>1</TableCell>
-              <TableCell>2</TableCell>
-              <TableCell>3</TableCell>
-              <TableCell>4</TableCell>
-              <TableCell>5</TableCell>
-            </TableRow>
-          ))}
+          {rows.map((row, blockIndex) => {
+            return (
+              <TableRow
+                key={blockIndex}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell>{formatBlock(row.block)}</TableCell>
+                {row.availibility.map((isAvailable, dayIndex) => {
+                  return (
+                    <TableCell key={dayIndex}>
+                      <Checkbox
+                        onChange={() => setCell(blockIndex, dayIndex)}
+                        checked={isAvailable}
+                      />
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>
