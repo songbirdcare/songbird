@@ -1,12 +1,10 @@
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Snackbar,
+  TextField,
 } from "@mui/material";
 import type { Provider } from "@songbird/precedent-iso";
 import React from "react";
@@ -27,42 +25,50 @@ export const DisplayBCBA: React.FC<{
 
   const [open, setOpen] = React.useState(false);
   const showSuccess = () => setOpen(true);
+
   const onClose = () => setOpen(false);
+  const provider = providers.find((p) => p.id === assessorId);
 
   return (
     <>
-      <FormControl sx={{ width: "auto" }}>
-        <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
-        <Select
-          labelId="accessor-bcba"
-          id="accessor-bcba"
-          value={assessorId ?? ""}
-          label="Accessor BCBA"
-          onChange={(e) => {
-            setAssessorId(e.target.value === "" ? undefined : e.target.value);
+      <Autocomplete
+        value={provider ?? null}
+        onChange={(_, newValue) => {
+          if (newValue) {
+            setAssessorId(newValue.id);
+          }
+        }}
+        getOptionLabel={(provider) =>
+          provider ? `${provider.firstName} ${provider.lastName}` : ""
+        }
+        options={providers.sort(
+          (a, b) => -b.firstName.localeCompare(a.firstName)
+        )}
+        sx={{ width: 300 }}
+        renderInput={({ size, ...rest }) => (
+          //@ts-ignore
+          <TextField
+            variant="outlined"
+            label="Select BCBA"
+            size={size}
+            {...rest}
+          />
+        )}
+      />
+      <Box marginTop={3}>
+        <Button
+          variant="contained"
+          disabled={isMutating}
+          onClick={async () => {
+            await trigger({ assessorId, childId });
+            mutate();
+            showSuccess();
           }}
         >
-          <MenuItem value={""}>No BCBA Selected</MenuItem>
-          {providers.map((provider) => (
-            <MenuItem key={provider.id} value={provider.id}>
-              {provider.firstName} {provider.lastName}
-            </MenuItem>
-          ))}
-        </Select>
+          Save BCBA Selection
+        </Button>
+      </Box>
 
-        <Box marginTop={3}>
-          <Button
-            disabled={isMutating}
-            onClick={async () => {
-              await trigger({ assessorId, childId });
-              mutate();
-              showSuccess();
-            }}
-          >
-            Save BCBA Selection
-          </Button>
-        </Box>
-      </FormControl>
       <Snackbar
         open={open}
         autoHideDuration={6000}
