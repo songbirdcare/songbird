@@ -5,9 +5,9 @@ export const useUpdateChild = () => {
   const data = useSWRMutation<
     UserModel,
     unknown,
-    "/api/proxy/admin/change-role",
+    "/api/proxy/child/update",
     UpdateArguments
-  >("/api/proxy/admin/change-role", async (url: string, args) => {
+  >("/api/proxy/child/update", async (url: string, args) => {
     const res = await fetch(url, {
       method: "PUT",
       headers: {

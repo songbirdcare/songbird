@@ -28,7 +28,6 @@ const AdminForUserPage: React.FC = () => {
 
   const { data: providers } = useFetchProviders();
   const { data: userData } = useFetchAdminUserData(id);
-  console.log({ userData, providers });
 
   return (
     <>

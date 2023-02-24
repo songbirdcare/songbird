@@ -13,6 +13,7 @@ import {
 import type { Block, Schedule, Slot } from "@songbird/precedent-iso";
 import React from "react";
 
+import { useUpdateChild } from "../hooks/use-update-child";
 import { SchedulerConverter } from "./schedule-converter";
 
 type Row = {
@@ -48,6 +49,8 @@ const RenderSchedule: React.FC<{
   rows: Row[];
   setCell: (blockIndex: number, dayIndex: number) => void;
 }> = ({ rows, setCell }) => {
+  const { trigger, isMutating } = useUpdateChild();
+
   return (
     <Box display="flex" gap={3} flexDirection="column">
       <TableContainer component={Paper}>
@@ -86,7 +89,15 @@ const RenderSchedule: React.FC<{
           </TableBody>
         </Table>
       </TableContainer>
-      <Button>Save Schedule</Button>
+
+      <Button
+        disabled={isMutating}
+        onClick={() => {
+          trigger({ schedule: SchedulerConverter.fromRows(rows) });
+        }}
+      >
+        Save Schedule
+      </Button>
     </Box>
   );
 };

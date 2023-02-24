@@ -25,7 +25,7 @@ export type QualificationStatus =
 
 export const ZUpdateArguments = z.object({
   schedule: ZSchedule.optional(),
-  bcbaId: z.string().optional(),
+  assessorId: z.string().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
 });
