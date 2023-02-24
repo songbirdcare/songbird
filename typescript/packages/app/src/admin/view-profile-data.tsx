@@ -1,7 +1,8 @@
 import { Box, Paper, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import type {
+import {
   Child,
+  FormatSchedule,
   Provider,
   Schedule,
   UserModel,
@@ -12,8 +13,9 @@ export const ViewProfileData: React.FC<{
   child: Child;
   user: UserModel;
   schedule: Schedule;
-}> = ({ providers, child, user }) => {
+}> = ({ providers, child, user, schedule }) => {
   const provider = providers.find((p) => p.id === child.assessorId);
+  const formatted = FormatSchedule.format(schedule);
   return (
     <Paper>
       <Box padding={2}>
@@ -37,6 +39,12 @@ export const ViewProfileData: React.FC<{
           </Grid2>
           <Grid2 xs={6}>
             <Typography>{user.phone}</Typography>
+          </Grid2>
+          <Grid2 xs={6}>
+            <Typography>Schedule</Typography>
+          </Grid2>
+          <Grid2 xs={6}>
+            <Typography sx={{ whiteSpace: "pre-wrap" }}>{formatted}</Typography>
           </Grid2>
           <Grid2 xs={6}>
             <Typography>Assessor BCBA</Typography>

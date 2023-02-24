@@ -12,7 +12,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import type { Block, Schedule, Slot } from "@songbird/precedent-iso";
+import { Block, FormatSchedule, Schedule } from "@songbird/precedent-iso";
 import React from "react";
 
 import { useUpdateChild } from "../hooks/use-update-child";
@@ -51,12 +51,14 @@ export const DisplaySchedule: React.FC<{
   };
 
   return (
-    <RenderSchedule
-      childId={childId}
-      rows={rows}
-      setCell={setCell}
-      mutate={mutate}
-    />
+    <Box>
+      <RenderSchedule
+        childId={childId}
+        rows={rows}
+        setCell={setCell}
+        mutate={mutate}
+      />
+    </Box>
   );
 };
 
@@ -93,7 +95,8 @@ const RenderSchedule: React.FC<{
                   key={blockIndex}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell>{formatBlock(row.block)}</TableCell>
+                  <TableCell>{FormatSchedule.formatBlock(row.block)}</TableCell>
+
                   {row.availibility.map((isAvailable, dayIndex) => {
                     return (
                       <TableCell key={dayIndex}>
@@ -141,10 +144,3 @@ const RenderSchedule: React.FC<{
     </Box>
   );
 };
-
-function formatBlock({ start, end }: Block): string {
-  return `${formatSlot(start)} - ${formatSlot(end)}`;
-}
-function formatSlot({ hour, period }: Slot): string {
-  return `${hour} ${period}`;
-}

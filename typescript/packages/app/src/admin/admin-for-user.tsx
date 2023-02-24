@@ -25,7 +25,7 @@ export const AdminForUser: React.FC<{
     <Box
       paddingX={2}
       paddingY={3}
-      width="750px"
+      width="1000px"
       height="100%"
       flexDirection={"column"}
       gap={4}
@@ -45,7 +45,7 @@ export const AdminForUser: React.FC<{
             <Tab label="View Profile" />
             <Tab label="Edit Schedule" />
             <Tab label="Edit Assessor BCBA" />
-            <Tab label="Send emails" />
+            <Tab label="Send email" />
           </Tabs>
         </Box>
         {tabIndex === 0 && (
@@ -71,7 +71,15 @@ export const AdminForUser: React.FC<{
             mutate={mutate}
           />
         )}
-        {tabIndex === 3 && <SendEmail />}
+        {tabIndex === 3 && (
+          <SendEmail
+            subject="BCBA assignment needed"
+            familyName="foo"
+            signOff="Nasr"
+            childName="Nasr Maswood"
+            schedule={schedule}
+          />
+        )}
       </Box>
     </Box>
   );
