@@ -62,7 +62,8 @@ export const SendEmail: React.FC<SendEmailArguments> = ({
           )}
           sx={{ width: 300 }}
           renderInput={({ size, ...rest }) => (
-            //@ts-ignore
+            // eslint-disable-next-line
+            // @ts-ignore
             <TextField
               variant="outlined"
               label="Select Insurance"

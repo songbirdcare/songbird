@@ -46,7 +46,8 @@ export const DisplayBCBA: React.FC<{
         )}
         sx={{ width: 300 }}
         renderInput={({ size, ...rest }) => (
-          //@ts-ignore
+          // eslint-disable-next-line
+          // @ts-ignore
           <TextField
             variant="outlined"
             label="Select BCBA"

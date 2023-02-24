@@ -11,9 +11,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
-import { Block, FormatSchedule,Schedule } from "@songbird/precedent-iso";
+import { Block, FormatSchedule, Schedule } from "@songbird/precedent-iso";
 import React from "react";
 
 import { useUpdateChild } from "../hooks/use-update-child";
