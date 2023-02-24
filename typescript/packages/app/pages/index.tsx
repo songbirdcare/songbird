@@ -1,9 +1,9 @@
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
-import { Dashboard } from "../src/dashboard/dashboard";
-
-import * as React from "react";
-import { useFetchMe } from "../src/hooks/use-fetch-user";
 import { useRouter } from "next/router";
+import * as React from "react";
+
+import { Dashboard } from "../src/dashboard/dashboard";
+import { useFetchMe } from "../src/hooks/use-fetch-user";
 import { SETTINGS } from "../src/settings";
 
 const Home: React.FC = () => {

@@ -5,10 +5,10 @@ export const useUpdateChild = () => {
   const data = useSWRMutation<
     UserModel,
     unknown,
-    "/api/proxy/child/update",
-    UpdateArguments
-  >("/api/proxy/child/update", async (url: string, args) => {
-    const res = await fetch(url, {
+    "/api/proxy/admin/child",
+    UpdateArguments & { childId: string }
+  >("/api/proxy/admin/child", async (url: string, args) => {
+    const res = await fetch(`${url}/${args.arg.childId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

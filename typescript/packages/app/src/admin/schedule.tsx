@@ -21,9 +21,10 @@ type Row = {
   availibility: boolean[];
 };
 
-export const DisplaySchedule: React.FC<{ schedule: Schedule }> = ({
-  schedule,
-}) => {
+export const DisplaySchedule: React.FC<{
+  childId: string;
+  schedule: Schedule;
+}> = ({ childId, schedule }) => {
   const [rows, setRows] = React.useState<Row[]>(() =>
     SchedulerConverter.toRows(schedule)
   );
@@ -42,13 +43,14 @@ export const DisplaySchedule: React.FC<{ schedule: Schedule }> = ({
     setRows(copy);
   };
 
-  return <RenderSchedule rows={rows} setCell={setCell} />;
+  return <RenderSchedule childId={childId} rows={rows} setCell={setCell} />;
 };
 
 const RenderSchedule: React.FC<{
   rows: Row[];
+  childId: string;
   setCell: (blockIndex: number, dayIndex: number) => void;
-}> = ({ rows, setCell }) => {
+}> = ({ rows, childId, setCell }) => {
   const { trigger, isMutating } = useUpdateChild();
 
   return (
@@ -93,7 +95,7 @@ const RenderSchedule: React.FC<{
       <Button
         disabled={isMutating}
         onClick={() => {
-          trigger({ schedule: SchedulerConverter.fromRows(rows) });
+          trigger({ schedule: SchedulerConverter.fromRows(rows), childId });
         }}
       >
         Save Schedule

@@ -1,4 +1,3 @@
-import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { Box, LinearProgress } from "@mui/material";
 import type { WorkflowSlug } from "@songbird/precedent-iso";
 import * as React from "react";
