@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   Checkbox,
   Paper,
   Table,
@@ -47,42 +49,45 @@ const RenderSchedule: React.FC<{
   setCell: (blockIndex: number, dayIndex: number) => void;
 }> = ({ rows, setCell }) => {
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Monday</TableCell>
-            <TableCell>Tuesday</TableCell>
-            <TableCell>Wednesday</TableCell>
-            <TableCell>Thursday</TableCell>
-            <TableCell>Friday</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, blockIndex) => {
-            return (
-              <TableRow
-                key={blockIndex}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell>{formatBlock(row.block)}</TableCell>
-                {row.availibility.map((isAvailable, dayIndex) => {
-                  return (
-                    <TableCell key={dayIndex}>
-                      <Checkbox
-                        onChange={() => setCell(blockIndex, dayIndex)}
-                        checked={isAvailable}
-                      />
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box display="flex" gap={3} flexDirection="column">
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell>Monday</TableCell>
+              <TableCell>Tuesday</TableCell>
+              <TableCell>Wednesday</TableCell>
+              <TableCell>Thursday</TableCell>
+              <TableCell>Friday</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, blockIndex) => {
+              return (
+                <TableRow
+                  key={blockIndex}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell>{formatBlock(row.block)}</TableCell>
+                  {row.availibility.map((isAvailable, dayIndex) => {
+                    return (
+                      <TableCell key={dayIndex}>
+                        <Checkbox
+                          onChange={() => setCell(blockIndex, dayIndex)}
+                          checked={isAvailable}
+                        />
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button>Save Schedule</Button>
+    </Box>
   );
 };
 

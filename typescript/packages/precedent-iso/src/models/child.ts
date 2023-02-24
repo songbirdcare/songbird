@@ -1,3 +1,6 @@
+import { z } from "zod";
+
+import { ZSchedule } from "./schedule";
 import type { WorkflowSlug } from "./workflow/workflow";
 
 export interface Child {
@@ -19,3 +22,12 @@ export type QualificationStatus =
       type: "disqualified";
       reason: DisqualificationReason;
     };
+
+export const ZUpdateArguments = z.object({
+  schedule: ZSchedule.optional(),
+  bcbaId: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+export type UpdateArguments = z.infer<typeof ZUpdateArguments>;

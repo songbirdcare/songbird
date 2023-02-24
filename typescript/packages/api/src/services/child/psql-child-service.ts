@@ -4,6 +4,7 @@ import {
   CreateEmpty,
   QualificationStatus,
   Schedule,
+  UpdateArguments,
   WorkflowSlug,
   ZSchedule,
   ZWorkflowSlug,
@@ -41,14 +42,22 @@ WHERE
 
     return schedule ?? CreateEmpty.schedule();
   }
-  async updateSchedule(childId: string, schedule: Schedule): Promise<void> {
+  async update(
+    childId: string,
+    { schedule, bcbaId, firstName, lastName }: UpdateArguments
+  ): Promise<void> {
     await this.pool.connect(async (connection) =>
       connection.query(
         sql.unsafe`
 UPDATE
     child
 SET
-    schedule = ${JSON.stringify(schedule)}
+    schedule = COALESCE(${
+      schedule ? JSON.stringify(schedule) : null
+    }, child.schedule),
+    bcbaId = COALESCE(${bcbaId ?? null}, child.bcbaId),
+    first_name = COALESCE(${firstName ?? null}, child.first_name),
+    last_name = COALESCE(${lastName ?? null}, child.last_name),
 WHERE
     id = ${childId}
 `

@@ -2,13 +2,13 @@ import type {
   Child,
   QualificationStatus,
   Schedule,
+  UpdateArguments,
   WorkflowSlug,
 } from "@songbird/precedent-iso";
 
 export interface ChildService {
   getSchedule(childId: string): Promise<Schedule>;
-  updateSchedule(childId: string, schedule: Schedule): Promise<void>;
-
+  update(childId: string, args: UpdateArguments): Promise<void>;
   advanceWorkflow(childId: string, from: WorkflowSlug): Promise<void>;
   get(userId: string): Promise<Child>;
   createIfNotExists(
