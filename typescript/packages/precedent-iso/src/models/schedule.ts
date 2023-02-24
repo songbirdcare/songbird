@@ -33,15 +33,15 @@ export const ZBlock = z.object({
 export type Block = z.infer<typeof ZBlock>;
 
 export const ZForDay = z.object({
-  weekday: ZWeekday,
-  blocks: ZBlock.array().length(5),
-  isAvailable: z.boolean().array().length(5),
+  day: ZWeekday,
+  blockAvailability: z.boolean().array(),
 });
 
 export type ForDay = z.infer<typeof ZForDay>;
 
 export const ZSchedule = z.object({
-  schedule: ZForDay.array().length(5),
+  blocks: ZBlock.array(),
+  days: ZForDay.array(),
 });
 
 export type Schedule = z.infer<typeof ZSchedule>;

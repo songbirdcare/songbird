@@ -1,25 +1,26 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from "@mui/material";
-import type { Child, Provider, UserModel } from "@songbird/precedent-iso";
+import { Box, Tab, Tabs, Typography } from "@mui/material";
+import type {
+  Child,
+  Provider,
+  Schedule,
+  UserModel,
+} from "@songbird/precedent-iso";
 import React from "react";
 
-import { Schedule } from "./schedule";
+import { DisplayBCBA } from "./display-bcba";
+import { DisplaySchedule } from "./schedule";
+import { SendEmail } from "./send-emails";
+import { ViewProfileData } from "./view-profile-data";
 
 export const AdminForUser: React.FC<{
   providers: Provider[];
   child: Child;
   user: UserModel;
-}> = ({ providers, child, user }) => {
-  const [accessorId, setAccessorId] = React.useState<string | undefined>(
-    child.assessorId
-  );
+  schedule: Schedule;
+  mutate: () => void;
+}> = ({ providers, child, user, schedule, mutate }) => {
+  const [tabIndex, setTabIndex] = React.useState(0);
+
   return (
     <Box
       paddingX={2}
@@ -30,30 +31,48 @@ export const AdminForUser: React.FC<{
       gap={4}
     >
       <Box marginBottom={2}>
-        <Typography>{user.email}</Typography>
+        <Typography color="primary" variant="h4">
+          Profile
+        </Typography>
       </Box>
-      <Schedule rows={[]} />
-      <FormControl fullWidth>
-        <InputLabel id="accessor-bcba">Accessor BCBA</InputLabel>
-        <Select
-          labelId="accessor-bcba"
-          id="accessor-bcba"
-          value={accessorId ?? ""}
-          label="Accessor BCBA"
-          onChange={(e) => {
-            setAccessorId(e.target.value === "" ? undefined : e.target.value);
-          }}
-        >
-          <MenuItem value={""}>No BCBA Selected</MenuItem>
-          {providers.map((provider) => (
-            <MenuItem key={provider.id} value={provider.id}>
-              {provider.firstName} {provider.lastName}
-            </MenuItem>
-          ))}
-        </Select>
-
-        <Button>Save</Button>
-      </FormControl>
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }} marginBottom={3}>
+          <Tabs
+            value={tabIndex}
+            onChange={(_, newValue) => setTabIndex(newValue)}
+            aria-label="Option selection"
+          >
+            <Tab label="View Profile" />
+            <Tab label="Edit Schedule" />
+            <Tab label="Edit Assessor BCBA" />
+            <Tab label="Send emails" />
+          </Tabs>
+        </Box>
+        {tabIndex === 0 && (
+          <ViewProfileData
+            providers={providers}
+            child={child}
+            user={user}
+            schedule={schedule}
+          />
+        )}
+        {tabIndex === 1 && (
+          <DisplaySchedule
+            childId={child.id}
+            schedule={schedule}
+            mutate={mutate}
+          />
+        )}
+        {tabIndex === 2 && (
+          <DisplayBCBA
+            childId={child.id}
+            initialAssessorId={child.assessorId}
+            providers={providers}
+            mutate={mutate}
+          />
+        )}
+        {tabIndex === 3 && <SendEmail />}
+      </Box>
     </Box>
   );
 };

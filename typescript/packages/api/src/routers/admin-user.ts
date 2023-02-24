@@ -1,4 +1,4 @@
-import { ZChangeRoleRequest } from "@songbird/precedent-iso";
+import { ZChangeRoleRequest, ZUpdateArguments } from "@songbird/precedent-iso";
 import express from "express";
 
 import type { ChildService } from "../services/child/child-service";
@@ -88,9 +88,29 @@ export class AdminUserRouter {
           childId: child.id,
         });
 
-        res.json({ user, child, workflows });
+        const schedule = await this.childService.getSchedule(child.id);
+
+        res.json({ user, child, workflows, schedule });
       }
     );
+
+    router.put(
+      "/child/:childId",
+      async (req: express.Request, res: express.Response) => {
+        const childId = req.params.childId;
+        if (typeof childId !== "string") {
+          throw new Error("invalid childId");
+        }
+
+        await this.childService.update(
+          childId,
+          ZUpdateArguments.parse(req.body)
+        );
+
+        res.json({ status: "ok" });
+      }
+    );
+
     return router;
   }
 }

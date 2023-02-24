@@ -1,8 +1,12 @@
 import {
   assertNever,
   Child,
+  CreateEmpty,
   QualificationStatus,
+  Schedule,
+  UpdateArguments,
   WorkflowSlug,
+  ZSchedule,
   ZWorkflowSlug,
 } from "@songbird/precedent-iso";
 import { DatabasePool, sql } from "slonik";
@@ -21,6 +25,45 @@ interface AdvanceWorkflowArguments {
 
 export class PsqlChildService implements ChildService {
   constructor(private readonly pool: DatabasePool) {}
+
+  async getSchedule(childId: string): Promise<Schedule> {
+    const schedule = await this.pool.connect(async (connection) =>
+      connection.maybeOne(
+        sql.type(ZFetchSchedule)`
+SELECT
+    schedule
+FROM
+    child
+WHERE
+    id = ${childId}
+`
+      )
+    );
+
+    return schedule ?? CreateEmpty.schedule();
+  }
+  async update(
+    childId: string,
+    { schedule, assessorId, firstName, lastName }: UpdateArguments
+  ): Promise<void> {
+    await this.pool.connect(async (connection) =>
+      connection.query(
+        sql.unsafe`
+UPDATE
+    child
+SET
+    schedule = COALESCE(${
+      schedule ? JSON.stringify(schedule) : null
+    }, child.schedule),
+    assessor = COALESCE(${assessorId ?? null}, child.assessor),
+    first_name = COALESCE(${firstName ?? null}, child.first_name),
+    last_name = COALESCE(${lastName ?? null}, child.last_name)
+WHERE
+    id = ${childId}
+`
+      )
+    );
+  }
 
   async advanceWorkflow(childId: string, from: WorkflowSlug) {
     const to = workflowOrder(from);
@@ -62,7 +105,7 @@ WHERE
 `
       )
     );
-    return fromSql(child);
+    return child;
   }
 
   async createIfNotExists(
@@ -82,22 +125,6 @@ ON CONFLICT (sb_user_id)
   }
 }
 
-function fromSql({
-  id,
-  qualification_status,
-  workflow_slug,
-  assessor,
-}: ChildFromSql): Child {
-  return {
-    id,
-    qualified: qualification_status
-      ? QualifiedSqlConverter.from(qualification_status)
-      : { type: "unknown" },
-    workflowSlug: workflow_slug,
-    assessorId: assessor ?? undefined,
-  };
-}
-
 export type ChildFromSql = z.infer<typeof ZChildFromSql>;
 
 const ZQualificationColumn = z.enum([
@@ -112,12 +139,21 @@ const ZQualificationColumn = z.enum([
 
 type QualificationColumn = z.infer<typeof ZQualificationColumn>;
 
-const ZChildFromSql = z.object({
-  id: z.string(),
-  qualification_status: ZQualificationColumn.nullable(),
-  workflow_slug: ZWorkflowSlug,
-  assessor: z.string().nullable(),
-});
+const ZChildFromSql = z
+  .object({
+    id: z.string(),
+    qualification_status: ZQualificationColumn.nullable(),
+    workflow_slug: ZWorkflowSlug,
+    assessor: z.string().nullable(),
+  })
+  .transform((val) => ({
+    id: val.id,
+    qualified: val.qualification_status
+      ? QualifiedSqlConverter.from(val.qualification_status)
+      : ({ type: "unknown" } as const),
+    workflowSlug: val.workflow_slug,
+    assessorId: val.assessor ?? undefined,
+  }));
 
 class QualifiedSqlConverter {
   static to = (qualified: QualificationStatus): QualificationColumn | null => {
@@ -155,3 +191,9 @@ class QualifiedSqlConverter {
     }
   };
 }
+
+const ZFetchSchedule = z
+  .object({
+    schedule: ZSchedule.nullable(),
+  })
+  .transform((val) => val?.schedule ?? undefined);

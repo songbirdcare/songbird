@@ -18,6 +18,7 @@ export const ZSettings = z.object({
   datadog: ZDatadogRum.optional(),
   flagSmith: z.string().min(1),
   testAnyWorkflowStage: z.boolean(),
+  testAdminNoRedirect: z.boolean(),
 });
 
 const enableDebuggingAction =
@@ -42,6 +43,7 @@ export const SETTINGS = ZSettings.parse({
   flagSmith: process.env["NEXT_PUBLIC_FLAGSMITH_API_KEY"],
   testAnyWorkflowStage:
     process.env["NEXT_PUBLIC_TEST_ANY_WORKFLOW_STAGE"] === "true",
+  testAdminNoRedirect: process.env["NEXT_PUBLIC_ADMIN_NO_REDIRECT"] === "true",
 });
 
 function dataDogRum() {

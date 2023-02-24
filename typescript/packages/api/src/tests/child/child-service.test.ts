@@ -74,3 +74,19 @@ test("advanceWorkflow", async () => {
     expect((await childService.get(user.id)).workflowSlug).toEqual("care_plan");
   });
 });
+
+test("schedule", async () => {
+  const { childService, userService } = await setup();
+  const user = await userService.upsert({
+    sub: "test",
+    email: "test@gmail.com",
+  });
+
+  await childService.createIfNotExists(user.id, {
+    type: "qualified",
+  });
+
+  const child = await childService.get(user.id);
+  const schedule = await childService.getSchedule(child.id);
+  expect(schedule).toBeUndefined();
+});

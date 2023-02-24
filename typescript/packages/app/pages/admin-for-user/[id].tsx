@@ -27,8 +27,7 @@ const AdminForUserPage: React.FC = () => {
   }
 
   const { data: providers } = useFetchProviders();
-  const { data: userData } = useFetchAdminUserData(id);
-  console.log({ userData, providers });
+  const { data: userData, mutate } = useFetchAdminUserData(id);
 
   return (
     <>
@@ -44,6 +43,8 @@ const AdminForUserPage: React.FC = () => {
             providers={providers}
             child={userData.child}
             user={userData.user}
+            schedule={userData.schedule}
+            mutate={mutate}
           />
         )}
       </BodyContainer>
