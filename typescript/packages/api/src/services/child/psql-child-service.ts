@@ -39,7 +39,6 @@ WHERE
 `
       )
     );
-    console.log({ childId, schedule });
 
     return schedule ?? CreateEmpty.schedule();
   }

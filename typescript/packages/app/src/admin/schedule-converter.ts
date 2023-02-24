@@ -1,4 +1,4 @@
-import { Block, Schedule,WEEKDAYS } from "@songbird/precedent-iso";
+import { Block, Schedule, WEEKDAYS } from "@songbird/precedent-iso";
 
 export type Row = {
   block: Block;
@@ -6,29 +6,23 @@ export type Row = {
 };
 
 export class SchedulerConverter {
-  static fromRows = (rows: Row[]): Schedule => {
-    const blocks = rows.map((row) => row.block);
-    const days = WEEKDAYS.map((day, dayIndex) => {
-      return {
-        day,
-        blockAvailability: rows.map((row) => {
-          const value = row.availibility[dayIndex];
-          if (value === undefined) {
-            throw new Error("illegal state");
-          }
-          return value;
-        }),
-      };
-    });
-    return {
-      days,
-      blocks,
-    };
-  };
-  static toRows = (schedule: Schedule): Row[] => {
-    const acc: Row[] = [];
-    for (const [idx, block] of schedule.blocks.entries()) {
-      acc.push({
+  static fromRows = (rows: Row[]): Schedule => ({
+    days: WEEKDAYS.map((day, dayIndex) => ({
+      day,
+      blockAvailability: rows.map((row) => {
+        const value = row.availibility[dayIndex];
+        if (value === undefined) {
+          throw new Error("illegal state");
+        }
+        return value;
+      }),
+    })),
+    blocks: rows.map((row) => row.block),
+  });
+
+  static toRows = (schedule: Schedule): Row[] =>
+    schedule.blocks.map(
+      (block, idx): Row => ({
         block,
         availibility: schedule.days.map((day) => {
           const value = day.blockAvailability[idx];
@@ -37,8 +31,6 @@ export class SchedulerConverter {
           }
           return value;
         }),
-      });
-    }
-    return acc;
-  };
+      })
+    );
 }

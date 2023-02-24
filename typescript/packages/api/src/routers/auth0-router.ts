@@ -12,9 +12,10 @@ export class Auth0Router {
     router.post(
       "/ingest",
       async (req: express.Request, res: express.Response) => {
-        const parsed = ZAuth0Payload.array().parse(req.body);
         try {
-          await this.userService.updateLastLogin(parsed);
+          await this.userService.updateLastLogin(
+            ZAuth0Payload.array().parse(req.body)
+          );
           res.json({ data: "okay" });
         } catch (e) {
           LOGGER.error(req.body, "oauth cannot parse");
