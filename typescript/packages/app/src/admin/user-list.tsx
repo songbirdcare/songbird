@@ -34,9 +34,14 @@ export const UserList: React.FC<{ selfId: string; users: UserModel[] }> = ({
     });
   return (
     <Box width="100%" padding={2} display="flex" flexDirection="column" gap={2}>
-      <Typography variant="h4" color="primary">
-        User List
-      </Typography>
+      <Box display="flex" gap={3} alignItems="center">
+        <Typography variant="h4" color="primary">
+          User List
+        </Typography>
+        <Link href="/dashboard">
+          <Typography>View parent dashboard</Typography>
+        </Link>
+      </Box>
       <DataGrid rows={rows} columns={columns} />
     </Box>
   );
