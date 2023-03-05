@@ -1,0 +1,27 @@
+{
+  "days": [
+    { "day": "Monday", "blockAvailability": [false, false, false, false] },
+    { "day": "Tuesday", "blockAvailability": [false, false, false, false] },
+    { "day": "Wednesday", "blockAvailability": [true, true, true, true] },
+    { "day": "Thursday", "blockAvailability": [false, true, true, true] },
+    { "day": "Friday", "blockAvailability": [false, false, false, false] }
+  ],
+  "blocks": [
+    {
+      "end": { "hour": 12, "period": "PM" },
+      "start": { "hour": 8, "period": "AM" }
+    },
+    {
+      "end": { "hour": 1, "period": "PM" },
+      "start": { "hour": 9, "period": "AM" }
+    },
+    {
+      "end": { "hour": 5, "period": "PM" },
+      "start": { "hour": 1, "period": "PM" }
+    },
+    {
+      "end": { "hour": 6, "period": "PM" },
+      "start": { "hour": 2, "period": "PM" }
+    }
+  ]
+}

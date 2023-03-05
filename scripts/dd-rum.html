@@ -1,0 +1,42 @@
+<script>
+  if (
+    !window.location.pathname.includes("article") &&
+    !window.location.hostname.includes("webflow")
+  ) {
+    (function (h, o, u, n, d) {
+      h = h[d] = h[d] || {
+        q: [],
+        onReady: function (c) {
+          h.q.push(c);
+        },
+      };
+      d = o.createElement(u);
+      d.async = 1;
+      d.src = n;
+      n = o.getElementsByTagName(u)[0];
+      n.parentNode.insertBefore(d, n);
+    })(
+      window,
+      document,
+      "script",
+      "https://www.datadoghq-browser-agent.com/datadog-rum-v4.js",
+      "DD_RUM"
+    );
+    DD_RUM.onReady(function () {
+      DD_RUM.init({
+        applicationId: "e96891f5-6574-4ad0-86bd-1210c78476f3",
+        clientToken: "puba97668267aa17c66761c5fabad64857e",
+        site: "datadoghq.com",
+        service: "marketing-website",
+        env: "production",
+        sessionSampleRate: 100,
+        sessionReplaySampleRate: 100,
+        trackResources: true,
+        trackLongTasks: true,
+        trackUserInteractions: true,
+      });
+
+      DD_RUM.startSessionReplayRecording();
+    });
+  }
+</script>

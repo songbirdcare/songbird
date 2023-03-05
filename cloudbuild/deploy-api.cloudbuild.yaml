@@ -1,0 +1,25 @@
+steps:
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "run",
+        "deploy",
+        "api",
+        "--image",
+        "${_LOCATION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/api:${_TAG}",
+        "--region",
+        "${_LOCATION}",
+        "--platform",
+        "managed",
+      ]
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "run",
+        "services",
+        "update-traffic",
+        "api",
+        "--to-latest",
+        "--region",
+        "${_LOCATION}",
+      ]

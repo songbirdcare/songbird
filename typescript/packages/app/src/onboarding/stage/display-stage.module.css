@@ -1,0 +1,29 @@
+@media (min-width: 670px) {
+  .paper {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    grid-template-rows: 1fr;
+  }
+}
+
+@media (max-width: 670px) {
+  .paper {
+    display: flex;
+  }
+  .icon-container {
+    flex-direction: column;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .text {
+    text-align: center;
+  }
+}
+
+.image {
+  filter: invert(66%) sepia(3%) saturate(16%) hue-rotate(36deg) brightness(91%)
+    contrast(94%);
+}

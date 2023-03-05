@@ -1,0 +1,61 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: ["production"]
+    paths-ignore:
+      - "README.md"
+      - "docker-compose.yml"
+      - "scripts/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Production
+
+    permissions: write-all
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          install_components: "beta"
+
+      - name: "Build DB"
+        run: |
+          make build-db
+
+      - name: "Build API"
+        run: |
+          make build-api
+
+      - name: "Deploy DB"
+        run: |
+          make deploy-db
+
+      - name: "Deploy API"
+        run: |
+          make deploy-api
+
+      - name: "Delete old images and revisions"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions
+
+      - uses: devmasx/merge-branch@master
+        name: "Merge production into develop"
+        with:
+          type: now
+          label_name: "Merge production into develop"
+          from_branch: production
+          target_branch: develop
+          github_token: ${{ github.token }}

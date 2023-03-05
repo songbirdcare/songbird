@@ -1,0 +1,58 @@
+name: Deploy to staging
+
+on:
+  push:
+    branches: ["develop"]
+    paths-ignore:
+      - "README.md"
+      - "docker-compose.yml"
+      - "scripts/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Preview
+
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          install_components: "beta"
+
+      - name: "Build DB"
+        run: |
+          git diff --quiet HEAD^ HEAD db || echo "DB service is being built"
+          git diff --quiet HEAD^ HEAD db || make build-db
+
+      - name: "Build API"
+        run: |
+          git diff --quiet HEAD^ HEAD typescript || echo "API service is being built"
+          git diff --quiet HEAD^ HEAD typescript || make build-api
+
+      - name: "Deploy DB"
+        run: |
+          git diff --quiet HEAD^ HEAD db || echo "DB service is being deployed"
+          git diff --quiet HEAD^ HEAD db || make deploy-db
+
+      - name: "Deploy API"
+        run: |
+          git diff --quiet HEAD^ HEAD typescript || echo "API service is being deployed"
+          git diff --quiet HEAD^ HEAD typescript || make deploy-api
+
+      - name: "Delete old images and revisions"
+        continue-on-error: true
+        run: |
+          make delete-old-revisions
